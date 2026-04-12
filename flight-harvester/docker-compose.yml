@@ -23,6 +23,13 @@ services:
       ADMIN_FULL_NAME: System Admin
       DEBUG: "true"
       CORS_ORIGINS: '["http://localhost:5173"]'
+      # Provider keys — leave empty until you activate paid tiers per phase
+      KIWI_API_KEY: ""
+      FLIGHTAPI_API_KEY: ""
+      SERPER_API_KEY: ""
+      SENTRY_DSN: ""
+      TELEGRAM_BOT_TOKEN: ""
+      TELEGRAM_CHAT_ID: ""
     depends_on:
       db: { condition: service_healthy }
 
