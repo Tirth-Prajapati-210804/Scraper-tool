@@ -26,15 +26,18 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         from app.db.session import AsyncSessionLocal
+        from app.providers.registry import ProviderRegistry
         from app.services.auth_service import ensure_default_admin
 
         app.state.settings = settings
+        app.state.provider_registry = ProviderRegistry(settings)
 
         async with AsyncSessionLocal() as session:
             await ensure_default_admin(session, settings)
 
         log.info("startup complete", environment=settings.environment)
         yield
+        await app.state.provider_registry.close_all()
         log.info("shutdown complete")
 
     app = FastAPI(
@@ -67,11 +70,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             db_ok = await check_db(session)
 
         s: Settings = request.app.state.settings
-        provider_status = {
-            "kiwi": "configured" if s.kiwi_api_key else "disabled",
-            "flightapi": "configured" if s.flightapi_api_key else "disabled",
-            "serper": "configured" if s.serper_api_key else "disabled",
-        }
+        registry = request.app.state.provider_registry
+        provider_status = registry.status()
 
         db_status = "ok" if db_ok else "down"
         overall = "ok" if db_ok else "degraded"
