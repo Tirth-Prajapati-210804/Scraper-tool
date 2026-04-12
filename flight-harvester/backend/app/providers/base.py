@@ -13,6 +13,7 @@ class ProviderResult:
     currency: str
     airline: str
     deep_link: str
+    provider: str = ""
     duration_minutes: int = 0
     stops: int = 0
     raw_data: dict = field(default_factory=dict)

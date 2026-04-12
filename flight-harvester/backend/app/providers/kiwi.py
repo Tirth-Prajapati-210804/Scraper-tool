@@ -104,6 +104,7 @@ class KiwiProvider:
                         currency="CAD",
                         airline=airline,
                         deep_link=deep_link,
+                        provider="kiwi",
                         duration_minutes=duration_min,
                         stops=stops,
                         raw_data=item,

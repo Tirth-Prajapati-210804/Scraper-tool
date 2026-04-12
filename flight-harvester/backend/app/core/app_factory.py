@@ -28,16 +28,29 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         from app.db.session import AsyncSessionLocal
         from app.providers.registry import ProviderRegistry
         from app.services.auth_service import ensure_default_admin
+        from app.tasks.scheduler import FlightScheduler
 
         app.state.settings = settings
-        app.state.provider_registry = ProviderRegistry(settings)
+
+        registry = ProviderRegistry(settings)
+        app.state.provider_registry = registry
 
         async with AsyncSessionLocal() as session:
             await ensure_default_admin(session, settings)
 
+        scheduler = FlightScheduler(
+            settings=settings,
+            session_factory=AsyncSessionLocal,
+            provider_registry=registry,
+        )
+        app.state.scheduler = scheduler
+        scheduler.start()
+
         log.info("startup complete", environment=settings.environment)
         yield
-        await app.state.provider_registry.close_all()
+
+        await scheduler.stop()
+        await registry.close_all()
         log.info("shutdown complete")
 
     app = FastAPI(
@@ -80,7 +93,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             status=overall,
             environment=s.environment,
             database_status=db_status,
-            scheduler_running=False,
+            scheduler_running=request.app.state.scheduler.is_running,
             provider_status=provider_status,
         )
 

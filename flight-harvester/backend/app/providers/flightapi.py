@@ -127,6 +127,7 @@ class FlightApiProvider:
             currency="CAD",
             airline=normalize_airline(airline),
             deep_link=deep_link,
+            provider="flightapi",
             raw_data=trip,
         )
 
@@ -160,6 +161,7 @@ class FlightApiProvider:
             currency="CAD",
             airline=normalize_airline(airline),
             deep_link=deep_link,
+            provider="flightapi",
             raw_data=itin,
         )
 

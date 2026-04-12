@@ -116,6 +116,7 @@ class SerperProvider:
                     currency="CAD",
                     airline=airline,
                     deep_link=deep_link,
+                    provider="serper",
                     duration_minutes=duration_min,
                     raw_data=item,
                 )
