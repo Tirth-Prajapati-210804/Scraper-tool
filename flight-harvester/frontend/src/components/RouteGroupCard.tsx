@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { Download, RefreshCw } from "lucide-react";
+import { Download, ExternalLink, RefreshCw } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   downloadExport,
   getRouteGroupProgress,
@@ -55,13 +56,19 @@ export function RouteGroupCard({ group }: RouteGroupCardProps) {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h3 className="font-semibold text-slate-900">{group.name}</h3>
+          <Link
+            to={`/route-groups/${group.id}`}
+            className="flex items-center gap-1 font-semibold text-slate-900 hover:text-brand-700"
+          >
+            {group.name}
+            <ExternalLink className="h-3.5 w-3.5 text-slate-400" />
+          </Link>
           <p className="mt-0.5 text-sm text-slate-500">
             {group.destination_label}
           </p>
         </div>
         <span
-          className={`inline-flex h-2 w-2 rounded-full mt-1.5 ${
+          className={`mt-1.5 inline-flex h-2 w-2 rounded-full ${
             group.is_active ? "bg-green-500" : "bg-slate-300"
           }`}
           title={group.is_active ? "Active" : "Inactive"}
@@ -83,7 +90,10 @@ export function RouteGroupCard({ group }: RouteGroupCardProps) {
         </div>
       ) : progress ? (
         <div className="space-y-1.5">
-          <ProgressBar value={progress.dates_with_data} max={progress.total_dates} />
+          <ProgressBar
+            value={progress.dates_with_data}
+            max={progress.total_dates}
+          />
           <div className="flex justify-between text-xs text-slate-500">
             <span>
               {formatNumber(progress.dates_with_data)}/

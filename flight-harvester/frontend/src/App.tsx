@@ -3,8 +3,11 @@ import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom
 import { AppLayout } from "./components/layout/AppLayout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
+import { CollectionLogsPage } from "./pages/CollectionLogsPage";
 import { DashboardPage } from "./pages/DashboardPage";
+import { DataExplorerPage } from "./pages/DataExplorerPage";
 import { LoginPage } from "./pages/LoginPage";
+import { RouteGroupDetailPage } from "./pages/RouteGroupDetailPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -32,7 +35,9 @@ export default function App() {
               }
             >
               <Route path="/" element={<DashboardPage />} />
-              {/* Phase 6 pages added here */}
+              <Route path="/route-groups/:id" element={<RouteGroupDetailPage />} />
+              <Route path="/explorer" element={<DataExplorerPage />} />
+              <Route path="/logs" element={<CollectionLogsPage />} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

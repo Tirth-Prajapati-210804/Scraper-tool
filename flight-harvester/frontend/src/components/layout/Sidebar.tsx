@@ -2,7 +2,6 @@ import {
   History,
   LayoutDashboard,
   LogOut,
-  Map,
   Plane,
   Table,
 } from "lucide-react";
@@ -12,9 +11,8 @@ import { cn } from "../../utils/cn";
 
 const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard" },
-  { to: "/route-groups", icon: Map, label: "Route Groups" },
-  { to: "/data-explorer", icon: Table, label: "Data Explorer" },
-  { to: "/collection-logs", icon: History, label: "Collection Logs" },
+  { to: "/explorer", icon: Table, label: "Data Explorer" },
+  { to: "/logs", icon: History, label: "Collection Logs" },
 ];
 
 export function Sidebar() {

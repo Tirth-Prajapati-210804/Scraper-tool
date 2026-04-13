@@ -1,22 +1,26 @@
 import { type ReactNode } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useMatch } from "react-router-dom";
 import { TopBar } from "./TopBar";
 import { Sidebar } from "./Sidebar";
 
-const PAGE_TITLES: Record<string, string> = {
-  "/": "Dashboard",
-  "/route-groups": "Route Groups",
-  "/data-explorer": "Data Explorer",
-  "/collection-logs": "Collection Logs",
-};
+function usePageTitle(): string {
+  const location = useLocation();
+  const isDetail = useMatch("/route-groups/:id");
+  if (isDetail) return "Route Group Detail";
+  const titles: Record<string, string> = {
+    "/": "Dashboard",
+    "/explorer": "Data Explorer",
+    "/logs": "Collection Logs",
+  };
+  return titles[location.pathname] ?? "Flight Harvester";
+}
 
 interface AppLayoutProps {
   children: ReactNode;
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
-  const location = useLocation();
-  const title = PAGE_TITLES[location.pathname] ?? "Flight Harvester";
+  const title = usePageTitle();
 
   return (
     <div className="flex h-screen overflow-hidden">

@@ -1,0 +1,238 @@
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ArrowLeft, Download, Pencil, RefreshCw } from "lucide-react";
+import { useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import {
+  downloadExport,
+  getRouteGroup,
+  getRouteGroupProgress,
+  saveBlobAsFile,
+} from "../api/route-groups";
+import { triggerGroupCollection } from "../api/collection";
+import { fetchPriceTrend, fetchPrices } from "../api/prices";
+import { DateCoverageGrid } from "../components/DateCoverageGrid";
+import { PriceChart } from "../components/PriceChart";
+import { PriceTable } from "../components/PriceTable";
+import { RouteGroupForm } from "../components/RouteGroupForm";
+import { Button } from "../components/ui/Button";
+import { Card } from "../components/ui/Card";
+import { Skeleton } from "../components/ui/Skeleton";
+
+export function RouteGroupDetailPage() {
+  const { id } = useParams<{ id: string }>();
+  const qc = useQueryClient();
+  const [editOpen, setEditOpen] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const [triggering, setTriggering] = useState(false);
+  const [triggered, setTriggered] = useState(false);
+  const [selectedOrigin, setSelectedOrigin] = useState<string>("");
+
+  const groupQuery = useQuery({
+    queryKey: ["route-group", id],
+    queryFn: () => getRouteGroup(id!),
+    enabled: !!id,
+  });
+
+  const progressQuery = useQuery({
+    queryKey: ["route-group-progress", id],
+    queryFn: () => getRouteGroupProgress(id!),
+    enabled: !!id,
+    refetchInterval: 60_000,
+  });
+
+  const group = groupQuery.data;
+  const originForQuery = selectedOrigin || group?.origins[0] || "";
+  const destForQuery = group?.destinations[0] || "";
+
+  const trendQuery = useQuery({
+    queryKey: ["price-trend", id, originForQuery, destForQuery],
+    queryFn: () =>
+      fetchPriceTrend({ origin: originForQuery, destination: destForQuery }),
+    enabled: !!originForQuery && !!destForQuery,
+  });
+
+  const pricesQuery = useQuery({
+    queryKey: ["prices", id, selectedOrigin],
+    queryFn: () =>
+      fetchPrices({ route_group_id: id, origin: selectedOrigin || undefined }),
+    enabled: !!id,
+  });
+
+  async function handleDownload() {
+    if (!group) return;
+    setDownloading(true);
+    try {
+      const blob = await downloadExport(group.id);
+      saveBlobAsFile(blob, `${group.name.replace(/[^a-z0-9_-]/gi, "_")}.xlsx`);
+    } finally {
+      setDownloading(false);
+    }
+  }
+
+  async function handleTrigger() {
+    if (!id) return;
+    setTriggering(true);
+    try {
+      await triggerGroupCollection(id);
+      setTriggered(true);
+      setTimeout(() => setTriggered(false), 3000);
+      qc.invalidateQueries({ queryKey: ["route-group-progress", id] });
+    } finally {
+      setTriggering(false);
+    }
+  }
+
+  if (groupQuery.isLoading) {
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-8 w-64" />
+        <Skeleton className="h-48 rounded-xl" />
+      </div>
+    );
+  }
+
+  if (!group) {
+    return (
+      <div className="py-16 text-center text-slate-400">
+        Route group not found.{" "}
+        <Link to="/" className="text-brand-600 hover:underline">
+          Back to dashboard
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Back + Actions */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Link
+          to="/"
+          className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Dashboard
+        </Link>
+        <div className="flex items-center gap-2">
+          {triggered && (
+            <span className="text-sm text-green-600">Triggered ✓</span>
+          )}
+          <Button variant="secondary" onClick={() => setEditOpen(true)}>
+            <Pencil className="h-4 w-4" />
+            Edit
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={handleTrigger}
+            loading={triggering}
+          >
+            <RefreshCw className="h-4 w-4" />
+            Trigger Scrape
+          </Button>
+          <Button
+            variant="primary"
+            onClick={handleDownload}
+            loading={downloading}
+          >
+            <Download className="h-4 w-4" />
+            Download Excel
+          </Button>
+        </div>
+      </div>
+
+      {/* Group Header */}
+      <Card>
+        <h2 className="text-lg font-bold text-slate-900">{group.name}</h2>
+        <p className="mt-1 text-sm text-slate-500">
+          Destination: {group.destination_label} · {group.nights} nights ·{" "}
+          {group.days_ahead} days ahead
+        </p>
+        <p className="mt-1 text-sm text-slate-500">
+          Origins: {group.origins.join(", ")}
+        </p>
+      </Card>
+
+      {/* Progress */}
+      <Card>
+        <h3 className="mb-4 text-sm font-semibold text-slate-700">
+          Collection Progress
+        </h3>
+        {progressQuery.isLoading ? (
+          <Skeleton className="h-32" />
+        ) : progressQuery.data ? (
+          <DateCoverageGrid progress={progressQuery.data} />
+        ) : (
+          <p className="text-sm text-slate-400">No progress data.</p>
+        )}
+      </Card>
+
+      {/* Price Trend */}
+      <Card>
+        <div className="mb-4 flex items-center justify-between gap-4">
+          <h3 className="text-sm font-semibold text-slate-700">Price Trend</h3>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-500">Origin:</span>
+            <select
+              value={selectedOrigin || group.origins[0]}
+              onChange={(e) => setSelectedOrigin(e.target.value)}
+              className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+            >
+              {group.origins.map((o) => (
+                <option key={o} value={o}>
+                  {o}
+                </option>
+              ))}
+            </select>
+            {group.destinations.length > 1 && (
+              <>
+                <span className="text-xs text-slate-500">→ {destForQuery}</span>
+              </>
+            )}
+          </div>
+        </div>
+        {trendQuery.isLoading ? (
+          <Skeleton className="h-64" />
+        ) : (
+          <PriceChart data={trendQuery.data ?? []} />
+        )}
+      </Card>
+
+      {/* Price Table */}
+      <Card>
+        <div className="mb-4 flex items-center justify-between gap-4">
+          <h3 className="text-sm font-semibold text-slate-700">Price Data</h3>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-500">Filter by origin:</span>
+            <select
+              value={selectedOrigin}
+              onChange={(e) => setSelectedOrigin(e.target.value)}
+              className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+            >
+              <option value="">All origins</option>
+              {group.origins.map((o) => (
+                <option key={o} value={o}>
+                  {o}
+                </option>
+              ))}
+            </select>
+            {pricesQuery.data && (
+              <span className="text-xs text-slate-400">
+                {pricesQuery.data.length} rows
+              </span>
+            )}
+          </div>
+        </div>
+        <PriceTable
+          prices={pricesQuery.data ?? []}
+          isLoading={pricesQuery.isLoading}
+        />
+      </Card>
+
+      <RouteGroupForm
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        initial={group}
+      />
+    </div>
+  );
+}
