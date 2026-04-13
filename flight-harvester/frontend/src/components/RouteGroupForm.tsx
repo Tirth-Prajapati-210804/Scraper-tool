@@ -1,6 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { type FormEvent, useEffect, useState } from "react";
 import { createRouteGroup, updateRouteGroup } from "../api/route-groups";
+import { useToast } from "../context/ToastContext";
 import type { RouteGroup } from "../types/route-group";
 import { Button } from "./ui/Button";
 import { Modal } from "./ui/Modal";
@@ -46,6 +47,7 @@ function toFormState(rg?: RouteGroup | null): FormState {
 
 export function RouteGroupForm({ open, onClose, initial }: RouteGroupFormProps) {
   const qc = useQueryClient();
+  const { showToast } = useToast();
   const [form, setForm] = useState<FormState>(() => toFormState(initial));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -88,6 +90,7 @@ export function RouteGroupForm({ open, onClose, initial }: RouteGroupFormProps) 
       if (initial) {
         await qc.invalidateQueries({ queryKey: ["route-group", initial.id] });
       }
+      showToast("Route group saved", "success");
       onClose();
     } catch {
       setError("Failed to save. Please check your input and try again.");

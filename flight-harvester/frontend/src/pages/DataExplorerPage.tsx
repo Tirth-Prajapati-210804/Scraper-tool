@@ -2,10 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { fetchPriceTrend, fetchPrices } from "../api/prices";
 import { listRouteGroups } from "../api/route-groups";
+import { ErrorBoundary } from "../components/ErrorBoundary";
 import { PriceChart } from "../components/PriceChart";
 import { PriceTable } from "../components/PriceTable";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
+import { usePageTitle } from "../utils/usePageTitle";
 import { DateRangeInput } from "../components/ui/DateRangeInput";
 import { Select } from "../components/ui/Select";
 
@@ -24,6 +26,7 @@ const EMPTY_FILTERS: Filters = {
 };
 
 export function DataExplorerPage() {
+  usePageTitle("Data Explorer");
   const [pending, setPending] = useState<Filters>(EMPTY_FILTERS);
   const [applied, setApplied] = useState<Filters>(EMPTY_FILTERS);
 
@@ -78,6 +81,7 @@ export function DataExplorerPage() {
   });
 
   return (
+    <ErrorBoundary>
     <div className="space-y-6">
       {/* Filters */}
       <Card>
@@ -178,5 +182,6 @@ export function DataExplorerPage() {
         </Card>
       )}
     </div>
+    </ErrorBoundary>
   );
 }

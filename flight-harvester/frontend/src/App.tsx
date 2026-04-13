@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom
 import { AppLayout } from "./components/layout/AppLayout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
+import { ToastProvider } from "./context/ToastContext";
 import { CollectionLogsPage } from "./pages/CollectionLogsPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { DataExplorerPage } from "./pages/DataExplorerPage";
@@ -23,24 +24,26 @@ export default function App() {
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route
-              element={
-                <ProtectedRoute>
-                  <AppLayout>
-                    <Outlet />
-                  </AppLayout>
-                </ProtectedRoute>
-              }
-            >
-              <Route path="/" element={<DashboardPage />} />
-              <Route path="/route-groups/:id" element={<RouteGroupDetailPage />} />
-              <Route path="/explorer" element={<DataExplorerPage />} />
-              <Route path="/logs" element={<CollectionLogsPage />} />
-            </Route>
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          <ToastProvider>
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route
+                element={
+                  <ProtectedRoute>
+                    <AppLayout>
+                      <Outlet />
+                    </AppLayout>
+                  </ProtectedRoute>
+                }
+              >
+                <Route path="/" element={<DashboardPage />} />
+                <Route path="/route-groups/:id" element={<RouteGroupDetailPage />} />
+                <Route path="/explorer" element={<DataExplorerPage />} />
+                <Route path="/logs" element={<CollectionLogsPage />} />
+              </Route>
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </ToastProvider>
         </AuthProvider>
       </QueryClientProvider>
     </BrowserRouter>

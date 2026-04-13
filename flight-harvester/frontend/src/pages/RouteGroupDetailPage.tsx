@@ -10,6 +10,7 @@ import {
 } from "../api/route-groups";
 import { triggerGroupCollection } from "../api/collection";
 import { fetchPriceTrend, fetchPrices } from "../api/prices";
+import { ErrorBoundary } from "../components/ErrorBoundary";
 import { DateCoverageGrid } from "../components/DateCoverageGrid";
 import { PriceChart } from "../components/PriceChart";
 import { PriceTable } from "../components/PriceTable";
@@ -17,14 +18,16 @@ import { RouteGroupForm } from "../components/RouteGroupForm";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { Skeleton } from "../components/ui/Skeleton";
+import { useToast } from "../context/ToastContext";
+import { usePageTitle } from "../utils/usePageTitle";
 
 export function RouteGroupDetailPage() {
   const { id } = useParams<{ id: string }>();
   const qc = useQueryClient();
+  const { showToast } = useToast();
   const [editOpen, setEditOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [triggering, setTriggering] = useState(false);
-  const [triggered, setTriggered] = useState(false);
   const [selectedOrigin, setSelectedOrigin] = useState<string>("");
 
   const groupQuery = useQuery({
@@ -58,12 +61,17 @@ export function RouteGroupDetailPage() {
     enabled: !!id,
   });
 
+  usePageTitle(group?.name ?? "Route Group");
+
   async function handleDownload() {
     if (!group) return;
     setDownloading(true);
     try {
       const blob = await downloadExport(group.id);
       saveBlobAsFile(blob, `${group.name.replace(/[^a-z0-9_-]/gi, "_")}.xlsx`);
+      showToast("Excel downloaded", "success");
+    } catch {
+      showToast("Download failed", "error");
     } finally {
       setDownloading(false);
     }
@@ -74,9 +82,10 @@ export function RouteGroupDetailPage() {
     setTriggering(true);
     try {
       await triggerGroupCollection(id);
-      setTriggered(true);
-      setTimeout(() => setTriggered(false), 3000);
+      showToast("Collection triggered", "success");
       qc.invalidateQueries({ queryKey: ["route-group-progress", id] });
+    } catch {
+      showToast("Failed to trigger collection", "error");
     } finally {
       setTriggering(false);
     }
@@ -103,6 +112,7 @@ export function RouteGroupDetailPage() {
   }
 
   return (
+    <ErrorBoundary>
     <div className="space-y-6">
       {/* Back + Actions */}
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -114,9 +124,6 @@ export function RouteGroupDetailPage() {
           Back to Dashboard
         </Link>
         <div className="flex items-center gap-2">
-          {triggered && (
-            <span className="text-sm text-green-600">Triggered ✓</span>
-          )}
           <Button variant="secondary" onClick={() => setEditOpen(true)}>
             <Pencil className="h-4 w-4" />
             Edit
@@ -234,5 +241,6 @@ export function RouteGroupDetailPage() {
         initial={group}
       />
     </div>
+    </ErrorBoundary>
   );
 }

@@ -3,12 +3,15 @@ import { useMemo, useState } from "react";
 import { fetchCollectionRuns, fetchScrapeLogs } from "../api/collection";
 import { listRouteGroups } from "../api/route-groups";
 import { CollectionRunsTable } from "../components/CollectionRunsTable";
+import { ErrorBoundary } from "../components/ErrorBoundary";
 import { ScrapeLogsTable } from "../components/ScrapeLogsTable";
 import { Card } from "../components/ui/Card";
 import { Select } from "../components/ui/Select";
 import type { ScrapeLogEntry } from "../types/price";
+import { usePageTitle } from "../utils/usePageTitle";
 
 export function CollectionLogsPage() {
+  usePageTitle("Collection Logs");
   const [filterGroupId, setFilterGroupId] = useState("");
   const [filterProvider, setFilterProvider] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
@@ -51,6 +54,7 @@ export function CollectionLogsPage() {
   }, [logsQuery.data]);
 
   return (
+    <ErrorBoundary>
     <div className="space-y-6">
       {/* Collection Runs */}
       <Card>
@@ -129,5 +133,6 @@ export function CollectionLogsPage() {
         />
       </Card>
     </div>
+    </ErrorBoundary>
   );
 }

@@ -52,6 +52,16 @@ class FlightScheduler:
             replace_existing=True,
         )
 
+        self.scheduler.add_job(
+            self.cleanup_old_data,
+            trigger="interval",
+            hours=24,
+            id="daily_cleanup",
+            max_instances=1,
+            coalesce=True,
+            replace_existing=True,
+        )
+
         self.scheduler.start()
         self._is_running = True
         log.info("scheduler_started", interval=self.settings.scheduler_interval_minutes)
@@ -191,6 +201,26 @@ class FlightScheduler:
         )
         already_done = {row[0] for row in result.fetchall()}
         return [d for d in dates if d not in already_done]
+
+    async def cleanup_old_data(self) -> None:
+        """Delete scrape_logs and collection_runs older than 30 days."""
+        log.info("cleanup_started")
+        try:
+            async with self.session_factory() as session:
+                await session.execute(
+                    text(
+                        "DELETE FROM scrape_logs WHERE created_at < now() - interval '30 days'"
+                    )
+                )
+                await session.execute(
+                    text(
+                        "DELETE FROM collection_runs WHERE started_at < now() - interval '30 days'"
+                    )
+                )
+                await session.commit()
+            log.info("cleanup_finished")
+        except Exception as exc:
+            log.exception("cleanup_failed", error=str(exc))
 
     async def trigger_single_group(self, group_id: UUID) -> dict[str, int]:
         stats: dict[str, int] = {"success": 0, "errors": 0, "skipped": 0}
