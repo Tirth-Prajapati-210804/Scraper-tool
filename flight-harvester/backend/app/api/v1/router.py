@@ -6,11 +6,13 @@ from app.api.v1.routes.auth import router as auth_router
 from app.api.v1.routes.collection import router as collection_router
 from app.api.v1.routes.prices import router as prices_router
 from app.api.v1.routes.route_groups import router as route_groups_router
+from app.api.v1.routes.search_profiles import router as search_profiles_router
 from app.api.v1.routes.stats import router as stats_router
 
 router = APIRouter()
 router.include_router(auth_router)
 router.include_router(collection_router)
 router.include_router(route_groups_router)
+router.include_router(search_profiles_router)
 router.include_router(prices_router)
 router.include_router(stats_router)

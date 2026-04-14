@@ -1,3 +1,16 @@
+export interface RouteGroupFromTextCreate {
+  origin: string;
+  destination: string;
+  nights?: number;
+  days_ahead?: number;
+}
+
+export interface RouteGroupFromTextResponse {
+  group: RouteGroup;
+  resolved_origins: string[];
+  resolved_destinations: string[];
+}
+
 export interface RouteGroup {
   id: string;
   name: string;

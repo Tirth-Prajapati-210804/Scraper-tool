@@ -14,11 +14,14 @@ from app.models.daily_cheapest import DailyCheapestPrice
 from app.models.user import User
 from app.schemas.route_group import (
     RouteGroupCreate,
+    RouteGroupFromTextCreate,
+    RouteGroupFromTextResponse,
     RouteGroupProgress,
     RouteGroupResponse,
     RouteGroupUpdate,
 )
 from app.services import export_service, route_group_service
+from app.utils.location_resolver import resolve_location
 
 router = APIRouter(prefix="/route-groups", tags=["route-groups"])
 
@@ -30,6 +33,70 @@ _DB = Annotated[AsyncSession, Depends(get_db_session)]
 async def list_groups(session: _DB, _: _Auth, active_only: bool = True) -> list[RouteGroupResponse]:
     groups = await route_group_service.list_all(session, active_only=active_only)
     return [RouteGroupResponse.model_validate(g) for g in groups]
+
+
+@router.post(
+    "/from-text",
+    response_model=RouteGroupFromTextResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Create route group from plain-text location names",
+)
+async def create_group_from_text(
+    body: RouteGroupFromTextCreate, session: _DB, _: _Auth
+) -> RouteGroupFromTextResponse:
+    """
+    Create a route group by typing location names like 'Canada' and 'Vietnam'.
+    The API resolves them to IATA airport codes automatically.
+
+    Examples:
+    - origin='Canada'  → YYZ, YVR, YEG, YYC, YHZ, YUL, YOW
+    - destination='Vietnam' → SGN, HAN, DAD
+    - destination='Tokyo'  → NRT, HND
+    - destination='TYO, SHA' → TYO, SHA  (raw IATA pass-through)
+    """
+    origins = resolve_location(body.origin)
+    destinations = resolve_location(body.destination)
+
+    if not origins:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=(
+                f"Could not resolve origin '{body.origin}' to any airport codes. "
+                "Try a country name (e.g. 'Canada'), city name (e.g. 'Toronto'), "
+                "or IATA codes like 'YYZ, YVR'."
+            ),
+        )
+    if not destinations:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=(
+                f"Could not resolve destination '{body.destination}' to any airport codes. "
+                "Try a country name (e.g. 'Vietnam'), city name (e.g. 'Tokyo'), "
+                "or IATA codes like 'SGN, HAN'."
+            ),
+        )
+
+    origin_label = body.origin.title()
+    dest_label = body.destination.title()
+    name = f"{origin_label} to {dest_label}"
+    destination_label = "/".join(destinations) if len(destinations) <= 4 else f"{destinations[0]}+{len(destinations)-1}"
+
+    create_payload = RouteGroupCreate(
+        name=name,
+        destination_label=destination_label,
+        origins=origins,
+        destinations=destinations,
+        nights=body.nights,
+        days_ahead=body.days_ahead,
+        sheet_name_map={o: o for o in origins},
+        special_sheets=[],
+    )
+    group = await route_group_service.create(session, create_payload)
+    return RouteGroupFromTextResponse(
+        group=RouteGroupResponse.model_validate(group),
+        resolved_origins=origins,
+        resolved_destinations=destinations,
+    )
 
 
 @router.post("/", response_model=RouteGroupResponse, status_code=status.HTTP_201_CREATED)

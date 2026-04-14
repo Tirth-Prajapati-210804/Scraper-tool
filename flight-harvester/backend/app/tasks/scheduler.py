@@ -11,6 +11,7 @@ from app.core.config import Settings
 from app.core.logging import get_logger
 from app.models.collection_run import CollectionRun
 from app.models.route_group import RouteGroup
+from app.models.search_profile import SearchProfile
 from app.providers.registry import ProviderRegistry
 from app.services.alert_service import AlertService
 from app.services.price_collector import PriceCollector
@@ -81,18 +82,6 @@ class FlightScheduler:
             await session.flush()
 
             try:
-                result = await session.execute(
-                    select(RouteGroup).where(RouteGroup.is_active.is_(True))
-                )
-                groups = result.scalars().all()
-
-                if not groups:
-                    log.warning("no_active_route_groups")
-                    run.status = "completed"
-                    run.finished_at = func.now()
-                    await session.commit()
-                    return
-
                 providers = self.provider_registry.get_enabled()
                 if not providers:
                     log.warning("no_providers_enabled")
@@ -105,33 +94,67 @@ class FlightScheduler:
                 total_errors = 0
                 total_routes = 0
 
+                # ── New: search profiles (multi-leg) ─────────────────────────
+                from sqlalchemy.orm import selectinload
+                profiles_result = await session.execute(
+                    select(SearchProfile)
+                    .options(selectinload(SearchProfile.legs))
+                    .where(SearchProfile.is_active.is_(True))
+                )
+                profiles = list(profiles_result.scalars().all())
+
+                collector = PriceCollector(
+                    session_factory=self.session_factory,
+                    providers=providers,
+                )
+
+                for profile in profiles:
+                    dates = self._generate_dates(profile.days_ahead)
+                    log.info("collecting_profile", profile=profile.name, legs=len(profile.legs))
+
+                    for leg in profile.legs:
+                        total_routes += 1
+                        try:
+                            stats = await collector.collect_leg_batch(
+                                leg_id=leg.id,
+                                profile_id=profile.id,
+                                origins=leg.resolved_origins,
+                                destinations=leg.resolved_destinations,
+                                dates=dates,
+                                batch_size=self.settings.scrape_batch_size,
+                                delay_seconds=self.settings.scrape_delay_seconds,
+                            )
+                            total_success += stats["success"]
+                            total_errors += stats["errors"]
+                            log.info(
+                                "leg_collected",
+                                profile=profile.name,
+                                leg=leg.leg_order,
+                                origins=leg.resolved_origins,
+                                destinations=leg.resolved_destinations,
+                                **stats,
+                            )
+                        except Exception as exc:
+                            total_errors += 1
+                            log.exception("leg_collection_failed", leg_id=str(leg.id), error=str(exc))
+
+                # ── Legacy: route groups ──────────────────────────────────────
+                groups_result = await session.execute(
+                    select(RouteGroup).where(RouteGroup.is_active.is_(True))
+                )
+                groups = list(groups_result.scalars().all())
+
                 for group in groups:
                     dates = self._generate_dates(group.days_ahead)
-
                     for origin in group.origins:
                         total_routes += 1
-                        log.info(
-                            "collecting_route",
-                            group=group.name,
-                            origin=origin,
-                            destinations=group.destinations,
-                            dates_count=len(dates),
-                        )
-
                         try:
                             remaining = await self._filter_already_scraped(
                                 session, origin, group.destinations, dates
                             )
-
                             if not remaining:
-                                log.info("route_already_complete", origin=origin)
                                 total_success += 1
                                 continue
-
-                            collector = PriceCollector(
-                                session_factory=self.session_factory,
-                                providers=providers,
-                            )
                             stats = await collector.collect_route_batch(
                                 origin=origin,
                                 destinations=group.destinations,
@@ -140,17 +163,11 @@ class FlightScheduler:
                                 batch_size=self.settings.scrape_batch_size,
                                 delay_seconds=self.settings.scrape_delay_seconds,
                             )
-
                             total_success += stats["success"]
                             total_errors += stats["errors"]
-
                         except Exception as exc:
                             total_errors += 1
-                            log.exception(
-                                "route_collection_failed",
-                                origin=origin,
-                                error=str(exc),
-                            )
+                            log.exception("route_collection_failed", origin=origin, error=str(exc))
 
                 run.status = "completed"
                 run.routes_total = total_routes
@@ -162,7 +179,7 @@ class FlightScheduler:
 
                 await self.alert_service.send_summary(
                     f"Collection cycle complete: {total_success} prices collected, "
-                    f"{total_errors} errors, {len(groups)} route groups."
+                    f"{total_errors} errors across {len(profiles)} profiles + {len(groups)} route groups."
                 )
 
             except Exception as exc:

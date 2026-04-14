@@ -3,6 +3,7 @@ import {
   LayoutDashboard,
   LogOut,
   Plane,
+  Search,
   Table,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
@@ -11,6 +12,7 @@ import { cn } from "../../utils/cn";
 
 const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard" },
+  { to: "/search-profiles", icon: Search, label: "Search Profiles" },
   { to: "/explorer", icon: Table, label: "Data Explorer" },
   { to: "/logs", icon: History, label: "Collection Logs" },
 ];

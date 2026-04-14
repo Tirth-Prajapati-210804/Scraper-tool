@@ -68,6 +68,23 @@ class RouteGroupResponse(BaseModel):
     updated_at: datetime
 
 
+class RouteGroupFromTextCreate(BaseModel):
+    """Create a route group using plain-text location names instead of raw IATA codes."""
+
+    origin: str = Field(min_length=1, max_length=200, description="e.g. 'Canada' or 'Toronto'")
+    destination: str = Field(min_length=1, max_length=200, description="e.g. 'Vietnam' or 'Tokyo'")
+    nights: int = Field(ge=1, le=90, default=10)
+    days_ahead: int = Field(ge=1, le=730, default=365)
+
+
+class RouteGroupFromTextResponse(BaseModel):
+    """Response for /from-text endpoint — includes the created group plus resolved codes."""
+
+    group: RouteGroupResponse
+    resolved_origins: list[str]
+    resolved_destinations: list[str]
+
+
 class PerOriginProgress(BaseModel):
     total: int
     collected: int

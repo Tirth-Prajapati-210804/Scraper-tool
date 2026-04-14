@@ -1,4 +1,9 @@
-import type { RouteGroup, RouteGroupProgress } from "../types/route-group";
+import type {
+  RouteGroup,
+  RouteGroupFromTextCreate,
+  RouteGroupFromTextResponse,
+  RouteGroupProgress,
+} from "../types/route-group";
 import { api } from "./client";
 
 export async function listRouteGroups(): Promise<RouteGroup[]> {
@@ -15,6 +20,16 @@ export async function createRouteGroup(
   data: Partial<RouteGroup>,
 ): Promise<RouteGroup> {
   const res = await api.post<RouteGroup>("/api/v1/route-groups/", data);
+  return res.data;
+}
+
+export async function createRouteGroupFromText(
+  data: RouteGroupFromTextCreate,
+): Promise<RouteGroupFromTextResponse> {
+  const res = await api.post<RouteGroupFromTextResponse>(
+    "/api/v1/route-groups/from-text",
+    data,
+  );
   return res.data;
 }
 
