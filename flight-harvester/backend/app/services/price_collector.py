@@ -7,7 +7,7 @@ from datetime import date
 from uuid import UUID
 
 from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.core.logging import get_logger
 from app.models.daily_cheapest import DailyCheapestPrice  # noqa: F401 — imported for side-effect
@@ -29,8 +29,12 @@ class CollectionResult:
 
 
 class PriceCollector:
-    def __init__(self, session: AsyncSession, providers: list[FlightProvider]) -> None:
-        self.session = session
+    def __init__(
+        self,
+        session_factory: async_sessionmaker[AsyncSession],
+        providers: list[FlightProvider],
+    ) -> None:
+        self.session_factory = session_factory
         self.providers = providers
 
     async def collect_single_date(
@@ -40,69 +44,72 @@ class PriceCollector:
         depart_date: date,
         route_group_id: UUID,
     ) -> CollectionResult:
+        """Each date gets its own session so concurrent calls don't share state."""
         all_results: list[ProviderResult] = []
         provider_results: dict[str, list[ProviderResult]] = {}
         errors: dict[str, str] = {}
 
-        for provider in self.providers:
-            start = time.monotonic()
-            try:
-                results = await provider.search_one_way(origin, destination, depart_date)
-                elapsed_ms = int((time.monotonic() - start) * 1000)
+        async with self.session_factory() as session:
+            for provider in self.providers:
+                start = time.monotonic()
+                try:
+                    results = await provider.search_one_way(origin, destination, depart_date)
+                    elapsed_ms = int((time.monotonic() - start) * 1000)
 
-                provider_results[provider.name] = results
-                all_results.extend(results)
+                    provider_results[provider.name] = results
+                    all_results.extend(results)
 
-                log_entry = ScrapeLog(
+                    log_entry = ScrapeLog(
+                        route_group_id=route_group_id,
+                        origin=origin,
+                        destination=destination,
+                        depart_date=depart_date,
+                        provider=provider.name,
+                        status="success" if results else "no_results",
+                        offers_found=len(results),
+                        cheapest_price=results[0].price if results else None,
+                        duration_ms=elapsed_ms,
+                    )
+                    session.add(log_entry)
+
+                except Exception as exc:
+                    elapsed_ms = int((time.monotonic() - start) * 1000)
+                    errors[provider.name] = str(exc)
+                    log.warning(
+                        "provider_error",
+                        provider=provider.name,
+                        origin=origin,
+                        destination=destination,
+                        date=str(depart_date),
+                        error=str(exc),
+                    )
+
+                    log_entry = ScrapeLog(
+                        route_group_id=route_group_id,
+                        origin=origin,
+                        destination=destination,
+                        depart_date=depart_date,
+                        provider=provider.name,
+                        status="error",
+                        offers_found=0,
+                        error_message=str(exc)[:500],
+                        duration_ms=elapsed_ms,
+                    )
+                    session.add(log_entry)
+
+            cheapest = min(all_results, key=lambda r: r.price) if all_results else None
+
+            if cheapest:
+                await self._upsert_cheapest(
+                    session=session,
                     route_group_id=route_group_id,
                     origin=origin,
                     destination=destination,
                     depart_date=depart_date,
-                    provider=provider.name,
-                    status="success" if results else "no_results",
-                    offers_found=len(results),
-                    cheapest_price=results[0].price if results else None,
-                    duration_ms=elapsed_ms,
-                )
-                self.session.add(log_entry)
-
-            except Exception as exc:
-                elapsed_ms = int((time.monotonic() - start) * 1000)
-                errors[provider.name] = str(exc)
-                log.warning(
-                    "provider_error",
-                    provider=provider.name,
-                    origin=origin,
-                    destination=destination,
-                    date=str(depart_date),
-                    error=str(exc),
+                    result=cheapest,
                 )
 
-                log_entry = ScrapeLog(
-                    route_group_id=route_group_id,
-                    origin=origin,
-                    destination=destination,
-                    depart_date=depart_date,
-                    provider=provider.name,
-                    status="error",
-                    offers_found=0,
-                    error_message=str(exc)[:500],
-                    duration_ms=elapsed_ms,
-                )
-                self.session.add(log_entry)
-
-        cheapest = min(all_results, key=lambda r: r.price) if all_results else None
-
-        if cheapest:
-            await self._upsert_cheapest(
-                route_group_id=route_group_id,
-                origin=origin,
-                destination=destination,
-                depart_date=depart_date,
-                result=cheapest,
-            )
-
-        await self.session.commit()
+            await session.commit()
 
         return CollectionResult(
             origin=origin,
@@ -115,6 +122,7 @@ class PriceCollector:
 
     async def _upsert_cheapest(
         self,
+        session: AsyncSession,
         route_group_id: UUID,
         origin: str,
         destination: str,
@@ -143,7 +151,7 @@ class PriceCollector:
                 scraped_at       = now()
             WHERE daily_cheapest_prices.price > EXCLUDED.price
         """)
-        await self.session.execute(
+        await session.execute(
             stmt,
             {
                 "route_group_id": str(route_group_id),
@@ -156,7 +164,7 @@ class PriceCollector:
                 "provider": result.provider or "unknown",
                 "deep_link": result.deep_link[:2048] if result.deep_link else None,
                 "stops": result.stops if result.stops is not None else None,
-                "duration_minutes": result.duration_minutes if result.duration_minutes else None,
+                "duration_minutes": result.duration_minutes or None,
             },
         )
 

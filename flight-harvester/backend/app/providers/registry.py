@@ -4,6 +4,7 @@ from app.core.config import Settings
 from app.providers.base import FlightProvider
 from app.providers.flightapi import FlightApiProvider
 from app.providers.kiwi import KiwiProvider
+from app.providers.mock import MockProvider
 from app.providers.serper import SerperProvider
 
 
@@ -29,6 +30,8 @@ class ProviderRegistry:
                 api_key=settings.serper_api_key,
                 timeout=settings.provider_timeout_seconds,
             )
+        if settings.mock_provider_key:
+            self.providers["mock"] = MockProvider(key=settings.mock_provider_key)
 
     def get_enabled(self) -> list[FlightProvider]:
         return list(self.providers.values())

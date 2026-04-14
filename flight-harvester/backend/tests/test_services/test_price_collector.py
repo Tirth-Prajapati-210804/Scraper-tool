@@ -29,6 +29,14 @@ def make_provider(name: str, results: list[ProviderResult]) -> MagicMock:
     return p
 
 
+def make_session_factory(session: AsyncMock) -> MagicMock:
+    """Return a mock async_sessionmaker that yields the given session."""
+    factory = MagicMock()
+    factory.return_value.__aenter__ = AsyncMock(return_value=session)
+    factory.return_value.__aexit__ = AsyncMock(return_value=None)
+    return factory
+
+
 ROUTE_ID = uuid.uuid4()
 TODAY = date.today()
 DEPART = TODAY + timedelta(days=30)
@@ -43,7 +51,10 @@ async def test_collect_single_date_returns_cheapest() -> None:
     session.commit = AsyncMock()
 
     provider = make_provider("kiwi", [make_result(1500), make_result(2000)])
-    collector = PriceCollector(session=session, providers=[provider])
+    collector = PriceCollector(
+        session_factory=make_session_factory(session),
+        providers=[provider],
+    )
 
     # Patch _upsert_cheapest so we don't need a real DB
     collector._upsert_cheapest = AsyncMock()
@@ -67,7 +78,10 @@ async def test_collect_single_date_picks_cheapest_across_providers() -> None:
 
     p1 = make_provider("kiwi", [make_result(1800, provider="kiwi")])
     p2 = make_provider("flightapi", [make_result(1200, provider="flightapi")])
-    collector = PriceCollector(session=session, providers=[p1, p2])
+    collector = PriceCollector(
+        session_factory=make_session_factory(session),
+        providers=[p1, p2],
+    )
     collector._upsert_cheapest = AsyncMock()
 
     result = await collector.collect_single_date("YYZ", "NRT", DEPART, ROUTE_ID)
@@ -88,7 +102,10 @@ async def test_collect_single_date_one_provider_fails() -> None:
     p_bad.name = "flightapi"
     p_bad.search_one_way = AsyncMock(side_effect=RuntimeError("API down"))
 
-    collector = PriceCollector(session=session, providers=[p_good, p_bad])
+    collector = PriceCollector(
+        session_factory=make_session_factory(session),
+        providers=[p_good, p_bad],
+    )
     collector._upsert_cheapest = AsyncMock()
 
     result = await collector.collect_single_date("YYZ", "NRT", DEPART, ROUTE_ID)
@@ -109,7 +126,10 @@ async def test_collect_single_date_no_results() -> None:
     session.commit = AsyncMock()
 
     provider = make_provider("kiwi", [])
-    collector = PriceCollector(session=session, providers=[provider])
+    collector = PriceCollector(
+        session_factory=make_session_factory(session),
+        providers=[provider],
+    )
     collector._upsert_cheapest = AsyncMock()
 
     result = await collector.collect_single_date("YYZ", "NRT", DEPART, ROUTE_ID)
@@ -125,7 +145,10 @@ async def test_collect_route_batch_stats() -> None:
     session.commit = AsyncMock()
 
     provider = make_provider("kiwi", [make_result(1500)])
-    collector = PriceCollector(session=session, providers=[provider])
+    collector = PriceCollector(
+        session_factory=make_session_factory(session),
+        providers=[provider],
+    )
     collector._upsert_cheapest = AsyncMock()
 
     dates = [DEPART + timedelta(days=i) for i in range(3)]
@@ -149,11 +172,15 @@ async def test_upsert_cheapest_sends_correct_params() -> None:
     session = AsyncMock()
     session.execute = AsyncMock()
 
-    collector = PriceCollector(session=session, providers=[])
+    collector = PriceCollector(
+        session_factory=make_session_factory(session),
+        providers=[],
+    )
     result = make_result(1250, airline="AC", provider="kiwi")
     result.deep_link = "https://example.com/booking"
 
     await collector._upsert_cheapest(
+        session=session,
         route_group_id=ROUTE_ID,
         origin="YYZ",
         destination="NRT",
@@ -162,8 +189,6 @@ async def test_upsert_cheapest_sends_correct_params() -> None:
     )
 
     session.execute.assert_awaited_once()
-    _, kwargs = session.execute.call_args
-    # second positional arg is the params dict
     call_args = session.execute.call_args[0]
     params = call_args[1]
     assert params["origin"] == "YYZ"

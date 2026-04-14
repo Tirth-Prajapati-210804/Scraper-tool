@@ -128,7 +128,10 @@ class FlightScheduler:
                                 total_success += 1
                                 continue
 
-                            collector = PriceCollector(session=session, providers=providers)
+                            collector = PriceCollector(
+                                session_factory=self.session_factory,
+                                providers=providers,
+                            )
                             stats = await collector.collect_route_batch(
                                 origin=origin,
                                 destinations=group.destinations,
@@ -248,7 +251,10 @@ class FlightScheduler:
                 if not remaining:
                     continue
 
-                collector = PriceCollector(session=session, providers=providers)
+                collector = PriceCollector(
+                    session_factory=self.session_factory,
+                    providers=providers,
+                )
                 part = await collector.collect_route_batch(
                     origin=origin,
                     destinations=group.destinations,

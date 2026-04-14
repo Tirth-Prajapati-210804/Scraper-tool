@@ -32,6 +32,9 @@ class Settings(BaseSettings):
     flightapi_api_key: str = ""
     flightapi_base_url: str = "https://api.flightapi.io"
     serper_api_key: str = ""
+    # Mock provider — set to any non-empty string to enable fake data for testing
+    # NEVER set this in production
+    mock_provider_key: str = ""
 
     # Scheduler
     scheduler_enabled: bool = True
