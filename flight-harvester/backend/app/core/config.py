@@ -28,10 +28,10 @@ class Settings(BaseSettings):
     admin_full_name: str = "System Admin"
 
     # Provider API keys (empty = disabled)
-    kiwi_api_key: str = ""
-    flightapi_api_key: str = ""
-    flightapi_base_url: str = "https://api.flightapi.io"
-    serper_api_key: str = ""
+    # Travelpayouts: free calendar API — sign up at travelpayouts.com
+    travelpayouts_token: str = ""
+    # SerpAPI Google Flights: accurate real-time prices — sign up at serpapi.com
+    serpapi_key: str = ""
     # Mock provider — set to any non-empty string to enable fake data for testing
     # NEVER set this in production
     mock_provider_key: str = ""
