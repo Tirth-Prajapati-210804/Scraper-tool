@@ -124,19 +124,23 @@ class PriceCollector:
         stmt = text("""
             INSERT INTO daily_cheapest_prices
                 (id, route_group_id, origin, destination, depart_date,
-                 airline, price, currency, provider, deep_link, scraped_at)
+                 airline, price, currency, provider, deep_link,
+                 stops, duration_minutes, scraped_at)
             VALUES
                 (gen_random_uuid(), :route_group_id, :origin, :destination, :depart_date,
-                 :airline, :price, :currency, :provider, :deep_link, now())
+                 :airline, :price, :currency, :provider, :deep_link,
+                 :stops, :duration_minutes, now())
             ON CONFLICT (origin, destination, depart_date)
             DO UPDATE SET
-                airline       = EXCLUDED.airline,
-                price         = EXCLUDED.price,
-                currency      = EXCLUDED.currency,
-                provider      = EXCLUDED.provider,
-                deep_link     = EXCLUDED.deep_link,
-                route_group_id = EXCLUDED.route_group_id,
-                scraped_at    = now()
+                airline          = EXCLUDED.airline,
+                price            = EXCLUDED.price,
+                currency         = EXCLUDED.currency,
+                provider         = EXCLUDED.provider,
+                deep_link        = EXCLUDED.deep_link,
+                stops            = EXCLUDED.stops,
+                duration_minutes = EXCLUDED.duration_minutes,
+                route_group_id   = EXCLUDED.route_group_id,
+                scraped_at       = now()
             WHERE daily_cheapest_prices.price > EXCLUDED.price
         """)
         await self.session.execute(
@@ -151,6 +155,8 @@ class PriceCollector:
                 "currency": result.currency,
                 "provider": result.provider or "unknown",
                 "deep_link": result.deep_link[:2048] if result.deep_link else None,
+                "stops": result.stops if result.stops is not None else None,
+                "duration_minutes": result.duration_minutes if result.duration_minutes else None,
             },
         )
 

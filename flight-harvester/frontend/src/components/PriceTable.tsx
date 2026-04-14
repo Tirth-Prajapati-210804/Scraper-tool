@@ -14,6 +14,8 @@ const COLUMNS: Column[] = [
   { key: "origin", label: "Origin" },
   { key: "destination", label: "Destination" },
   { key: "airline", label: "Airline" },
+  { key: "stops", label: "Stops" },
+  { key: "duration_minutes", label: "Duration" },
   { key: "price", label: "Price", align: "right" },
   { key: "provider", label: "Provider" },
   { key: "scraped_at", label: "Scraped At" },
@@ -89,6 +91,18 @@ export function PriceTable({ prices, isLoading }: PriceTableProps) {
               </td>
               <td className="px-3 py-2 text-slate-700">{price.destination}</td>
               <td className="px-3 py-2 text-slate-700">{price.airline}</td>
+              <td className="px-3 py-2 text-slate-700">
+                {price.stops == null
+                  ? "—"
+                  : price.stops === 0
+                    ? <span className="text-green-600 font-medium">Direct</span>
+                    : `${price.stops} stop${price.stops > 1 ? "s" : ""}`}
+              </td>
+              <td className="px-3 py-2 text-slate-700">
+                {price.duration_minutes == null
+                  ? "—"
+                  : `${Math.floor(price.duration_minutes / 60)}h ${price.duration_minutes % 60}m`}
+              </td>
               <td className="px-3 py-2 text-right font-medium text-slate-900">
                 ${Math.round(price.price).toLocaleString()}{" "}
                 <span className="text-xs text-slate-400">{price.currency}</span>

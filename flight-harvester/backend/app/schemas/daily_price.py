@@ -19,6 +19,8 @@ class DailyPriceResponse(BaseModel):
     currency: str
     provider: str
     deep_link: str | None
+    stops: int | None
+    duration_minutes: int | None
     scraped_at: datetime
 
 

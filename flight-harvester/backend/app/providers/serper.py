@@ -20,6 +20,8 @@ DURATION_PATTERN = re.compile(r"(\d{1,2})h(?:\s?(\d{1,2})m)?", re.IGNORECASE)
 AIRLINE_PATTERN = re.compile(
     r"(?:with|on|by|via)\s+([A-Z][a-z]+(?: [A-Z][a-z]+)*)", re.IGNORECASE
 )
+STOPS_PATTERN = re.compile(r"(\d+)\s*stop", re.IGNORECASE)
+NONSTOP_PATTERN = re.compile(r"\b(?:nonstop|non-stop|direct)\b", re.IGNORECASE)
 
 
 class SerperProvider:
@@ -104,6 +106,12 @@ class SerperProvider:
                 mins = int(duration_match.group(2) or 0)
                 duration_min = hours * 60 + mins
 
+            if NONSTOP_PATTERN.search(text):
+                stops = 0
+            else:
+                stops_match = STOPS_PATTERN.search(text)
+                stops = int(stops_match.group(1)) if stops_match else 0
+
             airline_match = AIRLINE_PATTERN.search(text)
             airline_raw = airline_match.group(1) if airline_match else ""
             airline = normalize_airline(airline_raw) if airline_raw else "-"
@@ -117,6 +125,7 @@ class SerperProvider:
                     airline=airline,
                     deep_link=deep_link,
                     provider="serper",
+                    stops=stops,
                     duration_minutes=duration_min,
                     raw_data=item,
                 )

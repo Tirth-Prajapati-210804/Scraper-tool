@@ -121,6 +121,9 @@ class FlightApiProvider:
 
         airline = self._extract_airline(trip)
         deep_link = trip.get("deepLink") or trip.get("deep_link") or ""
+        legs = trip.get("legs") or []
+        stops = max(0, len(legs) - 1)
+        duration_minutes = sum(int(leg.get("duration", 0)) for leg in legs)
 
         return ProviderResult(
             price=price,
@@ -128,6 +131,8 @@ class FlightApiProvider:
             airline=normalize_airline(airline),
             deep_link=deep_link,
             provider="flightapi",
+            stops=stops,
+            duration_minutes=duration_minutes,
             raw_data=trip,
         )
 
@@ -155,6 +160,8 @@ class FlightApiProvider:
             carriers = legs[0].get("carriers") or []
             airline = carriers[0] if carriers else ""
 
+        stops = max(0, len(legs) - 1)
+        duration_minutes = sum(int(leg.get("duration", 0)) for leg in legs)
         deep_link = itin.get("deepLink") or itin.get("deep_link") or ""
         return ProviderResult(
             price=price,
@@ -162,6 +169,8 @@ class FlightApiProvider:
             airline=normalize_airline(airline),
             deep_link=deep_link,
             provider="flightapi",
+            stops=stops,
+            duration_minutes=duration_minutes,
             raw_data=itin,
         )
 
