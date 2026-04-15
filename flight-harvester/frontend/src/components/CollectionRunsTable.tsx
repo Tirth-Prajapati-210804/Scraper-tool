@@ -1,4 +1,4 @@
-import { CheckCircle, Loader2, XCircle } from "lucide-react";
+import { CheckCircle, Loader2, Square, XCircle } from "lucide-react";
 import type { CollectionRun } from "../types/price";
 import { formatRelativeTime } from "../utils/format";
 import { Skeleton } from "./ui/Skeleton";
@@ -15,9 +15,16 @@ function formatDuration(startedAt: string, finishedAt: string | null): string {
 interface CollectionRunsTableProps {
   runs: CollectionRun[];
   isLoading: boolean;
+  onStop?: () => void;
+  stopping?: boolean;
 }
 
-export function CollectionRunsTable({ runs, isLoading }: CollectionRunsTableProps) {
+export function CollectionRunsTable({
+  runs,
+  isLoading,
+  onStop,
+  stopping,
+}: CollectionRunsTableProps) {
   if (isLoading) return <Skeleton className="h-48 rounded-xl" />;
 
   if (!runs.length) {
@@ -27,6 +34,8 @@ export function CollectionRunsTable({ runs, isLoading }: CollectionRunsTableProp
       </p>
     );
   }
+
+  const hasRunning = runs.some((r) => r.status === "running");
 
   return (
     <div className="overflow-x-auto">
@@ -38,6 +47,7 @@ export function CollectionRunsTable({ runs, isLoading }: CollectionRunsTableProp
             <th className="px-3 py-2.5">Status</th>
             <th className="px-3 py-2.5">Routes</th>
             <th className="px-3 py-2.5 text-right">Prices</th>
+            {hasRunning && onStop && <th className="px-3 py-2.5" />}
           </tr>
         </thead>
         <tbody>
@@ -58,6 +68,10 @@ export function CollectionRunsTable({ runs, isLoading }: CollectionRunsTableProp
                   <span className="flex items-center gap-1 text-red-500">
                     <XCircle className="h-3.5 w-3.5" /> failed
                   </span>
+                ) : run.status === "stopped" ? (
+                  <span className="flex items-center gap-1 text-amber-500">
+                    <Square className="h-3.5 w-3.5" /> stopped
+                  </span>
                 ) : (
                   <span className="flex items-center gap-1 text-brand-600">
                     <Loader2 className="h-3.5 w-3.5 animate-spin" /> running
@@ -70,6 +84,21 @@ export function CollectionRunsTable({ runs, isLoading }: CollectionRunsTableProp
               <td className="px-3 py-2 text-right text-slate-700">
                 {run.dates_scraped.toLocaleString()}
               </td>
+              {hasRunning && onStop && (
+                <td className="px-3 py-2 text-right">
+                  {run.status === "running" && (
+                    <button
+                      onClick={onStop}
+                      disabled={stopping}
+                      className="inline-flex items-center gap-1 rounded-lg border border-red-200 px-2.5 py-1 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+                      title="Stop this collection"
+                    >
+                      <Square className="h-3 w-3" />
+                      {stopping ? "Stopping…" : "Stop"}
+                    </button>
+                  )}
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

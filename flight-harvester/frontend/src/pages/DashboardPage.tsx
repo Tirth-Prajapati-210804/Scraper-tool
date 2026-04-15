@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Activity,
   Database,
@@ -6,9 +6,10 @@ import {
   MapPin,
   Play,
   Plus,
+  Square,
 } from "lucide-react";
 import { useState } from "react";
-import { triggerCollection } from "../api/collection";
+import { getCollectionStatus, stopCollection, triggerCollection } from "../api/collection";
 import { listRouteGroups } from "../api/route-groups";
 import { fetchHealth, fetchOverviewStats } from "../api/stats";
 import { ErrorBoundary } from "../components/ErrorBoundary";
@@ -25,6 +26,7 @@ import { usePageTitle } from "../utils/usePageTitle";
 export function DashboardPage() {
   usePageTitle("Dashboard");
   const { showToast } = useToast();
+  const qc = useQueryClient();
   const [triggering, setTriggering] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
 
@@ -45,15 +47,36 @@ export function DashboardPage() {
     refetchInterval: 30_000,
   });
 
+  const statusQuery = useQuery({
+    queryKey: ["collection-status"],
+    queryFn: getCollectionStatus,
+    refetchInterval: (data) => (data?.is_collecting ? 3_000 : 15_000),
+  });
+
+  const stopMut = useMutation({
+    mutationFn: stopCollection,
+    onSuccess: () => {
+      showToast("Stop signal sent", "success");
+      qc.invalidateQueries({ queryKey: ["collection-status"] });
+    },
+    onError: () => showToast("Failed to stop collection", "error"),
+  });
+
   const stats = statsQuery.data;
   const groups = groupsQuery.data ?? [];
   const health = healthQuery.data;
+  const isCollecting = statusQuery.data?.is_collecting ?? false;
 
   async function handleTriggerAll() {
     setTriggering(true);
     try {
-      await triggerCollection();
-      showToast("Collection triggered", "success");
+      const res = await triggerCollection();
+      if (res.status === "already_running") {
+        showToast("Collection is already running", "info" as never);
+      } else {
+        showToast("Collection triggered", "success");
+        qc.invalidateQueries({ queryKey: ["collection-status"] });
+      }
     } catch {
       showToast("Failed to trigger collection", "error");
     } finally {
@@ -82,14 +105,26 @@ export function DashboardPage() {
               <Plus className="h-4 w-4" />
               New group
             </Button>
-            <Button
-              variant="secondary"
-              onClick={handleTriggerAll}
-              loading={triggering}
-            >
-              <Play className="h-4 w-4" />
-              Trigger collection
-            </Button>
+            {isCollecting ? (
+              <Button
+                variant="secondary"
+                onClick={() => stopMut.mutate()}
+                loading={stopMut.isPending}
+                className="border-red-200 text-red-600 hover:bg-red-50"
+              >
+                <Square className="h-4 w-4" />
+                Stop collection
+              </Button>
+            ) : (
+              <Button
+                variant="secondary"
+                onClick={handleTriggerAll}
+                loading={triggering}
+              >
+                <Play className="h-4 w-4" />
+                Trigger collection
+              </Button>
+            )}
           </div>
         </div>
 

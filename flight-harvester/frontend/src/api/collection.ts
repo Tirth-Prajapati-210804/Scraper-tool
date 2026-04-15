@@ -1,8 +1,24 @@
 import type { CollectionRun, ScrapeLogEntry } from "../types/price";
 import { api } from "./client";
 
-export async function triggerCollection(): Promise<void> {
-  await api.post("/api/v1/collection/trigger");
+export interface CollectionStatus {
+  is_collecting: boolean;
+  scheduler_running: boolean;
+}
+
+export async function getCollectionStatus(): Promise<CollectionStatus> {
+  const res = await api.get<CollectionStatus>("/api/v1/collection/status");
+  return res.data;
+}
+
+export async function triggerCollection(): Promise<{ status: string }> {
+  const res = await api.post<{ status: string }>("/api/v1/collection/trigger");
+  return res.data;
+}
+
+export async function stopCollection(): Promise<{ status: string }> {
+  const res = await api.post<{ status: string }>("/api/v1/collection/stop");
+  return res.data;
 }
 
 export async function triggerGroupCollection(groupId: string): Promise<void> {

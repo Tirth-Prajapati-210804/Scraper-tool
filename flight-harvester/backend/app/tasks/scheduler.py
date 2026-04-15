@@ -7,6 +7,11 @@ Runs two recurring jobs:
 
 Set SCHEDULER_ENABLED=false in .env to disable all scheduled work (useful when
 running the API server during local development without wanting background tasks).
+
+Stop support:
+  Call request_stop() to signal a running cycle to abort at the next checkpoint
+  (between legs, between batches). The cycle marks its CollectionRun as "stopped"
+  and exits cleanly without raising an exception.
 """
 from __future__ import annotations
 
@@ -42,10 +47,30 @@ class FlightScheduler:
         self.alert_service = AlertService(settings)
         self.scheduler = AsyncIOScheduler(timezone="UTC")
         self._is_running = False
+        # Cancellation state — reset at the start of every cycle
+        self._stop_requested: bool = False
+        self._is_collecting: bool = False
 
     @property
     def is_running(self) -> bool:
         return self._is_running and self.scheduler.running
+
+    @property
+    def is_collecting(self) -> bool:
+        """True while a collection cycle is actively running."""
+        return self._is_collecting
+
+    def request_stop(self) -> None:
+        """
+        Signal the current collection cycle to stop at its next checkpoint.
+
+        The cycle checks this flag between legs and between batches, so it may
+        complete a few more API calls before actually stopping (never mid-batch).
+        The CollectionRun row is marked "stopped" instead of "completed".
+        """
+        if self._is_collecting:
+            self._stop_requested = True
+            log.info("stop_requested")
 
     def start(self) -> None:
         if not self.settings.scheduler_enabled:
@@ -95,7 +120,17 @@ class FlightScheduler:
 
         A CollectionRun row is written to the DB at the start and updated at the
         end, so the Logs page can show history of every cycle.
+
+        If request_stop() is called while this is running, the cycle will finish
+        its current batch and then exit, marking the run as "stopped".
         """
+        # Guard: don't allow concurrent collections (can happen via manual trigger)
+        if self._is_collecting:
+            log.warning("collection_already_running_skipping")
+            return
+
+        self._stop_requested = False
+        self._is_collecting = True
         log.info("collection_cycle_started")
 
         async with self.session_factory() as session:
@@ -133,11 +168,19 @@ class FlightScheduler:
                 )
 
                 for profile in profiles:
+                    if self._stop_requested:
+                        log.info("collection_stopped_between_profiles", profile=profile.name)
+                        break
+
                     # Generate the list of future dates to collect for this profile
                     dates = self._generate_dates(profile.days_ahead)
                     log.info("collecting_profile", profile=profile.name, legs=len(profile.legs))
 
                     for leg in profile.legs:
+                        if self._stop_requested:
+                            log.info("collection_stopped_between_legs", leg_id=str(leg.id))
+                            break
+
                         total_routes += 1
                         try:
                             stats = await collector.collect_leg_batch(
@@ -148,6 +191,7 @@ class FlightScheduler:
                                 dates=dates,
                                 batch_size=self.settings.scrape_batch_size,
                                 delay_seconds=self.settings.scrape_delay_seconds,
+                                stop_check=lambda: self._stop_requested,
                             )
                             total_success += stats["success"]
                             total_errors += stats["errors"]
@@ -164,39 +208,51 @@ class FlightScheduler:
                             log.exception("leg_collection_failed", leg_id=str(leg.id), error=str(exc))
 
                 # ── Legacy: route groups ──────────────────────────────────────
-                groups_result = await session.execute(
-                    select(RouteGroup).where(RouteGroup.is_active.is_(True))
-                )
-                groups = list(groups_result.scalars().all())
+                if not self._stop_requested:
+                    groups_result = await session.execute(
+                        select(RouteGroup).where(RouteGroup.is_active.is_(True))
+                    )
+                    groups = list(groups_result.scalars().all())
 
-                for group in groups:
-                    dates = self._generate_dates(group.days_ahead)
-                    for origin in group.origins:
-                        total_routes += 1
-                        try:
-                            # Skip dates already successfully scraped today to
-                            # avoid redundant API calls on repeated cycles
-                            remaining = await self._filter_already_scraped(
-                                session, origin, group.destinations, dates
-                            )
-                            if not remaining:
-                                total_success += 1
-                                continue
-                            stats = await collector.collect_route_batch(
-                                origin=origin,
-                                destinations=group.destinations,
-                                dates=remaining,
-                                route_group_id=group.id,
-                                batch_size=self.settings.scrape_batch_size,
-                                delay_seconds=self.settings.scrape_delay_seconds,
-                            )
-                            total_success += stats["success"]
-                            total_errors += stats["errors"]
-                        except Exception as exc:
-                            total_errors += 1
-                            log.exception("route_collection_failed", origin=origin, error=str(exc))
+                    for group in groups:
+                        if self._stop_requested:
+                            log.info("collection_stopped_between_groups", group=group.name)
+                            break
 
-                run.status = "completed"
+                        dates = self._generate_dates(group.days_ahead)
+                        for origin in group.origins:
+                            if self._stop_requested:
+                                break
+
+                            total_routes += 1
+                            try:
+                                # Skip dates already successfully scraped today to
+                                # avoid redundant API calls on repeated cycles
+                                remaining = await self._filter_already_scraped(
+                                    session, origin, group.destinations, dates
+                                )
+                                if not remaining:
+                                    total_success += 1
+                                    continue
+                                stats = await collector.collect_route_batch(
+                                    origin=origin,
+                                    destinations=group.destinations,
+                                    dates=remaining,
+                                    route_group_id=group.id,
+                                    batch_size=self.settings.scrape_batch_size,
+                                    delay_seconds=self.settings.scrape_delay_seconds,
+                                    stop_check=lambda: self._stop_requested,
+                                )
+                                total_success += stats["success"]
+                                total_errors += stats["errors"]
+                            except Exception as exc:
+                                total_errors += 1
+                                log.exception("route_collection_failed", origin=origin, error=str(exc))
+                else:
+                    groups = []
+
+                # Mark run as stopped or completed depending on whether we were cancelled
+                run.status = "stopped" if self._stop_requested else "completed"
                 run.routes_total = total_routes
                 run.routes_success = total_success
                 run.routes_failed = total_errors
@@ -204,10 +260,13 @@ class FlightScheduler:
                 run.finished_at = func.now()
                 await session.commit()
 
-                await self.alert_service.send_summary(
-                    f"Collection cycle complete: {total_success} prices collected, "
-                    f"{total_errors} errors across {len(profiles)} profiles + {len(groups)} route groups."
-                )
+                if not self._stop_requested:
+                    await self.alert_service.send_summary(
+                        f"Collection cycle complete: {total_success} prices collected, "
+                        f"{total_errors} errors across {len(profiles)} profiles + {len(groups)} route groups."
+                    )
+                else:
+                    log.info("collection_cycle_stopped_by_user", success=total_success, errors=total_errors)
 
             except Exception as exc:
                 run.status = "failed"
@@ -215,6 +274,10 @@ class FlightScheduler:
                 await session.commit()
                 log.exception("collection_cycle_failed", error=str(exc))
                 await self.alert_service.send_alert(f"Collection cycle FAILED: {exc}")
+            finally:
+                # Always clear the collecting flag, even if an exception occurred
+                self._is_collecting = False
+                self._stop_requested = False
 
         log.info("collection_cycle_finished")
 

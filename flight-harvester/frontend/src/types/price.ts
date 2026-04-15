@@ -22,7 +22,7 @@ export interface CollectionRun {
   id: string;
   started_at: string;
   finished_at: string | null;
-  status: "running" | "completed" | "failed";
+  status: "running" | "completed" | "failed" | "stopped";
   routes_total: number;
   routes_success: number;
   routes_failed: number;

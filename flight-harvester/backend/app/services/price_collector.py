@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import date
 from uuid import UUID
@@ -267,13 +268,24 @@ class PriceCollector:
         dates: list[date],
         batch_size: int = 5,
         delay_seconds: float = 1.0,
+        stop_check: Callable[[], bool] | None = None,
     ) -> dict[str, int]:
-        """Collect prices for all origin×destination pairs for a search leg."""
+        """
+        Collect prices for all origin×destination pairs for a search leg.
+
+        stop_check: optional callable that returns True when the caller wants the
+        batch loop to abort early (used by the scheduler's stop-collection feature).
+        The current batch finishes before stopping — never halts mid-batch.
+        """
         stats: dict[str, int] = {"success": 0, "errors": 0, "skipped": 0}
 
         for origin in origins:
             for dest in destinations:
                 for i in range(0, len(dates), batch_size):
+                    # Check stop signal before starting each batch
+                    if stop_check and stop_check():
+                        return stats
+
                     batch = dates[i : i + batch_size]
                     tasks = [
                         self.collect_single_date(
@@ -311,12 +323,22 @@ class PriceCollector:
         route_group_id: UUID,
         batch_size: int = 3,
         delay_seconds: float = 2.0,
+        stop_check: Callable[[], bool] | None = None,
     ) -> dict[str, int]:
-        """Legacy route-group collection path."""
+        """
+        Legacy route-group collection path.
+
+        stop_check: optional callable that returns True when the caller wants the
+        batch loop to abort early (see collect_leg_batch for details).
+        """
         stats: dict[str, int] = {"success": 0, "errors": 0, "skipped": 0}
 
         for dest in destinations:
             for i in range(0, len(dates), batch_size):
+                # Check stop signal before starting each batch
+                if stop_check and stop_check():
+                    return stats
+
                 batch = dates[i : i + batch_size]
                 tasks = [
                     self.collect_single_date(origin, dest, d, route_group_id)

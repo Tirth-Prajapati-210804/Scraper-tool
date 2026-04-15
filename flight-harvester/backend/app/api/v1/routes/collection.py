@@ -16,6 +16,19 @@ from app.models.user import User
 router = APIRouter(prefix="/collection", tags=["collection"])
 
 
+@router.get("/status")
+async def collection_status(
+    request: Request,
+    _: Annotated[User, Depends(get_current_user)],
+) -> dict:
+    """Return whether a collection cycle is currently running."""
+    scheduler = request.app.state.scheduler
+    return {
+        "is_collecting": scheduler.is_collecting,
+        "scheduler_running": scheduler.is_running,
+    }
+
+
 @router.post("/trigger")
 async def trigger_collection(
     request: Request,
@@ -23,8 +36,26 @@ async def trigger_collection(
     _: Annotated[User, Depends(get_current_user)],
 ) -> dict[str, str]:
     scheduler = request.app.state.scheduler
+    if scheduler.is_collecting:
+        return {"status": "already_running"}
     background_tasks.add_task(scheduler.run_collection_cycle)
     return {"status": "triggered"}
+
+
+@router.post("/stop")
+async def stop_collection(
+    request: Request,
+    _: Annotated[User, Depends(get_current_user)],
+) -> dict[str, str]:
+    """
+    Signal the running collection cycle to stop at its next batch boundary.
+    Returns immediately — the cycle may take a few seconds to actually stop.
+    """
+    scheduler = request.app.state.scheduler
+    if not scheduler.is_collecting:
+        return {"status": "not_running"}
+    scheduler.request_stop()
+    return {"status": "stop_requested"}
 
 
 @router.post("/trigger-group/{group_id}")
