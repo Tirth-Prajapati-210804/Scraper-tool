@@ -72,7 +72,9 @@ class TravelpayoutsProvider:
                     "depart_date": year_month,   # "YYYY-MM" format → returns full month
                     "currency": currency,
                     "calendar_type": "departure_date",
-                },
+                    "one_way": "true",           # without this the API returns round-trip
+                },                               # cached prices, which are often absent for
+                                                 # low-traffic routes like regional India→SEA
                 headers={"X-Access-Token": self._token},
             )
             resp.raise_for_status()
@@ -91,11 +93,25 @@ class TravelpayoutsProvider:
         # The outer key under "data" is the origin IATA code — we iterate and take the first
         # dict value that is itself a dict (the day-keyed price map).
         raw = data.get("data", {})
+        result: dict[str, Any] = {}
         if isinstance(raw, dict):
             for _key, day_map in raw.items():
                 if isinstance(day_map, dict):
-                    return day_map
-        return {}
+                    result = day_map
+                    break
+
+        if not result:
+            # HTTP 200 + success=true but no actual price data for this route/month.
+            # Travelpayouts only caches data for frequently searched routes — low-traffic
+            # routes (e.g. regional Indian airports → Southeast Asia) often return empty.
+            log.info(
+                "travelpayouts_calendar_empty",
+                origin=origin,
+                destination=destination,
+                month=year_month,
+                note="Route may not have enough search volume for Travelpayouts cache",
+            )
+        return result
 
     async def search_one_way(
         self,
@@ -167,6 +183,10 @@ class TravelpayoutsProvider:
                 raw_data=day_data,
             )
         ]
+
+    def clear_cache(self) -> None:
+        """Discard all cached calendar data so the next request re-fetches from the API."""
+        self._cache.clear()
 
     async def close(self) -> None:
         # Clear the in-memory cache on shutdown to free memory
