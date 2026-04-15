@@ -4,7 +4,7 @@ from datetime import date, timedelta
 from io import BytesIO
 
 from openpyxl import Workbook
-from openpyxl.styles import Alignment, Font
+from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import get_column_letter
 
 from app.models.all_flight_result import AllFlightResult
@@ -98,53 +98,53 @@ def export_route_group(
 
         _autosize_columns(ws)
 
-    # --- Per-provider sheets ---
-    # One sheet per provider (e.g. "SerpAPI", "Travelpayouts", "Mock"), each
-    # containing every offer that provider returned, sorted by date then price.
+    # --- All Results sheet ---
+    # Shows every flight offer from every provider (not just the cheapest).
+    # One row per offer, sorted by departure date then price.
     if all_results:
-        # Pretty-print names for sheet titles
-        provider_display = {
-            "serpapi":       "SerpAPI",
-            "travelpayouts": "Travelpayouts",
-            "mock":          "Mock",
-        }
-
-        # Group results by provider, preserving insertion order
-        by_provider: dict[str, list[AllFlightResult]] = {}
-        for r in all_results:
-            key = r.provider.lower()
-            if key not in by_provider:
-                by_provider[key] = []
-            by_provider[key].append(r)
-
+        ws = wb.create_sheet(title="All Results")
         headers = [
             "Date", "Dep Airport", "Arr Airport", "Airline",
-            "Price", "Currency", "Stops", "Duration (min)",
+            "Price", "Currency", "Stops", "Duration (min)", "Provider",
         ]
+        _write_header_row(ws, headers)
 
-        for provider_key, provider_rows in by_provider.items():
-            sheet_title = provider_display.get(provider_key, provider_key.title())
-            ws = wb.create_sheet(title=sheet_title)
-            _write_header_row(ws, headers)
+        # Sort: date asc, price asc
+        sorted_results = sorted(
+            all_results,
+            key=lambda r: (r.depart_date, r.price),
+        )
 
-            # Sort each provider's rows: date asc, price asc
-            sorted_rows = sorted(provider_rows, key=lambda r: (r.depart_date, r.price))
+        # Highlight rows by provider for quick visual scanning
+        provider_colors = {
+            "serpapi":        "DBEAFE",  # blue-100
+            "travelpayouts":  "D1FAE5",  # green-100
+            "mock":           "FEF9C3",  # yellow-100
+        }
 
-            for row_idx, r in enumerate(sorted_rows, start=2):
-                ws.cell(row=row_idx, column=1, value=r.depart_date)
-                ws.cell(row=row_idx, column=1).number_format = "YYYY-MM-DD"
-                ws.cell(row=row_idx, column=2, value=r.origin)
-                ws.cell(row=row_idx, column=3, value=r.destination)
-                ws.cell(row=row_idx, column=4, value=r.airline or "-")
-                ws.cell(row=row_idx, column=5, value=int(round(float(r.price))))
-                ws.cell(row=row_idx, column=6, value=r.currency)
-                ws.cell(row=row_idx, column=7, value=r.stops if r.stops is not None else "-")
-                ws.cell(
-                    row=row_idx, column=8,
-                    value=r.duration_minutes if r.duration_minutes else "-",
-                )
+        for row_idx, r in enumerate(sorted_results, start=2):
+            d = r.depart_date
+            ws.cell(row=row_idx, column=1, value=d)
+            ws.cell(row=row_idx, column=1).number_format = "YYYY-MM-DD"
+            ws.cell(row=row_idx, column=2, value=r.origin)
+            ws.cell(row=row_idx, column=3, value=r.destination)
+            ws.cell(row=row_idx, column=4, value=r.airline or "-")
+            ws.cell(row=row_idx, column=5, value=int(round(float(r.price))))
+            ws.cell(row=row_idx, column=6, value=r.currency)
+            ws.cell(row=row_idx, column=7, value=r.stops if r.stops is not None else "-")
+            ws.cell(
+                row=row_idx, column=8,
+                value=r.duration_minutes if r.duration_minutes else "-",
+            )
+            ws.cell(row=row_idx, column=9, value=r.provider)
 
-            _autosize_columns(ws)
+            # Colour the row by provider
+            colour = provider_colors.get(r.provider.lower(), "F8FAFC")
+            fill = PatternFill(start_color=colour, end_color=colour, fill_type="solid")
+            for col in range(1, 10):
+                ws.cell(row=row_idx, column=col).fill = fill
+
+        _autosize_columns(ws)
 
     output = BytesIO()
     wb.save(output)
