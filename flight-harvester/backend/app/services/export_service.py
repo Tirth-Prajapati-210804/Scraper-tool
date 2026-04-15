@@ -7,6 +7,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font
 from openpyxl.utils import get_column_letter
 
+from app.models.all_flight_result import AllFlightResult
 from app.models.daily_cheapest import DailyCheapestPrice
 from app.models.route_group import RouteGroup
 
@@ -14,6 +15,7 @@ from app.models.route_group import RouteGroup
 def export_route_group(
     route_group: RouteGroup,
     prices: list[DailyCheapestPrice],
+    all_results: list[AllFlightResult] | None = None,
 ) -> bytes:
     wb = Workbook()
     wb.remove(wb.active)
@@ -29,7 +31,7 @@ def export_route_group(
     today = date.today()
     all_dates = [today + timedelta(days=i) for i in range(1, route_group.days_ahead + 1)]
 
-    # --- Main sheets (6 columns) ---
+    # --- Main sheets (cheapest price per date per origin) ---
     for origin in route_group.origins:
         name_map = route_group.sheet_name_map or {}
         sheet_name = name_map.get(origin, origin)
@@ -95,6 +97,54 @@ def export_route_group(
                 ws.cell(row=row_idx, column=4, value="-")
 
         _autosize_columns(ws)
+
+    # --- Per-provider sheets ---
+    # One sheet per provider (e.g. "SerpAPI", "Travelpayouts", "Mock"), each
+    # containing every offer that provider returned, sorted by date then price.
+    if all_results:
+        # Pretty-print names for sheet titles
+        provider_display = {
+            "serpapi":       "SerpAPI",
+            "travelpayouts": "Travelpayouts",
+            "mock":          "Mock",
+        }
+
+        # Group results by provider, preserving insertion order
+        by_provider: dict[str, list[AllFlightResult]] = {}
+        for r in all_results:
+            key = r.provider.lower()
+            if key not in by_provider:
+                by_provider[key] = []
+            by_provider[key].append(r)
+
+        headers = [
+            "Date", "Dep Airport", "Arr Airport", "Airline",
+            "Price", "Currency", "Stops", "Duration (min)",
+        ]
+
+        for provider_key, provider_rows in by_provider.items():
+            sheet_title = provider_display.get(provider_key, provider_key.title())
+            ws = wb.create_sheet(title=sheet_title)
+            _write_header_row(ws, headers)
+
+            # Sort each provider's rows: date asc, price asc
+            sorted_rows = sorted(provider_rows, key=lambda r: (r.depart_date, r.price))
+
+            for row_idx, r in enumerate(sorted_rows, start=2):
+                ws.cell(row=row_idx, column=1, value=r.depart_date)
+                ws.cell(row=row_idx, column=1).number_format = "YYYY-MM-DD"
+                ws.cell(row=row_idx, column=2, value=r.origin)
+                ws.cell(row=row_idx, column=3, value=r.destination)
+                ws.cell(row=row_idx, column=4, value=r.airline or "-")
+                ws.cell(row=row_idx, column=5, value=int(round(float(r.price))))
+                ws.cell(row=row_idx, column=6, value=r.currency)
+                ws.cell(row=row_idx, column=7, value=r.stops if r.stops is not None else "-")
+                ws.cell(
+                    row=row_idx, column=8,
+                    value=r.duration_minutes if r.duration_minutes else "-",
+                )
+
+            _autosize_columns(ws)
 
     output = BytesIO()
     wb.save(output)

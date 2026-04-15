@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
 from app.db.session import get_db_session
+from app.models.all_flight_result import AllFlightResult
 from app.models.daily_cheapest import DailyCheapestPrice
 from app.models.user import User
 from app.schemas.route_group import (
@@ -166,7 +167,12 @@ async def export_group(group_id: uuid.UUID, session: _DB, current_user: _Auth) -
     )
     prices = list(prices_result.scalars().all())
 
-    excel_bytes = export_service.export_route_group(group, prices)
+    all_results_result = await session.execute(
+        select(AllFlightResult).where(AllFlightResult.route_group_id == group_id)
+    )
+    all_results = list(all_results_result.scalars().all())
+
+    excel_bytes = export_service.export_route_group(group, prices, all_results or None)
     safe_name = group.name.replace("/", "-").replace(" ", "_")
     filename = f"{safe_name}.xlsx"
 

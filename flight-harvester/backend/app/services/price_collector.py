@@ -11,6 +11,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.core.logging import get_logger
+from app.models.all_flight_result import AllFlightResult
 from app.models.daily_cheapest import DailyCheapestPrice  # noqa: F401 — side-effect import
 from app.models.scrape_log import ScrapeLog
 from app.providers.base import FlightProvider, ProviderResult
@@ -131,7 +132,7 @@ class PriceCollector:
                         result=cheapest,
                     )
                 else:
-                    # Legacy path: write to daily_cheapest_prices (route-group)
+                    # Legacy path: write cheapest to daily_cheapest_prices (route-group)
                     await self._upsert_cheapest(
                         session=session,
                         route_group_id=route_group_id,
@@ -139,6 +140,16 @@ class PriceCollector:
                         destination=destination,
                         depart_date=depart_date,
                         result=cheapest,
+                    )
+                    # Also save every result from every provider so the Excel export
+                    # can include an "All Results" sheet with the full picture.
+                    await self._save_all_results(
+                        session=session,
+                        route_group_id=route_group_id,
+                        origin=origin,
+                        destination=destination,
+                        depart_date=depart_date,
+                        results=all_results,
                     )
 
             await session.commit()
@@ -256,6 +267,59 @@ class PriceCollector:
                 "duration_minutes": result.duration_minutes or None,
             },
         )
+
+    # ── all_flight_results write (legacy route-group path) ───────────────────
+
+    async def _save_all_results(
+        self,
+        session: AsyncSession,
+        route_group_id: UUID,
+        origin: str,
+        destination: str,
+        depart_date: date,
+        results: list[ProviderResult],
+    ) -> None:
+        """
+        Replace-on-collect strategy:
+        1. Delete any existing rows for this (route_group_id, origin, destination, depart_date)
+        2. Insert one row per result, preserving every airline/price/provider combination.
+
+        This ensures the all_flight_results table always reflects the most recent
+        collection run without growing unboundedly.
+        """
+        # Delete existing rows for this route/date before inserting fresh data
+        await session.execute(
+            text("""
+                DELETE FROM all_flight_results
+                WHERE route_group_id = :rg_id
+                  AND origin = :origin
+                  AND destination = :destination
+                  AND depart_date = :depart_date
+            """),
+            {
+                "rg_id": str(route_group_id),
+                "origin": origin,
+                "destination": destination,
+                "depart_date": depart_date,
+            },
+        )
+
+        # Insert all results sorted cheapest-first for readability
+        for result in sorted(results, key=lambda r: r.price):
+            row = AllFlightResult(
+                route_group_id=route_group_id,
+                origin=origin,
+                destination=destination,
+                depart_date=depart_date,
+                airline=normalize_airline(result.airline),
+                price=result.price,
+                currency=result.currency,
+                provider=result.provider or "unknown",
+                deep_link=result.deep_link[:2048] if result.deep_link else None,
+                stops=result.stops if result.stops is not None else None,
+                duration_minutes=result.duration_minutes or None,
+            )
+            session.add(row)
 
     # ── batch helpers ─────────────────────────────────────────────────────────
 
