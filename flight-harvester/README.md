@@ -1,4 +1,4 @@
-# Flight Harvester
+# Flight Data Scrapper
 
 Automated flight price collection platform. Tracks the cheapest daily flight prices across multiple origin-destination routes and exports them as formatted Excel spreadsheets — the same format you used to fill in by hand on Skyscanner and Kayak.
 
@@ -24,7 +24,7 @@ Automated flight price collection platform. Tracks the cheapest daily flight pri
 
 ## What does it do?
 
-Flight Harvester replaces the manual process of:
+Flight Data Scrapper replaces the manual process of:
 
 1. Opening Skyscanner or Kayak
 2. Searching each origin → destination for every date
@@ -87,7 +87,7 @@ On demand:
 
 ```bash
 git clone https://github.com/tirth-prajapati-210804/scraper-tool.git
-cd scraper-tool/flight-harvester
+cd scraper-tool/flight-data-scrapper
 ```
 
 ### Step 2 — Create the environment file
@@ -152,7 +152,7 @@ docker compose down -v
 
 ```bash
 git clone https://github.com/tirth-prajapati-210804/scraper-tool.git
-cd scraper-tool/flight-harvester
+cd scraper-tool/flight-data-scrapper
 ```
 
 ### Step 2 — Set up PostgreSQL
@@ -161,10 +161,10 @@ Create a database for the app. Open a terminal and run:
 
 ```bash
 # On Linux/Mac:
-psql -U postgres -c "CREATE DATABASE flight_harvester;"
+psql -U postgres -c "CREATE DATABASE flight_data_scrapper;"
 
 # On Windows (open "SQL Shell (psql)" from the Start menu):
-CREATE DATABASE flight_harvester;
+CREATE DATABASE flight_data_scrapper;
 ```
 
 ### Step 3 — Set up the backend
@@ -182,7 +182,7 @@ cp .env.example .env
 Edit `.env` and fill in all required values (see [Configuration reference](#configuration-reference) below). At minimum:
 
 ```dotenv
-DATABASE_URL=postgresql+asyncpg://postgres:YOUR_PASSWORD@localhost:5432/flight_harvester
+DATABASE_URL=postgresql+asyncpg://postgres:YOUR_PASSWORD@localhost:5432/flight_data_scrapper
 JWT_SECRET_KEY=any-long-random-string-change-this
 ADMIN_EMAIL=admin@yourdomain.com
 ADMIN_PASSWORD=choose-a-strong-password
@@ -235,7 +235,7 @@ The API is now running at http://localhost:8000. Keep this terminal open.
 Open a **new terminal**:
 
 ```bash
-cd scraper-tool/flight-harvester/frontend
+cd scraper-tool/flight-data-scrapper/frontend
 
 # Install Node.js dependencies
 npm install
@@ -420,7 +420,7 @@ Railway is the easiest way to host the backend for free (small tier).
 
 1. Go to https://railway.app and create an account
 2. Click **New Project → Deploy from GitHub repo**
-3. Select this repository and set the **Root Directory** to `flight-harvester/backend`
+3. Select this repository and set the **Root Directory** to `flight-data-scrapper/backend`
 4. Add a **PostgreSQL** plugin to the project
 5. Set all required environment variables in the **Variables** tab (same as `.env`)
 6. Railway auto-detects the `railway.toml` config and starts the server
@@ -430,7 +430,7 @@ Railway is the easiest way to host the backend for free (small tier).
 
 1. Go to https://vercel.com and create an account
 2. Click **Add New → Project → Import Git Repository**
-3. Select this repository and set the **Root Directory** to `flight-harvester/frontend`
+3. Select this repository and set the **Root Directory** to `flight-data-scrapper/frontend`
 4. Add environment variable: `VITE_API_BASE_URL=https://your-app.up.railway.app`
 5. Click Deploy — Vercel handles the build automatically
 6. Update `CORS_ORIGINS` in your Railway backend variables to include your Vercel URL
@@ -493,8 +493,8 @@ docker compose down -v    # this deletes the database
 docker compose up --build # recreates everything fresh
 
 # Using local dev:
-psql -U postgres -c "DROP DATABASE flight_harvester;"
-psql -U postgres -c "CREATE DATABASE flight_harvester;"
+psql -U postgres -c "DROP DATABASE flight_data_scrapper;"
+psql -U postgres -c "CREATE DATABASE flight_data_scrapper;"
 cd backend && python -m alembic upgrade head
 python -m app.scripts.seed_route_groups
 ```
@@ -537,7 +537,7 @@ ports: ["8001:8000"]
 ### Project structure
 
 ```
-flight-harvester/
+flight-data-scrapper/
 ├── backend/                        # FastAPI + SQLAlchemy + PostgreSQL
 │   ├── app/
 │   │   ├── api/                    # REST endpoints

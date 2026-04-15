@@ -29,6 +29,15 @@ class CollectionResult:
 
 
 class PriceCollector:
+    """
+    Coordinates searches across all configured providers for a single route/date,
+    then writes the cheapest result to the database.
+
+    Each collect_single_date() call gets its own DB session (created from
+    session_factory) so concurrent calls don't share a session and cause
+    transaction conflicts.
+    """
+
     def __init__(
         self,
         session_factory: async_sessionmaker[AsyncSession],
@@ -174,6 +183,8 @@ class PriceCollector:
                 stops            = EXCLUDED.stops,
                 duration_minutes = EXCLUDED.duration_minutes,
                 scraped_at       = now()
+            -- Only update if the new price is strictly cheaper than what's stored.
+            -- If the new price is equal or higher, the existing record is kept unchanged.
             WHERE flight_prices.price > EXCLUDED.price
         """)
         await session.execute(
@@ -225,6 +236,7 @@ class PriceCollector:
                 duration_minutes = EXCLUDED.duration_minutes,
                 route_group_id   = EXCLUDED.route_group_id,
                 scraped_at       = now()
+            -- Same cheapest-wins logic as the flight_prices upsert above
             WHERE daily_cheapest_prices.price > EXCLUDED.price
         """)
         await session.execute(
@@ -286,6 +298,7 @@ class PriceCollector:
                                 stats["skipped"] += 1
 
                     if i + batch_size < len(dates):
+                        # Pause between batches to avoid hitting provider rate limits
                         await asyncio.sleep(delay_seconds)
 
         return stats

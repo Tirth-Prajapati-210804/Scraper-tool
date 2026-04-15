@@ -12,7 +12,7 @@ function usePageTitle(): string {
     "/explorer": "Data Explorer",
     "/logs": "Collection Logs",
   };
-  return titles[location.pathname] ?? "Flight Harvester";
+  return titles[location.pathname] ?? "Flight Data Scrapper";
 }
 
 interface AppLayoutProps {

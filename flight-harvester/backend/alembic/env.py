@@ -20,7 +20,7 @@ target_metadata = Base.metadata
 def get_url() -> str:
     return os.environ.get(
         "DATABASE_URL",
-        "postgresql+asyncpg://postgres:postgres@localhost:5432/flight_harvester",
+        "postgresql+asyncpg://postgres:postgres@localhost:5432/flight_data_scrapper",
     )
 
 

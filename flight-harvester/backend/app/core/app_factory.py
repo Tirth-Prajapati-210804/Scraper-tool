@@ -72,7 +72,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.get("/")
     async def root() -> dict[str, str]:
-        return {"message": "Flight Harvester API is running."}
+        return {"message": "Flight Data Scrapper API is running."}
 
     @app.get("/health", response_model=HealthResponse)
     async def health(request: Request) -> HealthResponse:

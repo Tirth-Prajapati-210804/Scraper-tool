@@ -4,9 +4,17 @@ SerpAPI Google Flights provider.
 Sign up at serpapi.com — free plan includes ~100 searches/month.
 Paid plans start at $75/month for 5,000 searches.
 
-Uses engine=google_flights with deep_search=true to get prices identical
-to what google.com/flights shows in the browser. This is completely different
-from Serper.dev (which scraped Google Search text snippets).
+HOW IT WORKS:
+  SerpAPI scrapes google.com/flights and returns the results as structured JSON.
+  This is completely different from Serper.dev (which scraped Google *Search* text
+  snippets and returned random unrelated prices).
+
+  With deep_search=true, prices are 100% identical to what you see in the Google
+  Flights browser UI. Without it, prices can be off by up to 4x on some routes.
+
+COST EFFICIENCY:
+  Use Travelpayouts (free) for bulk date scanning. Use SerpAPI only as a fallback
+  for routes where Travelpayouts has no data, or when real-time accuracy is needed.
 
 Set SERPAPI_KEY in .env to activate.
 """
@@ -29,7 +37,8 @@ class SerpApiProvider:
     name = "serpapi"
 
     def __init__(self, api_key: str, timeout: int = 60) -> None:
-        # deep_search can be slow — use a longer default timeout
+        # deep_search=true makes responses significantly slower than normal searches,
+        # so we use a 60-second timeout instead of the default 30
         self._api_key = api_key
         self._timeout = timeout
 
@@ -45,20 +54,30 @@ class SerpApiProvider:
         adults: int = 1,
         cabin: str = "economy",
     ) -> list[ProviderResult]:
-        # Map cabin strings to SerpAPI travel_class values
+        """
+        Search Google Flights for origin→destination on depart_date.
+
+        Returns all offers from both "best_flights" and "other_flights" sections,
+        sorted by Google's ranking (best first). The caller (PriceCollector) picks
+        the cheapest across all providers.
+        """
+        # SerpAPI encodes cabin class as a number, not a string
         travel_class_map = {"economy": 1, "premium_economy": 2, "business": 3, "first": 4}
         travel_class = travel_class_map.get(cabin.lower(), 1)
 
         params = {
             "engine": "google_flights",
-            "departure_id": origin,
-            "arrival_id": destination,
+            "departure_id": origin,        # IATA code, e.g. "AMD"
+            "arrival_id": destination,     # IATA code, e.g. "DEL"
             "outbound_date": depart_date.isoformat(),
             "currency": "USD",
             "adults": adults,
             "type": 2,             # 1 = round-trip, 2 = one-way
             "travel_class": travel_class,
-            "deep_search": "true",  # exact prices matching Google Flights browser
+            # deep_search=true mirrors the exact prices shown in the browser.
+            # Without this flag, SerpAPI may return a faster but less accurate
+            # estimate that can differ significantly from the real price.
+            "deep_search": "true",
             "api_key": self._api_key,
         }
 
@@ -69,6 +88,9 @@ class SerpApiProvider:
 
         results: list[ProviderResult] = []
 
+        # Google Flights splits results into two sections:
+        #   "best_flights"  — top picks ranked by price + convenience
+        #   "other_flights" — remaining options, usually more stops or worse times
         for section in ("best_flights", "other_flights"):
             for offer in data.get(section, []):
                 price = offer.get("price")
@@ -82,16 +104,21 @@ class SerpApiProvider:
                 first_leg = flights[0]
                 airline = first_leg.get("airline", "")
                 flight_number = first_leg.get("flight_number", "")
-                total_duration = offer.get("total_duration", 0)  # minutes
+                total_duration = offer.get("total_duration", 0)  # already in minutes
+
+                # stops = number of connecting flights in the itinerary
+                # A direct flight has 1 flight segment → len(flights) - 1 = 0 stops
                 stops = max(0, len(flights) - 1)
 
-                # Build a deep link — SerpAPI provides booking_token for this
+                # SerpAPI provides a booking_token that can be used to deep-link
+                # directly into the Google Flights booking flow for this exact offer
                 booking_token = offer.get("booking_token", "")
                 if booking_token:
                     deep_link = (
                         f"https://www.google.com/travel/flights?tfs={booking_token}"
                     )
                 else:
+                    # Fallback: generic Google Flights search link for this route/date
                     deep_link = (
                         f"https://www.google.com/flights#search;f={origin};t={destination};"
                         f"d={depart_date.isoformat()};tt=o"

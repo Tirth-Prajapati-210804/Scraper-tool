@@ -1,6 +1,6 @@
-# Flight Harvester — Frontend
+# Flight Data Scrapper — Frontend
 
-React 19 + TypeScript + Tailwind CSS dashboard for the Flight Harvester platform.
+React 19 + TypeScript + Tailwind CSS dashboard for the Flight Data Scrapper platform.
 
 ---
 
@@ -36,7 +36,7 @@ npm --version    # comes with Node
 ### Step 1 — Install dependencies
 
 ```bash
-cd flight-harvester/frontend
+cd flight-data-scrapper/frontend
 npm install
 ```
 
@@ -144,7 +144,7 @@ npm run preview
 
 ## Docker
 
-The frontend has its own `Dockerfile` and is included in the root `docker-compose.yml`. When you run `docker compose up --build` from `flight-harvester/`, the frontend is automatically built and served on port 80 via nginx.
+The frontend has its own `Dockerfile` and is included in the root `docker-compose.yml`. When you run `docker compose up --build` from `flight-data-scrapper/`, the frontend is automatically built and served on port 80 via nginx.
 
 You do not need to run `npm install` or `npm run build` manually when using Docker.
 
@@ -154,7 +154,7 @@ You do not need to run `npm install` or `npm run build` manually when using Dock
 
 1. Push the repository to GitHub
 2. Go to https://vercel.com → **New Project** → import your repository
-3. Set **Root Directory** to `flight-harvester/frontend`
+3. Set **Root Directory** to `flight-data-scrapper/frontend`
 4. Add environment variable: `VITE_API_BASE_URL=https://your-backend-url.railway.app`
 5. Click Deploy
 

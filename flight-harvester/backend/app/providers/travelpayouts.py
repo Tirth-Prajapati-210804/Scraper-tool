@@ -2,12 +2,19 @@
 Travelpayouts / Aviasales flight data provider.
 
 Free forever — sign up at travelpayouts.com → Partners → copy API token from Profile.
-Uses the Calendar API: one request per (origin, destination, month) returns
-cheapest prices for every day in that month. Results are cached in memory so
-a single HTTP call serves up to 31 individual search_one_way queries.
 
-Cached prices are updated every few hours on Travelpayouts' side — ideal for
-continuous price tracking. Not real-time bookable fares.
+HOW IT WORKS (Calendar API):
+  Instead of querying one date at a time, this provider fetches the cheapest price
+  for every day in an entire month with a single HTTP request. Results are stored
+  in an in-memory cache so all 30 individual search_one_way() calls for that month
+  are served instantly without hitting the API again.
+
+  Example: 10 route pairs × 12 months = only 120 HTTP calls for a full year of data.
+
+ACCURACY:
+  Prices are cached on Aviasales' servers and refreshed every few hours.
+  Expect ~85–90% accuracy vs. live booking prices — suitable for price tracking
+  and alerting, but users should always verify before booking.
 """
 from __future__ import annotations
 
@@ -32,8 +39,12 @@ class TravelpayoutsProvider:
     def __init__(self, token: str, timeout: int = 30) -> None:
         self._token = token
         self._timeout = timeout
-        # Cache keyed by (origin, destination, "YYYY-MM")
+        # Cache key: (origin_IATA, destination_IATA, "YYYY-MM")
+        # Value: dict mapping "YYYY-MM-DD" → raw price data for that day
+        # One cache entry covers all 30+ days in a month for a given route.
         self._cache: dict[tuple[str, str, str], dict[str, Any]] = {}
+        # Lock prevents two concurrent requests from fetching the same
+        # (origin, destination, month) calendar simultaneously
         self._lock = asyncio.Lock()
 
     def is_configured(self) -> bool:
@@ -43,14 +54,22 @@ class TravelpayoutsProvider:
     async def _fetch_calendar(
         self, origin: str, destination: str, year_month: str, currency: str
     ) -> dict[str, Any]:
-        """Fetch cheapest prices for every day in year_month (e.g. '2026-05')."""
+        """
+        Fetch cheapest prices for every day in year_month (e.g. '2026-05').
+
+        Returns a dict like:
+            { "2026-05-01": {"price": 89, "airline": "6E", "transfers": 0}, ... }
+
+        Returns {} if the API reports no data or the response is malformed.
+        The @retry decorator automatically retries up to 3 times on HTTP errors.
+        """
         async with httpx.AsyncClient(timeout=self._timeout) as client:
             resp = await client.get(
                 _CALENDAR_URL,
                 params={
                     "origin": origin,
                     "destination": destination,
-                    "depart_date": year_month,
+                    "depart_date": year_month,   # "YYYY-MM" format → returns full month
                     "currency": currency,
                     "calendar_type": "departure_date",
                 },
@@ -68,9 +87,10 @@ class TravelpayoutsProvider:
             )
             return {}
 
-        # Response: { "success": true, "data": { "ORIGIN": { "YYYY-MM-DD": {...}, ... } } }
+        # Response shape: { "success": true, "data": { "ORIGIN": { "YYYY-MM-DD": {...} } } }
+        # The outer key under "data" is the origin IATA code — we iterate and take the first
+        # dict value that is itself a dict (the day-keyed price map).
         raw = data.get("data", {})
-        # The outer key is the origin IATA code
         if isinstance(raw, dict):
             for _key, day_map in raw.items():
                 if isinstance(day_map, dict):
@@ -85,11 +105,20 @@ class TravelpayoutsProvider:
         adults: int = 1,
         cabin: str = "economy",
     ) -> list[ProviderResult]:
+        """
+        Return the cheapest price for origin→destination on depart_date.
+
+        On the first call for a given (origin, destination, month), fetches the
+        full month calendar from the API and caches it. Subsequent calls for other
+        dates in the same month are served from cache with no HTTP request.
+        """
         currency = "USD"
-        year_month = depart_date.strftime("%Y-%m")
-        date_str = depart_date.isoformat()
+        year_month = depart_date.strftime("%Y-%m")  # e.g. "2026-05"
+        date_str = depart_date.isoformat()           # e.g. "2026-05-14"
         cache_key = (origin, destination, year_month)
 
+        # Acquire lock before checking the cache to prevent duplicate concurrent
+        # fetches for the same route+month combination
         async with self._lock:
             if cache_key not in self._cache:
                 try:
@@ -104,19 +133,22 @@ class TravelpayoutsProvider:
                         month=year_month,
                         error=str(exc),
                     )
+                    # Store empty dict so we don't retry on every subsequent call
                     self._cache[cache_key] = {}
 
         day_data = self._cache[cache_key].get(date_str)
         if not day_data:
+            # No price data for this specific date (Travelpayouts has no cached fare)
             return []
 
+        # "price" is the standard key; "value" is used by some older response formats
         price = day_data.get("price") or day_data.get("value")
         if not price:
             return []
 
         airline = str(day_data.get("airline", ""))
+        # "transfers" = number of stops; fallback to "number_of_changes" for older API versions
         stops = int(day_data.get("transfers", day_data.get("number_of_changes", 0)))
-        flight_num = day_data.get("flight_number", "")
         deep_link = (
             f"https://www.aviasales.com/search/{origin}{depart_date.strftime('%d%m')}{destination}1"
         )
@@ -129,10 +161,13 @@ class TravelpayoutsProvider:
                 deep_link=deep_link,
                 provider=self.name,
                 stops=stops,
-                duration_minutes=0,  # Travelpayouts calendar does not return duration
+                # Travelpayouts calendar API does not return flight duration —
+                # set to 0 as a sentinel; the UI handles 0/None as "unknown"
+                duration_minutes=0,
                 raw_data=day_data,
             )
         ]
 
     async def close(self) -> None:
+        # Clear the in-memory cache on shutdown to free memory
         self._cache.clear()

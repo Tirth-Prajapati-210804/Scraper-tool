@@ -28,7 +28,7 @@ export function Sidebar() {
           <Plane className="h-4 w-4 text-white" />
         </div>
         <span className="text-sm font-semibold text-slate-800">
-          Flight Harvester
+          Flight Data Scrapper
         </span>
       </div>
 

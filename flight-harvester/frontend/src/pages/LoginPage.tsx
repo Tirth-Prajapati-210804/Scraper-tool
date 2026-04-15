@@ -36,7 +36,7 @@ export function LoginPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-slate-900">
-              Flight Harvester
+              Flight Data Scrapper
             </h1>
             <p className="mt-1 text-sm text-slate-500">
               Sign in to manage flight collection

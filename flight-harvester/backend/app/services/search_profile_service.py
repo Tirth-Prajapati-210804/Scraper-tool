@@ -1,3 +1,13 @@
+"""
+CRUD and business logic for SearchProfile and its legs.
+
+Key design decisions:
+- Location resolution (plain text → IATA codes) happens once at creation time
+  and the results are stored in the DB. This means the scheduler never needs to
+  re-run the resolver — it just reads resolved_origins / resolved_destinations.
+- The service always loads profiles with their legs eagerly (selectinload) to
+  avoid lazy-loading errors in async SQLAlchemy sessions.
+"""
 from __future__ import annotations
 
 import uuid
@@ -19,6 +29,7 @@ from app.utils.location_resolver import resolve_location
 
 
 async def list_all(session: AsyncSession, active_only: bool = True) -> list[SearchProfile]:
+    """Return all profiles, with legs eagerly loaded, ordered by name."""
     q = select(SearchProfile).options(selectinload(SearchProfile.legs))
     if active_only:
         q = q.where(SearchProfile.is_active.is_(True))
@@ -27,6 +38,7 @@ async def list_all(session: AsyncSession, active_only: bool = True) -> list[Sear
 
 
 async def get_by_id(session: AsyncSession, profile_id: uuid.UUID) -> SearchProfile | None:
+    """Fetch a single profile with its legs. Returns None if not found."""
     result = await session.execute(
         select(SearchProfile)
         .options(selectinload(SearchProfile.legs))
@@ -36,15 +48,28 @@ async def get_by_id(session: AsyncSession, profile_id: uuid.UUID) -> SearchProfi
 
 
 async def create(session: AsyncSession, data: SearchProfileCreate) -> SearchProfile:
+    """
+    Create a profile and all its legs.
+
+    For each leg, plain-text origin/destination queries are resolved to IATA
+    codes via location_resolver. The resolved codes are stored in the leg so
+    the scheduler never needs to repeat this lookup.
+
+    Raises ValueError if any leg's origin or destination cannot be resolved
+    (e.g. a typo like "Indai" instead of "India").
+    """
     profile = SearchProfile(
         name=data.name,
         days_ahead=data.days_ahead,
         is_active=data.is_active,
     )
     session.add(profile)
-    await session.flush()  # get profile.id
+    # flush() makes profile.id available in the DB without committing,
+    # so the legs can reference it as a foreign key immediately
+    await session.flush()
 
     for i, leg_data in enumerate(data.legs):
+        # Convert user-typed strings like "India" → ["DEL", "BOM", "MAA", "BLR", ...]
         resolved_origins = resolve_location(leg_data.origin_query)
         resolved_destinations = resolve_location(leg_data.destination_query)
 
@@ -62,19 +87,19 @@ async def create(session: AsyncSession, data: SearchProfileCreate) -> SearchProf
 
         leg = SearchLeg(
             profile_id=profile.id,
-            leg_order=i,
-            origin_query=leg_data.origin_query,
+            leg_order=i,                                     # 0-based position
+            origin_query=leg_data.origin_query,              # store original text for display
             destination_query=leg_data.destination_query,
-            resolved_origins=resolved_origins,
-            resolved_destinations=resolved_destinations,
-            min_halt_hours=leg_data.min_halt_hours,
+            resolved_origins=resolved_origins,               # e.g. ["AMD"]
+            resolved_destinations=resolved_destinations,     # e.g. ["DEL", "BOM"]
+            min_halt_hours=leg_data.min_halt_hours,          # None = final leg
             max_halt_hours=leg_data.max_halt_hours,
         )
         session.add(leg)
 
     await session.commit()
     await session.refresh(profile)
-    # Reload with legs
+    # Re-fetch with legs loaded — refresh() alone doesn't load relationships
     result = await session.execute(
         select(SearchProfile)
         .options(selectinload(SearchProfile.legs))
@@ -86,6 +111,7 @@ async def create(session: AsyncSession, data: SearchProfileCreate) -> SearchProf
 async def update(
     session: AsyncSession, profile_id: uuid.UUID, data: SearchProfileUpdate
 ) -> SearchProfile | None:
+    """Update top-level profile fields (name, days_ahead, is_active). Does not modify legs."""
     profile = await get_by_id(session, profile_id)
     if not profile:
         return None
@@ -97,6 +123,11 @@ async def update(
 
 
 async def delete(session: AsyncSession, profile_id: uuid.UUID) -> bool:
+    """
+    Delete a profile and all its legs and prices.
+    Cascade delete in the DB handles child rows automatically.
+    Returns False if the profile was not found.
+    """
     profile = await get_by_id(session, profile_id)
     if not profile:
         return False
@@ -108,6 +139,17 @@ async def delete(session: AsyncSession, profile_id: uuid.UUID) -> bool:
 async def get_progress(
     session: AsyncSession, profile_id: uuid.UUID
 ) -> SearchProfileProgress | None:
+    """
+    Calculate collection coverage for a profile.
+
+    For each leg:
+        total_slots = len(resolved_origins) × len(resolved_destinations) × days_ahead
+        filled_slots = number of rows in flight_prices for this leg
+
+    A slot represents one (origin, destination, date) combination. When filled_slots
+    equals total_slots, the profile has a price for every possible route on every
+    tracked date — 100% coverage.
+    """
     profile = await get_by_id(session, profile_id)
     if not profile:
         return None
@@ -118,16 +160,20 @@ async def get_progress(
     leg_progress: list[ProfileProgressLeg] = []
 
     for leg in profile.legs:
+        # Expected number of price records for this leg:
+        # every combination of origin × destination × date
         expected = (
             len(leg.resolved_origins)
             * len(leg.resolved_destinations)
             * profile.days_ahead
         )
+        # Count how many of those slots have actually been collected
         count_result = await session.execute(
             select(func.count()).where(FlightPrice.leg_id == leg.id)
         )
         collected = count_result.scalar_one() or 0
 
+        # Track when this leg was last scraped (used for "last collected X ago" display)
         last_result = await session.execute(
             select(func.max(FlightPrice.scraped_at)).where(FlightPrice.leg_id == leg.id)
         )

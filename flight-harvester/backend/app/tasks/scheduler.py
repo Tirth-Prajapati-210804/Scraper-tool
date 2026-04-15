@@ -1,3 +1,13 @@
+"""
+Flight collection scheduler.
+
+Runs two recurring jobs:
+  - flight_collection: calls run_collection_cycle() every SCHEDULER_INTERVAL_MINUTES
+  - daily_cleanup: calls cleanup_old_data() once every 24 hours
+
+Set SCHEDULER_ENABLED=false in .env to disable all scheduled work (useful when
+running the API server during local development without wanting background tasks).
+"""
 from __future__ import annotations
 
 from datetime import date, timedelta
@@ -47,9 +57,9 @@ class FlightScheduler:
             trigger="interval",
             minutes=self.settings.scheduler_interval_minutes,
             id="flight_collection",
-            max_instances=1,
-            coalesce=True,
-            misfire_grace_time=300,
+            max_instances=1,   # prevent overlapping runs if a cycle takes longer than the interval
+            coalesce=True,     # if multiple triggers fired while the job was running, run only once
+            misfire_grace_time=300,  # allow up to 5 min late start before skipping a cycle
             replace_existing=True,
         )
 
@@ -74,6 +84,18 @@ class FlightScheduler:
         log.info("scheduler_stopped")
 
     async def run_collection_cycle(self) -> None:
+        """
+        Main collection loop — runs every SCHEDULER_INTERVAL_MINUTES minutes.
+
+        Processes two systems in each cycle:
+          1. Search Profiles (new): each profile has ordered legs; prices are
+             written to the flight_prices table keyed by leg_id.
+          2. Route Groups (legacy): flat origin→destinations groups; prices are
+             written to daily_cheapest_prices. Kept for backwards compatibility.
+
+        A CollectionRun row is written to the DB at the start and updated at the
+        end, so the Logs page can show history of every cycle.
+        """
         log.info("collection_cycle_started")
 
         async with self.session_factory() as session:
@@ -95,6 +117,8 @@ class FlightScheduler:
                 total_routes = 0
 
                 # ── New: search profiles (multi-leg) ─────────────────────────
+                # selectinload fetches all legs in a single extra query rather than
+                # issuing one query per profile (avoids N+1 problem)
                 from sqlalchemy.orm import selectinload
                 profiles_result = await session.execute(
                     select(SearchProfile)
@@ -109,6 +133,7 @@ class FlightScheduler:
                 )
 
                 for profile in profiles:
+                    # Generate the list of future dates to collect for this profile
                     dates = self._generate_dates(profile.days_ahead)
                     log.info("collecting_profile", profile=profile.name, legs=len(profile.legs))
 
@@ -149,6 +174,8 @@ class FlightScheduler:
                     for origin in group.origins:
                         total_routes += 1
                         try:
+                            # Skip dates already successfully scraped today to
+                            # avoid redundant API calls on repeated cycles
                             remaining = await self._filter_already_scraped(
                                 session, origin, group.destinations, dates
                             )
@@ -192,6 +219,7 @@ class FlightScheduler:
         log.info("collection_cycle_finished")
 
     def _generate_dates(self, days_ahead: int) -> list[date]:
+        """Return a list of dates from tomorrow through days_ahead days into the future."""
         today = date.today()
         return [today + timedelta(days=d) for d in range(1, days_ahead + 1)]
 
@@ -202,6 +230,14 @@ class FlightScheduler:
         destinations: list[str],
         dates: list[date],
     ) -> list[date]:
+        """
+        Return only the dates that have NOT been successfully scraped today.
+
+        Queries scrape_logs for rows with status='success' created today for this
+        origin/destinations combination, then removes those dates from the input list.
+        This prevents wasting API calls re-fetching prices already collected in an
+        earlier cycle run on the same day.
+        """
         today = date.today()
         result = await session.execute(
             text("""
@@ -220,10 +256,16 @@ class FlightScheduler:
             },
         )
         already_done = {row[0] for row in result.fetchall()}
+        # Return only dates not already covered
         return [d for d in dates if d not in already_done]
 
     async def cleanup_old_data(self) -> None:
-        """Delete scrape_logs and collection_runs older than 30 days."""
+        """
+        Delete scrape_logs and collection_runs older than 30 days.
+
+        Runs once every 24 hours. Keeps the DB from growing indefinitely —
+        we only need recent logs for debugging and the dashboard.
+        """
         log.info("cleanup_started")
         try:
             async with self.session_factory() as session:
@@ -243,6 +285,10 @@ class FlightScheduler:
             log.exception("cleanup_failed", error=str(exc))
 
     async def trigger_single_group(self, group_id: UUID) -> dict[str, int]:
+        """
+        Manually trigger a collection run for one specific route group.
+        Called by the API when the user clicks "Trigger Scrape" on the detail page.
+        """
         stats: dict[str, int] = {"success": 0, "errors": 0, "skipped": 0}
 
         async with self.session_factory() as session:
