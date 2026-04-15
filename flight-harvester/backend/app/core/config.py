@@ -32,10 +32,6 @@ class Settings(BaseSettings):
     travelpayouts_token: str = ""
     # SerpAPI Google Flights: accurate real-time prices — sign up at serpapi.com
     serpapi_key: str = ""
-    # Mock provider — set to any non-empty string to enable fake data for testing
-    # NEVER set this in production
-    mock_provider_key: str = ""
-
     # Scheduler
     scheduler_enabled: bool = True
     scheduler_interval_minutes: int = 60

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from app.core.config import Settings
 from app.providers.base import FlightProvider
-from app.providers.mock import MockProvider
 from app.providers.serpapi import SerpApiProvider
 from app.providers.travelpayouts import TravelpayoutsProvider
 
@@ -27,10 +26,6 @@ class ProviderRegistry:
                 timeout=settings.provider_timeout_seconds,
             )
 
-        # Mock: deterministic fake data for local testing only
-        if settings.mock_provider_key:
-            self.providers["mock"] = MockProvider(key=settings.mock_provider_key)
-
     def get_enabled(self) -> list[FlightProvider]:
         return list(self.providers.values())
 
@@ -38,7 +33,6 @@ class ProviderRegistry:
         all_providers: dict[str, str] = {
             "travelpayouts": "disabled",
             "serpapi": "disabled",
-            "mock": "disabled",
         }
         for name, provider in self.providers.items():
             all_providers[name] = "configured" if provider.is_configured() else "disabled"

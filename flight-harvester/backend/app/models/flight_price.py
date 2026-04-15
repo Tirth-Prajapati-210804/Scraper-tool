@@ -37,7 +37,7 @@ class FlightPrice(Base):
     airline: Mapped[str] = mapped_column(String(100), nullable=False, default="")
     price: Mapped[float] = mapped_column(Float, nullable=False)
     currency: Mapped[str] = mapped_column(String(8), nullable=False, default="USD")
-    provider: Mapped[str] = mapped_column(String(50), nullable=False)     # "travelpayouts", "serpapi", "mock"
+    provider: Mapped[str] = mapped_column(String(50), nullable=False)     # "travelpayouts", "serpapi"
     deep_link: Mapped[str | None] = mapped_column(String(2048), nullable=True)   # direct booking URL
     stops: Mapped[int | None] = mapped_column(Integer, nullable=True)            # 0 = direct
     duration_minutes: Mapped[int | None] = mapped_column(Integer, nullable=True) # None if provider doesn't return it

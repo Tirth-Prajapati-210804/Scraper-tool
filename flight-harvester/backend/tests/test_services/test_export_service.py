@@ -13,141 +13,116 @@ from app.services.export_service import export_route_group
 
 # ── helpers ──────────────────────────────────────────────────────────────────
 
-def make_route_group(
-    origins: list[str] = None,
-    destinations: list[str] = None,
-    sheet_name_map: dict | None = None,
-    special_sheets: list | None = None,
-    days_ahead: int = 5,
-) -> MagicMock:
+def make_route_group() -> MagicMock:
     rg = MagicMock()
     rg.id = uuid.uuid4()
     rg.name = "Test Group"
-    rg.destination_label = "TYO/SHA"
-    rg.destinations = destinations or ["TYO", "SHA"]
-    rg.origins = origins or ["YYZ", "YVR"]
-    rg.nights = 12
-    rg.days_ahead = days_ahead
-    rg.sheet_name_map = sheet_name_map or {"YYZ": "YYZ", "YVR": "YVR"}
-    rg.special_sheets = special_sheets or []
     return rg
 
 
-def make_price(
-    origin: str,
-    destination: str,
-    depart_date: date,
-    price: float = 1500.0,
-    airline: str = "AC",
+def make_result(
+    origin: str = "AMD",
+    destination: str = "SGN",
+    depart_date: date | None = None,
+    price: float = 200.0,
+    airline: str = "VJ",
+    provider: str = "serpapi",
+    stops: int | None = 0,
+    duration_minutes: int | None = 120,
+    currency: str = "USD",
 ) -> MagicMock:
-    p = MagicMock()
-    p.origin = origin
-    p.destination = destination
-    p.depart_date = depart_date
-    p.price = price
-    p.airline = airline
-    p.currency = "CAD"
-    return p
+    r = MagicMock()
+    r.origin = origin
+    r.destination = destination
+    r.depart_date = depart_date or (date.today() + timedelta(days=1))
+    r.price = price
+    r.airline = airline
+    r.provider = provider
+    r.stops = stops
+    r.duration_minutes = duration_minutes
+    r.currency = currency
+    return r
 
 
 # ── tests ─────────────────────────────────────────────────────────────────────
 
-def test_export_generates_correct_sheet_names() -> None:
+def test_export_creates_all_results_sheet() -> None:
+    rg = make_route_group()
+    excel_bytes = export_route_group(rg, [make_result()])
+    wb = openpyxl.load_workbook(BytesIO(excel_bytes))
+    assert "All Results" in wb.sheetnames
+    assert len(wb.sheetnames) == 1
+
+
+def test_export_empty_results_produces_header_only() -> None:
     rg = make_route_group()
     excel_bytes = export_route_group(rg, [])
     wb = openpyxl.load_workbook(BytesIO(excel_bytes))
-    assert "YYZ" in wb.sheetnames
-    assert "YVR" in wb.sheetnames
+    ws = wb["All Results"]
+    # Only header row, no data rows
+    assert ws.max_row == 1
 
 
 def test_export_has_correct_headers() -> None:
-    rg = make_route_group(origins=["YYZ"])
-    rg.origins = ["YYZ"]
-    rg.sheet_name_map = {"YYZ": "YYZ"}
+    rg = make_route_group()
     excel_bytes = export_route_group(rg, [])
     wb = openpyxl.load_workbook(BytesIO(excel_bytes))
-    ws = wb["YYZ"]
+    ws = wb["All Results"]
     assert ws.cell(1, 1).value == "Date"
     assert ws.cell(1, 2).value == "Dep Airport"
-    assert ws.cell(1, 3).value == "Arrivel Airport"  # intentional typo from client
-    assert ws.cell(1, 4).value == "Night "            # trailing space from client
-    assert ws.cell(1, 5).value == "Airline"
-    assert ws.cell(1, 6).value == "Flight Price"
+    assert ws.cell(1, 3).value == "Arr Airport"
+    assert ws.cell(1, 4).value == "Airline"
+    assert ws.cell(1, 5).value == "Price"
+    assert ws.cell(1, 6).value == "Currency"
+    assert ws.cell(1, 7).value == "Stops"
+    assert ws.cell(1, 8).value == "Duration (min)"
+    assert ws.cell(1, 9).value == "Provider"
 
 
 def test_export_prices_are_integers() -> None:
-    rg = make_route_group(origins=["YYZ"], days_ahead=3)
-    rg.origins = ["YYZ"]
-    rg.sheet_name_map = {"YYZ": "YYZ"}
-    tomorrow = date.today() + timedelta(days=1)
-    price = make_price("YYZ", "TYO", tomorrow, price=1587.50)
-
-    excel_bytes = export_route_group(rg, [price])
+    rg = make_route_group()
+    excel_bytes = export_route_group(rg, [make_result(price=199.75)])
     wb = openpyxl.load_workbook(BytesIO(excel_bytes))
-    ws = wb["YYZ"]
-    # row 2 = tomorrow
-    assert ws.cell(2, 6).value == 1588
+    ws = wb["All Results"]
+    assert ws.cell(2, 5).value == 200
 
 
-def test_export_missing_dates_show_dash() -> None:
-    rg = make_route_group(origins=["YYZ"], days_ahead=3)
-    rg.origins = ["YYZ"]
-    rg.sheet_name_map = {"YYZ": "YYZ"}
-    # No prices provided
-    excel_bytes = export_route_group(rg, [])
+def test_export_sorted_by_date_then_price() -> None:
+    rg = make_route_group()
+    today = date.today()
+    r1 = make_result(depart_date=today + timedelta(days=2), price=300.0)
+    r2 = make_result(depart_date=today + timedelta(days=1), price=500.0)
+    r3 = make_result(depart_date=today + timedelta(days=1), price=200.0)
+
+    excel_bytes = export_route_group(rg, [r1, r2, r3])
     wb = openpyxl.load_workbook(BytesIO(excel_bytes))
-    ws = wb["YYZ"]
-    assert ws.cell(2, 5).value == "-"
-    assert ws.cell(2, 6).value == "-"
+    ws = wb["All Results"]
+
+    # Row 2: earliest date, cheapest price first
+    assert ws.cell(2, 5).value == 200
+    assert ws.cell(3, 5).value == 500
+    assert ws.cell(4, 5).value == 300
 
 
-def test_special_sheet_has_4_columns() -> None:
-    special = {
-        "name": "Osaka to Beijing",
-        "origin": "KIX",
-        "destination_label": "Beijing (Any)",
-        "destinations": ["BJS", "PEK"],
-        "columns": 4,
-    }
-    rg = make_route_group(origins=["YYZ"], days_ahead=2, special_sheets=[special])
-    rg.origins = ["YYZ"]
-    rg.sheet_name_map = {"YYZ": "YYZ"}
-
-    excel_bytes = export_route_group(rg, [])
+def test_export_none_stops_shows_dash() -> None:
+    rg = make_route_group()
+    excel_bytes = export_route_group(rg, [make_result(stops=None)])
     wb = openpyxl.load_workbook(BytesIO(excel_bytes))
-    assert "Osaka to Beijing" in wb.sheetnames
-    ws = wb["Osaka to Beijing"]
-    assert ws.cell(1, 1).value == "Date"
-    assert ws.cell(1, 2).value == "Dep Airport"
-    assert ws.cell(1, 3).value == "Arrivel Airport"
-    assert ws.cell(1, 4).value == "Flight Price"
-    # Column 5 should not exist (only 4 cols)
-    assert ws.cell(1, 5).value is None
+    ws = wb["All Results"]
+    assert ws.cell(2, 7).value == "-"
 
 
-def test_export_cheapest_across_destinations() -> None:
-    """When multiple destinations have prices, keep the cheapest."""
-    rg = make_route_group(origins=["YYZ"], days_ahead=3)
-    rg.origins = ["YYZ"]
-    rg.sheet_name_map = {"YYZ": "YYZ"}
-    tomorrow = date.today() + timedelta(days=1)
-    cheap = make_price("YYZ", "TYO", tomorrow, price=1200.0, airline="AC")
-    expensive = make_price("YYZ", "SHA", tomorrow, price=1800.0, airline="UA")
-
-    excel_bytes = export_route_group(rg, [cheap, expensive])
+def test_export_zero_duration_shows_dash() -> None:
+    rg = make_route_group()
+    excel_bytes = export_route_group(rg, [make_result(duration_minutes=0)])
     wb = openpyxl.load_workbook(BytesIO(excel_bytes))
-    ws = wb["YYZ"]
-    assert ws.cell(2, 6).value == 1200
-    assert ws.cell(2, 5).value == "AC"
+    ws = wb["All Results"]
+    assert ws.cell(2, 8).value == "-"
 
 
-def test_export_uses_sheet_name_map() -> None:
-    rg = make_route_group(
-        origins=["YYZ", "YVR"],
-        sheet_name_map={"YYZ": "YYZ-DPS", "YVR": "YVR-DPS"},
-    )
-    excel_bytes = export_route_group(rg, [])
+def test_export_provider_written_to_column_9() -> None:
+    rg = make_route_group()
+    excel_bytes = export_route_group(rg, [make_result(provider="travelpayouts")])
     wb = openpyxl.load_workbook(BytesIO(excel_bytes))
-    assert "YYZ-DPS" in wb.sheetnames
-    assert "YVR-DPS" in wb.sheetnames
-    assert "YYZ" not in wb.sheetnames
+    ws = wb["All Results"]
+    assert ws.cell(2, 9).value == "travelpayouts"
