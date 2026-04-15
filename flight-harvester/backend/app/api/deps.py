@@ -4,6 +4,7 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import Settings, get_settings
@@ -28,10 +29,7 @@ async def get_current_user(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
     user_id: str = payload.get("sub", "")
-    # Look up by id — fetch all active users matching; simpler: query by email stored in sub
-    # sub stores user UUID, so fetch by id
-    from sqlalchemy import select
-
+    # sub stores the user UUID; look up by id and require is_active=True
     result = await session.execute(
         select(User).where(User.id == user_id, User.is_active.is_(True))
     )
@@ -39,3 +37,15 @@ async def get_current_user(
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
     return user
+
+
+async def require_admin(
+    current_user: Annotated[User, Depends(get_current_user)],
+) -> User:
+    """Dependency that ensures the current user has the 'admin' role."""
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin privileges required.",
+        )
+    return current_user

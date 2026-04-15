@@ -67,6 +67,7 @@ class SearchProfileResponse(BaseModel):
     name: str
     is_active: bool
     days_ahead: int
+    user_id: uuid.UUID | None = None
     legs: list[SearchLegResponse]
     created_at: datetime
     updated_at: datetime

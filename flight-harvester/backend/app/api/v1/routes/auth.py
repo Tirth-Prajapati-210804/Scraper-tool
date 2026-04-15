@@ -11,8 +11,8 @@ from app.api.deps import get_current_user
 from app.core.config import Settings, get_settings
 from app.db.session import get_db_session
 from app.models.user import User
-from app.schemas.auth import LoginRequest, LoginResponse, UserResponse
-from app.services.auth_service import authenticate, issue_login_response
+from app.schemas.auth import LoginRequest, LoginResponse, RegisterRequest, UserResponse
+from app.services.auth_service import authenticate, create_user, issue_login_response
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -53,6 +53,30 @@ async def login(
             detail="Invalid credentials",
         )
     return issue_login_response(user, settings)
+
+
+@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+async def register(
+    body: RegisterRequest,
+    session: Annotated[AsyncSession, Depends(get_db_session)],
+) -> UserResponse:
+    """
+    Create a new user account. Anyone can register; new users get the 'user' role.
+    Admins are only created via the seed process or by another admin promoting a user.
+    """
+    try:
+        user = await create_user(
+            session,
+            email=body.email,
+            password=body.password,
+            full_name=body.full_name,
+            role="user",
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail=str(exc)
+        ) from exc
+    return UserResponse.model_validate(user)
 
 
 @router.get("/me", response_model=UserResponse)

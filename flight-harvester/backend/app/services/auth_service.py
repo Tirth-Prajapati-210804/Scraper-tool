@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import uuid
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -14,10 +16,67 @@ async def get_user_by_email(session: AsyncSession, email: str) -> User | None:
     return result.scalar_one_or_none()
 
 
+async def get_user_by_id(session: AsyncSession, user_id: uuid.UUID) -> User | None:
+    result = await session.execute(select(User).where(User.id == user_id))
+    return result.scalar_one_or_none()
+
+
 async def authenticate(session: AsyncSession, email: str, password: str) -> User | None:
     user = await get_user_by_email(session, email)
     if not user or not verify_password(password, user.hashed_password):
         return None
+    return user
+
+
+async def create_user(
+    session: AsyncSession,
+    email: str,
+    password: str,
+    full_name: str,
+    role: str = "user",
+) -> User:
+    """Create a new user. Raises ValueError if the email is already registered."""
+    existing = await get_user_by_email(session, email)
+    if existing:
+        raise ValueError(f"Email '{email}' is already registered.")
+    user = User(
+        email=email,
+        hashed_password=hash_password(password),
+        full_name=full_name,
+        role=role,
+        is_active=True,
+    )
+    session.add(user)
+    await session.commit()
+    await session.refresh(user)
+    return user
+
+
+async def list_users(session: AsyncSession) -> list[User]:
+    """Return all users ordered by creation date. Admin-only."""
+    result = await session.execute(select(User).order_by(User.created_at))
+    return list(result.scalars().all())
+
+
+async def deactivate_user(session: AsyncSession, user_id: uuid.UUID) -> User | None:
+    """Deactivate (soft-delete) a user. Returns None if not found."""
+    user = await get_user_by_id(session, user_id)
+    if not user:
+        return None
+    user.is_active = False
+    await session.commit()
+    await session.refresh(user)
+    return user
+
+
+async def reactivate_user(session: AsyncSession, user_id: uuid.UUID) -> User | None:
+    """Re-enable a deactivated user. Returns None if not found."""
+    user = await get_user_by_id(session, user_id)
+    if not user:
+        return None
+    user.is_active = True
+    await session.commit()
+    await session.refresh(user)
     return user
 
 

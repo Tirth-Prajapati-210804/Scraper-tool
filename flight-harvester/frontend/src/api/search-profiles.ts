@@ -44,9 +44,42 @@ export async function getSearchProfileProgress(id: string): Promise<SearchProfil
 
 export async function getProfilePrices(
   id: string,
-  params?: { leg_order?: number; origin?: string; destination?: string; limit?: number },
+  params?: { leg_order?: number; origin?: string; destination?: string; stops?: number; limit?: number },
 ): Promise<FlightPrice[]> {
   const res = await api.get<FlightPrice[]>(`/api/v1/search-profiles/${id}/prices`, {
+    params,
+  });
+  return res.data;
+}
+
+export interface JourneyLeg {
+  leg_order: number;
+  origin_query: string;
+  destination_query: string;
+  origin: string;
+  destination: string;
+  depart_date: string;
+  airline: string;
+  price: number;
+  currency: string;
+  provider: string;
+  stops: number | null;
+  duration_minutes: number | null;
+  deep_link: string | null;
+}
+
+export interface JourneyRow {
+  start_date: string;
+  total_price: number;
+  currency: string;
+  legs: JourneyLeg[];
+}
+
+export async function getProfileJourney(
+  id: string,
+  params?: { date_from?: string; date_to?: string },
+): Promise<JourneyRow[]> {
+  const res = await api.get<JourneyRow[]>(`/api/v1/search-profiles/${id}/journey`, {
     params,
   });
   return res.data;

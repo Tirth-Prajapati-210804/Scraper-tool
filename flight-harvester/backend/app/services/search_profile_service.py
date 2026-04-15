@@ -7,6 +7,7 @@ Key design decisions:
   re-run the resolver — it just reads resolved_origins / resolved_destinations.
 - The service always loads profiles with their legs eagerly (selectinload) to
   avoid lazy-loading errors in async SQLAlchemy sessions.
+- Access control: admins see all profiles; regular users see only their own (matching user_id).
 """
 from __future__ import annotations
 
@@ -28,26 +29,51 @@ from app.schemas.search_profile import (
 from app.utils.location_resolver import resolve_location
 
 
-async def list_all(session: AsyncSession, active_only: bool = True) -> list[SearchProfile]:
-    """Return all profiles, with legs eagerly loaded, ordered by name."""
+async def list_all(
+    session: AsyncSession,
+    active_only: bool = True,
+    requesting_user_id: uuid.UUID | None = None,
+    is_admin: bool = True,
+) -> list[SearchProfile]:
+    """
+    Return profiles with legs eagerly loaded, ordered by name.
+
+    - Admins (is_admin=True) see all profiles.
+    - Regular users see only profiles they created (user_id == their id).
+    """
     q = select(SearchProfile).options(selectinload(SearchProfile.legs))
     if active_only:
         q = q.where(SearchProfile.is_active.is_(True))
+    if not is_admin and requesting_user_id is not None:
+        # Regular users see only their own profiles
+        q = q.where(SearchProfile.user_id == requesting_user_id)
     result = await session.execute(q.order_by(SearchProfile.name))
     return list(result.scalars().all())
 
 
-async def get_by_id(session: AsyncSession, profile_id: uuid.UUID) -> SearchProfile | None:
-    """Fetch a single profile with its legs. Returns None if not found."""
-    result = await session.execute(
+async def get_by_id(
+    session: AsyncSession,
+    profile_id: uuid.UUID,
+    requesting_user_id: uuid.UUID | None = None,
+    is_admin: bool = True,
+) -> SearchProfile | None:
+    """
+    Fetch a single profile with its legs. Returns None if not found or not accessible.
+
+    Admins can access any profile; regular users can only access their own.
+    """
+    q = (
         select(SearchProfile)
         .options(selectinload(SearchProfile.legs))
         .where(SearchProfile.id == profile_id)
     )
+    if not is_admin and requesting_user_id is not None:
+        q = q.where(SearchProfile.user_id == requesting_user_id)
+    result = await session.execute(q)
     return result.scalar_one_or_none()
 
 
-async def create(session: AsyncSession, data: SearchProfileCreate) -> SearchProfile:
+async def create(session: AsyncSession, data: SearchProfileCreate, owner_id: uuid.UUID | None = None) -> SearchProfile:
     """
     Create a profile and all its legs.
 
@@ -62,6 +88,7 @@ async def create(session: AsyncSession, data: SearchProfileCreate) -> SearchProf
         name=data.name,
         days_ahead=data.days_ahead,
         is_active=data.is_active,
+        user_id=owner_id,
     )
     session.add(profile)
     # flush() makes profile.id available in the DB without committing,
@@ -109,10 +136,14 @@ async def create(session: AsyncSession, data: SearchProfileCreate) -> SearchProf
 
 
 async def update(
-    session: AsyncSession, profile_id: uuid.UUID, data: SearchProfileUpdate
+    session: AsyncSession,
+    profile_id: uuid.UUID,
+    data: SearchProfileUpdate,
+    requesting_user_id: uuid.UUID | None = None,
+    is_admin: bool = True,
 ) -> SearchProfile | None:
     """Update top-level profile fields (name, days_ahead, is_active). Does not modify legs."""
-    profile = await get_by_id(session, profile_id)
+    profile = await get_by_id(session, profile_id, requesting_user_id=requesting_user_id, is_admin=is_admin)
     if not profile:
         return None
     for field, value in data.model_dump(exclude_none=True).items():
@@ -122,13 +153,18 @@ async def update(
     return profile
 
 
-async def delete(session: AsyncSession, profile_id: uuid.UUID) -> bool:
+async def delete(
+    session: AsyncSession,
+    profile_id: uuid.UUID,
+    requesting_user_id: uuid.UUID | None = None,
+    is_admin: bool = True,
+) -> bool:
     """
     Delete a profile and all its legs and prices.
     Cascade delete in the DB handles child rows automatically.
-    Returns False if the profile was not found.
+    Returns False if the profile was not found or not accessible.
     """
-    profile = await get_by_id(session, profile_id)
+    profile = await get_by_id(session, profile_id, requesting_user_id=requesting_user_id, is_admin=is_admin)
     if not profile:
         return False
     await session.delete(profile)

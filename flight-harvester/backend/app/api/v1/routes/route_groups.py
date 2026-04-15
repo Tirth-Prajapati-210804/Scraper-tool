@@ -29,9 +29,18 @@ _Auth = Annotated[User, Depends(get_current_user)]
 _DB = Annotated[AsyncSession, Depends(get_db_session)]
 
 
+def _is_admin(user: User) -> bool:
+    return user.role == "admin"
+
+
 @router.get("/", response_model=list[RouteGroupResponse])
-async def list_groups(session: _DB, _: _Auth, active_only: bool = True) -> list[RouteGroupResponse]:
-    groups = await route_group_service.list_all(session, active_only=active_only)
+async def list_groups(session: _DB, current_user: _Auth, active_only: bool = True) -> list[RouteGroupResponse]:
+    groups = await route_group_service.list_all(
+        session,
+        active_only=active_only,
+        requesting_user_id=current_user.id,
+        is_admin=_is_admin(current_user),
+    )
     return [RouteGroupResponse.model_validate(g) for g in groups]
 
 
@@ -42,7 +51,7 @@ async def list_groups(session: _DB, _: _Auth, active_only: bool = True) -> list[
     summary="Create route group from plain-text location names",
 )
 async def create_group_from_text(
-    body: RouteGroupFromTextCreate, session: _DB, _: _Auth
+    body: RouteGroupFromTextCreate, session: _DB, current_user: _Auth
 ) -> RouteGroupFromTextResponse:
     """
     Create a route group by typing location names like 'Canada' and 'Vietnam'.
@@ -91,7 +100,7 @@ async def create_group_from_text(
         sheet_name_map={o: o for o in origins},
         special_sheets=[],
     )
-    group = await route_group_service.create(session, create_payload)
+    group = await route_group_service.create(session, create_payload, owner_id=current_user.id)
     return RouteGroupFromTextResponse(
         group=RouteGroupResponse.model_validate(group),
         resolved_origins=origins,
@@ -100,14 +109,18 @@ async def create_group_from_text(
 
 
 @router.post("/", response_model=RouteGroupResponse, status_code=status.HTTP_201_CREATED)
-async def create_group(body: RouteGroupCreate, session: _DB, _: _Auth) -> RouteGroupResponse:
-    group = await route_group_service.create(session, body)
+async def create_group(body: RouteGroupCreate, session: _DB, current_user: _Auth) -> RouteGroupResponse:
+    group = await route_group_service.create(session, body, owner_id=current_user.id)
     return RouteGroupResponse.model_validate(group)
 
 
 @router.get("/{group_id}", response_model=RouteGroupResponse)
-async def get_group(group_id: uuid.UUID, session: _DB, _: _Auth) -> RouteGroupResponse:
-    group = await route_group_service.get_by_id(session, group_id)
+async def get_group(group_id: uuid.UUID, session: _DB, current_user: _Auth) -> RouteGroupResponse:
+    group = await route_group_service.get_by_id(
+        session, group_id,
+        requesting_user_id=current_user.id,
+        is_admin=_is_admin(current_user),
+    )
     if not group:
         raise HTTPException(status_code=404, detail="Route group not found")
     return RouteGroupResponse.model_validate(group)
@@ -115,24 +128,36 @@ async def get_group(group_id: uuid.UUID, session: _DB, _: _Auth) -> RouteGroupRe
 
 @router.put("/{group_id}", response_model=RouteGroupResponse)
 async def update_group(
-    group_id: uuid.UUID, body: RouteGroupUpdate, session: _DB, _: _Auth
+    group_id: uuid.UUID, body: RouteGroupUpdate, session: _DB, current_user: _Auth
 ) -> RouteGroupResponse:
-    group = await route_group_service.update(session, group_id, body)
+    group = await route_group_service.update(
+        session, group_id, body,
+        requesting_user_id=current_user.id,
+        is_admin=_is_admin(current_user),
+    )
     if not group:
         raise HTTPException(status_code=404, detail="Route group not found")
     return RouteGroupResponse.model_validate(group)
 
 
 @router.delete("/{group_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_group(group_id: uuid.UUID, session: _DB, _: _Auth) -> None:
-    deleted = await route_group_service.delete(session, group_id)
+async def delete_group(group_id: uuid.UUID, session: _DB, current_user: _Auth) -> None:
+    deleted = await route_group_service.delete(
+        session, group_id,
+        requesting_user_id=current_user.id,
+        is_admin=_is_admin(current_user),
+    )
     if not deleted:
         raise HTTPException(status_code=404, detail="Route group not found")
 
 
 @router.get("/{group_id}/export")
-async def export_group(group_id: uuid.UUID, session: _DB, _: _Auth) -> StreamingResponse:
-    group = await route_group_service.get_by_id(session, group_id)
+async def export_group(group_id: uuid.UUID, session: _DB, current_user: _Auth) -> StreamingResponse:
+    group = await route_group_service.get_by_id(
+        session, group_id,
+        requesting_user_id=current_user.id,
+        is_admin=_is_admin(current_user),
+    )
     if not group:
         raise HTTPException(status_code=404, detail="Route group not found")
 
@@ -153,7 +178,15 @@ async def export_group(group_id: uuid.UUID, session: _DB, _: _Auth) -> Streaming
 
 
 @router.get("/{group_id}/progress", response_model=RouteGroupProgress)
-async def get_progress(group_id: uuid.UUID, session: _DB, _: _Auth) -> RouteGroupProgress:
+async def get_progress(group_id: uuid.UUID, session: _DB, current_user: _Auth) -> RouteGroupProgress:
+    # Verify access first
+    group = await route_group_service.get_by_id(
+        session, group_id,
+        requesting_user_id=current_user.id,
+        is_admin=_is_admin(current_user),
+    )
+    if not group:
+        raise HTTPException(status_code=404, detail="Route group not found")
     progress = await route_group_service.get_progress(session, group_id)
     if not progress:
         raise HTTPException(status_code=404, detail="Route group not found")

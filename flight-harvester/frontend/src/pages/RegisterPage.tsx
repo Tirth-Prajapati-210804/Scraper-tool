@@ -1,28 +1,43 @@
 import { type FormEvent, useState } from "react";
-import { useNavigate, Link, useSearchParams } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Plane } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
+import { register } from "../api/auth";
 import { Button } from "../components/ui/Button";
+import { usePageTitle } from "../utils/usePageTitle";
 
-export function LoginPage() {
-  const { login } = useAuth();
+export function RegisterPage() {
+  usePageTitle("Register");
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const justRegistered = searchParams.get("registered") === "1";
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+
     setLoading(true);
     try {
-      await login(email, password);
-      navigate("/", { replace: true });
-    } catch {
-      setError("Invalid email or password. Please try again.");
+      await register(email, password, fullName);
+      // Redirect to login with a success hint
+      navigate("/login?registered=1", { replace: true });
+    } catch (err: unknown) {
+      const msg =
+        (err as { response?: { data?: { detail?: string } } })?.response?.data
+          ?.detail ?? "Registration failed. Please try again.";
+      setError(typeof msg === "string" ? msg : JSON.stringify(msg));
     } finally {
       setLoading(false);
     }
@@ -41,19 +56,30 @@ export function LoginPage() {
               Flight Data Scrapper
             </h1>
             <p className="mt-1 text-sm text-slate-500">
-              Sign in to manage flight collection
+              Create a new account
             </p>
           </div>
         </div>
 
         {/* Form */}
         <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-          {justRegistered && (
-            <p className="mb-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
-              Account created! Sign in below.
-            </p>
-          )}
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="fullName" className="field-label">
+                Full name
+              </label>
+              <input
+                id="fullName"
+                type="text"
+                autoComplete="name"
+                required
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="field-input"
+                placeholder="Jane Smith"
+              />
+            </div>
+
             <div>
               <label htmlFor="email" className="field-label">
                 Email
@@ -66,7 +92,7 @@ export function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="field-input"
-                placeholder="admin@example.com"
+                placeholder="you@example.com"
               />
             </div>
 
@@ -77,10 +103,26 @@ export function LoginPage() {
               <input
                 id="password"
                 type="password"
-                autoComplete="current-password"
+                autoComplete="new-password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                className="field-input"
+                placeholder="Min. 8 characters"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="confirmPassword" className="field-label">
+                Confirm password
+              </label>
+              <input
+                id="confirmPassword"
+                type="password"
+                autoComplete="new-password"
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 className="field-input"
                 placeholder="••••••••"
               />
@@ -98,14 +140,14 @@ export function LoginPage() {
               loading={loading}
               className="w-full"
             >
-              Sign in
+              Create account
             </Button>
           </form>
 
           <p className="mt-4 text-center text-sm text-slate-500">
-            Don't have an account?{" "}
-            <Link to="/register" className="text-brand-600 hover:underline">
-              Register
+            Already have an account?{" "}
+            <Link to="/login" className="text-brand-600 hover:underline">
+              Sign in
             </Link>
           </p>
         </div>
