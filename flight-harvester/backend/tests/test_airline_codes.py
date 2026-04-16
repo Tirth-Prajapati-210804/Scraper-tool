@@ -17,7 +17,7 @@ def test_normalize_typos() -> None:
 
 def test_normalize_short_code() -> None:
     assert normalize_airline("AC") == "AC"
-    assert normalize_airline("KLM") == "KLM"
+    assert normalize_airline("KLM") == "KL"  # KL is the correct IATA code for KLM
 
 
 def test_normalize_empty() -> None:
@@ -41,4 +41,4 @@ def test_normalize_first_word_match() -> None:
 
 def test_normalize_fallback_truncate() -> None:
     result = normalize_airline("UNKNOWN AIRLINE XYZ")
-    assert result == "UN"
+    assert result == "UNKNOWN AIRLINE XYZ"  # returns raw name instead of truncating

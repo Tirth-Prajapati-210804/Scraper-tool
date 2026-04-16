@@ -107,6 +107,7 @@ async def test_collect_single_date_one_provider_fails() -> None:
         providers=[p_good, p_bad],
     )
     collector._upsert_cheapest = AsyncMock()
+    collector._save_all_results = AsyncMock()
 
     result = await collector.collect_single_date("YYZ", "NRT", DEPART, ROUTE_ID)
 
