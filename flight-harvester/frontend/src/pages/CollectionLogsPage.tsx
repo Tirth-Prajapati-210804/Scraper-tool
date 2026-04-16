@@ -34,7 +34,7 @@ export function CollectionLogsPage() {
     queryKey: ["collection-status"],
     queryFn: getCollectionStatus,
     // Poll faster when collecting so the banner disappears quickly after stop
-    refetchInterval: (data) => (data?.is_collecting ? 3_000 : 15_000),
+    refetchInterval: (query) => (query.state.data?.is_collecting ? 3_000 : 15_000),
   });
 
   const runsQuery = useQuery({

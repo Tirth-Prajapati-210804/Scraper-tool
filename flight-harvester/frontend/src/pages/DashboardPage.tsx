@@ -50,7 +50,7 @@ export function DashboardPage() {
   const statusQuery = useQuery({
     queryKey: ["collection-status"],
     queryFn: getCollectionStatus,
-    refetchInterval: (data) => (data?.is_collecting ? 3_000 : 15_000),
+    refetchInterval: (query) => (query.state.data?.is_collecting ? 3_000 : 15_000),
   });
 
   const stopMut = useMutation({
