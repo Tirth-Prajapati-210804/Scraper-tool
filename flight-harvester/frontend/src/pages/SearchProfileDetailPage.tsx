@@ -9,7 +9,7 @@ import {
   getSearchProfileProgress,
   type JourneyRow,
 } from "../api/search-profiles";
-import { triggerGroupCollection } from "../api/collection";
+import { triggerProfileCollection } from "../api/collection";
 import { ErrorBoundary } from "../components/ErrorBoundary";
 import { PriceTable } from "../components/PriceTable";
 import { Button } from "../components/ui/Button";
@@ -97,7 +97,7 @@ export function SearchProfileDetailPage() {
     if (!id) return;
     setTriggering(true);
     try {
-      await triggerGroupCollection(id);
+      await triggerProfileCollection(id);
       showToast("Collection triggered", "success");
       qc.invalidateQueries({ queryKey: ["search-profile-progress", id] });
       qc.invalidateQueries({ queryKey: ["search-profile-prices", id] });

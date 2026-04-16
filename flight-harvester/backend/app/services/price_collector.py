@@ -53,7 +53,7 @@ class PriceCollector:
         origin: str,
         destination: str,
         depart_date: date,
-        route_group_id: UUID,
+        route_group_id: UUID | None,
         *,
         leg_id: UUID | None = None,
         profile_id: UUID | None = None,
@@ -356,7 +356,10 @@ class PriceCollector:
                             origin,
                             dest,
                             d,
-                            profile_id,          # route_group_id slot (unused for logs)
+                            # Pass None because this is a search profile, not a route
+                            # group. ScrapeLog.route_group_id has a FK to route_groups.id —
+                            # passing profile_id here would violate that constraint.
+                            None,
                             leg_id=leg_id,
                             profile_id=profile_id,
                         )

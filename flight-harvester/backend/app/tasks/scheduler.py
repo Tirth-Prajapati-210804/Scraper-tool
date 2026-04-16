@@ -347,6 +347,59 @@ class FlightScheduler:
         except Exception as exc:
             log.exception("cleanup_failed", error=str(exc))
 
+    async def trigger_single_profile(self, profile_id: UUID) -> dict[str, int]:
+        """
+        Manually trigger a collection run for one specific search profile.
+        Called by the API when the user clicks "Trigger Collection" on the
+        Search Profile detail page.
+        """
+        stats: dict[str, int] = {"success": 0, "errors": 0, "skipped": 0}
+
+        async with self.session_factory() as session:
+            from sqlalchemy.orm import selectinload
+            result = await session.execute(
+                select(SearchProfile)
+                .options(selectinload(SearchProfile.legs))
+                .where(SearchProfile.id == profile_id, SearchProfile.is_active.is_(True))
+            )
+            profile = result.scalar_one_or_none()
+            if not profile:
+                return stats
+
+            providers = self.provider_registry.get_enabled()
+            if not providers:
+                return stats
+
+            dates = self._generate_dates(profile.days_ahead)
+            collector = PriceCollector(
+                session_factory=self.session_factory,
+                providers=providers,
+            )
+
+            for leg in profile.legs:
+                try:
+                    part = await collector.collect_leg_batch(
+                        leg_id=leg.id,
+                        profile_id=profile.id,
+                        origins=leg.resolved_origins,
+                        destinations=leg.resolved_destinations,
+                        dates=dates,
+                        batch_size=self.settings.scrape_batch_size,
+                        delay_seconds=self.settings.scrape_delay_seconds,
+                    )
+                    stats["success"] += part["success"]
+                    stats["errors"] += part["errors"]
+                    stats["skipped"] += part["skipped"]
+                except Exception as exc:
+                    stats["errors"] += 1
+                    log.exception(
+                        "profile_leg_trigger_failed",
+                        leg_id=str(leg.id),
+                        error=str(exc),
+                    )
+
+        return stats
+
     async def trigger_single_group(self, group_id: UUID) -> dict[str, int]:
         """
         Manually trigger a collection run for one specific route group.

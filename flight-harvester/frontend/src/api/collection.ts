@@ -25,6 +25,10 @@ export async function triggerGroupCollection(groupId: string): Promise<void> {
   await api.post(`/api/v1/collection/trigger-group/${groupId}`);
 }
 
+export async function triggerProfileCollection(profileId: string): Promise<void> {
+  await api.post(`/api/v1/collection/trigger-profile/${profileId}`);
+}
+
 export async function fetchCollectionRuns(limit = 20): Promise<CollectionRun[]> {
   const res = await api.get<CollectionRun[]>("/api/v1/collection/runs", {
     params: { limit },
