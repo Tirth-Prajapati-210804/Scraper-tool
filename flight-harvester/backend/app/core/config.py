@@ -50,6 +50,13 @@ class Settings(BaseSettings):
     @classmethod
     def parse_cors_origins(cls, v: object) -> list[str]:
         if isinstance(v, str):
+            v = v.strip()
+            # Handle JSON array format: '["http://localhost","http://localhost:5173"]'
+            # (used by docker-compose environment block)
+            if v.startswith("["):
+                import json
+                return json.loads(v)
+            # Handle comma-separated format: "http://localhost,http://localhost:5173"
             return [origin.strip() for origin in v.split(",") if origin.strip()]
         return v  # type: ignore[return-value]
 
