@@ -1,5 +1,7 @@
 import axios from "axios";
 
+// In Docker, VITE_API_BASE_URL is "" so axios uses relative URLs (proxied by nginx).
+// In local dev it is "http://localhost:8000" (set in frontend/.env).
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
 
 export const api = axios.create({
