@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { getCollectionStatus, stopCollection, triggerCollection } from "../api/collection";
+import { getErrorMessage } from "../api/client";
 import { listRouteGroups } from "../api/route-groups";
 import { fetchHealth, fetchOverviewStats } from "../api/stats";
 import { ErrorBoundary } from "../components/ErrorBoundary";
@@ -66,19 +67,23 @@ export function DashboardPage() {
   const groups = groupsQuery.data ?? [];
   const health = healthQuery.data;
   const isCollecting = statusQuery.data?.is_collecting ?? false;
+  const noProvider =
+    !healthQuery.isLoading &&
+    health?.provider_status?.serpapi !== "configured" &&
+    !health?.demo_mode;
 
   async function handleTriggerAll() {
     setTriggering(true);
     try {
       const res = await triggerCollection();
       if (res.status === "already_running") {
-        showToast("Collection is already running", "info" as never);
+        showToast("Collection is already running", "info");
       } else {
-        showToast("Collection triggered", "success");
+        showToast("Collection triggered successfully", "success");
         qc.invalidateQueries({ queryKey: ["collection-status"] });
       }
-    } catch {
-      showToast("Failed to trigger collection", "error");
+    } catch (err) {
+      showToast(getErrorMessage(err, "Failed to trigger collection"), "error");
     } finally {
       setTriggering(false);
     }
@@ -87,6 +92,32 @@ export function DashboardPage() {
   return (
     <ErrorBoundary>
       <div className="space-y-6">
+        {/* No-provider warning banner */}
+        {noProvider && (
+          <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            <span className="mt-0.5 text-lg leading-none">⚠️</span>
+            <div>
+              <p className="font-semibold">No API key configured</p>
+              <p className="mt-0.5 text-amber-700">
+                Add <code className="rounded bg-amber-100 px-1 font-mono text-xs">SERPAPI_KEY</code> to{" "}
+                <code className="rounded bg-amber-100 px-1 font-mono text-xs">backend/.env</code> to collect real prices.
+                Or set <code className="rounded bg-amber-100 px-1 font-mono text-xs">DEMO_MODE=true</code> to use fake data for testing.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Demo mode notice */}
+        {health?.demo_mode && (
+          <div className="flex items-center gap-3 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
+            <span className="text-lg leading-none">🧪</span>
+            <p>
+              <span className="font-semibold">Demo mode active</span> — prices are fake and generated locally. Switch to a real{" "}
+              <code className="rounded bg-blue-100 px-1 font-mono text-xs">SERPAPI_KEY</code> for production use.
+            </p>
+          </div>
+        )}
+
         {/* Header row */}
         <div className="flex items-center justify-between">
           <div>

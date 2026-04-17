@@ -95,6 +95,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             database_status=db_status,
             scheduler_running=request.app.state.scheduler.is_running,
             provider_status=provider_status,
+            demo_mode=s.demo_mode,
         )
 
     @app.exception_handler(Exception)

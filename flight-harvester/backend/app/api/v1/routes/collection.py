@@ -3,7 +3,7 @@ from __future__ import annotations
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, BackgroundTasks, Depends, Query, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, Request
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -38,6 +38,12 @@ async def trigger_collection(
     scheduler = request.app.state.scheduler
     if scheduler.is_collecting:
         return {"status": "already_running"}
+    registry = request.app.state.provider_registry
+    if not registry.get_enabled():
+        raise HTTPException(
+            status_code=400,
+            detail="No flight data provider is configured. Add SERPAPI_KEY to your .env file, or enable DEMO_MODE=true to use fake data.",
+        )
     background_tasks.add_task(scheduler.run_collection_cycle)
     return {"status": "triggered"}
 
@@ -66,6 +72,12 @@ async def trigger_group(
     _: Annotated[User, Depends(get_current_user)],
 ) -> dict[str, str]:
     scheduler = request.app.state.scheduler
+    registry = request.app.state.provider_registry
+    if not registry.get_enabled():
+        raise HTTPException(
+            status_code=400,
+            detail="No flight data provider is configured. Add SERPAPI_KEY to your .env file, or enable DEMO_MODE=true to use fake data.",
+        )
     background_tasks.add_task(scheduler.trigger_single_group, group_id)
     return {"status": "triggered", "group_id": str(group_id)}
 

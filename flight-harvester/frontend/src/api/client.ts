@@ -30,3 +30,13 @@ api.interceptors.response.use(
     return Promise.reject(err);
   },
 );
+
+/** Extract a human-readable message from an axios error response. */
+export function getErrorMessage(err: unknown, fallback = "Something went wrong"): string {
+  if (err && typeof err === "object" && "response" in err) {
+    const detail = (err as { response?: { data?: { detail?: string } } })
+      .response?.data?.detail;
+    if (detail) return detail;
+  }
+  return fallback;
+}

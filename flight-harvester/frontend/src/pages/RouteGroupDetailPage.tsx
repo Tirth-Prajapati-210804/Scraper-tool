@@ -9,6 +9,7 @@ import {
   saveBlobAsFile,
 } from "../api/route-groups";
 import { triggerGroupCollection } from "../api/collection";
+import { getErrorMessage } from "../api/client";
 import { fetchPriceTrend, fetchPrices } from "../api/prices";
 import { ErrorBoundary } from "../components/ErrorBoundary";
 import { DateCoverageGrid } from "../components/DateCoverageGrid";
@@ -82,10 +83,10 @@ export function RouteGroupDetailPage() {
     setTriggering(true);
     try {
       await triggerGroupCollection(id);
-      showToast("Collection triggered", "success");
+      showToast("Collection triggered successfully", "success");
       qc.invalidateQueries({ queryKey: ["route-group-progress", id] });
-    } catch {
-      showToast("Failed to trigger collection", "error");
+    } catch (err) {
+      showToast(getErrorMessage(err, "Failed to trigger collection"), "error");
     } finally {
       setTriggering(false);
     }

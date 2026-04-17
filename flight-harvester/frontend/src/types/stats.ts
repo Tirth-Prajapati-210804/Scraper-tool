@@ -20,4 +20,5 @@ export interface HealthResponse {
   database_status: string;
   scheduler_running: boolean;
   provider_status: Record<string, string>;
+  demo_mode: boolean;
 }

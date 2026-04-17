@@ -10,8 +10,12 @@ class ProviderRegistry:
 
     def __init__(self, settings: Settings) -> None:
         self.providers: dict[str, FlightProvider] = {}
+        self._demo_mode = settings.demo_mode
 
-        if settings.serpapi_key:
+        if settings.demo_mode:
+            from app.providers.mock import MockProvider
+            self.providers["demo"] = MockProvider()
+        elif settings.serpapi_key:
             self.providers["serpapi"] = SerpApiProvider(
                 api_key=settings.serpapi_key,
                 timeout=settings.provider_timeout_seconds,
@@ -21,9 +25,9 @@ class ProviderRegistry:
         return list(self.providers.values())
 
     def status(self) -> dict[str, str]:
-        all_providers: dict[str, str] = {
-            "serpapi": "disabled",
-        }
+        if self._demo_mode:
+            return {"demo": "active", "serpapi": "disabled"}
+        all_providers: dict[str, str] = {"serpapi": "disabled"}
         for name, provider in self.providers.items():
             all_providers[name] = "configured" if provider.is_configured() else "disabled"
         return all_providers

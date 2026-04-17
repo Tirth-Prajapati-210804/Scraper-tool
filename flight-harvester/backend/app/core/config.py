@@ -30,6 +30,9 @@ class Settings(BaseSettings):
     # Provider API keys (empty = disabled)
     # SerpAPI Google Flights: accurate real-time prices — sign up at serpapi.com
     serpapi_key: str = ""
+    # Demo mode: generates realistic fake prices without any API key.
+    # Set DEMO_MODE=true for demos/testing. Never use in production.
+    demo_mode: bool = False
     # Scheduler
     scheduler_enabled: bool = True
     scheduler_interval_minutes: int = 60
