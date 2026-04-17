@@ -3,7 +3,6 @@ from __future__ import annotations
 from app.core.config import Settings
 from app.providers.base import FlightProvider
 from app.providers.serpapi import SerpApiProvider
-from app.providers.travelpayouts import TravelpayoutsProvider
 
 
 class ProviderRegistry:
@@ -12,14 +11,6 @@ class ProviderRegistry:
     def __init__(self, settings: Settings) -> None:
         self.providers: dict[str, FlightProvider] = {}
 
-        # Travelpayouts: free, calendar-based bulk scanning (PRIMARY)
-        if settings.travelpayouts_token:
-            self.providers["travelpayouts"] = TravelpayoutsProvider(
-                token=settings.travelpayouts_token,
-                timeout=settings.provider_timeout_seconds,
-            )
-
-        # SerpAPI Google Flights: real-time accurate prices (SECONDARY)
         if settings.serpapi_key:
             self.providers["serpapi"] = SerpApiProvider(
                 api_key=settings.serpapi_key,
@@ -31,7 +22,6 @@ class ProviderRegistry:
 
     def status(self) -> dict[str, str]:
         all_providers: dict[str, str] = {
-            "travelpayouts": "disabled",
             "serpapi": "disabled",
         }
         for name, provider in self.providers.items():

@@ -27,10 +27,8 @@ def export_route_group(
     # Sort: date asc, price asc
     sorted_results = sorted(all_results, key=lambda r: (r.depart_date, r.price))
 
-    # Colour rows by provider for quick visual scanning
     provider_colors = {
-        "serpapi":       "DBEAFE",  # blue-100
-        "travelpayouts": "D1FAE5",  # green-100
+        "serpapi": "DBEAFE",  # blue-100
     }
 
     for row_idx, r in enumerate(sorted_results, start=2):

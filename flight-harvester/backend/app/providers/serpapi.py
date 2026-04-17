@@ -12,10 +12,6 @@ HOW IT WORKS:
   With deep_search=true, prices are 100% identical to what you see in the Google
   Flights browser UI. Without it, prices can be off by up to 4x on some routes.
 
-COST EFFICIENCY:
-  Use Travelpayouts (free) for bulk date scanning. Use SerpAPI only as a fallback
-  for routes where Travelpayouts has no data, or when real-time accuracy is needed.
-
 Set SERPAPI_KEY in .env to activate.
 """
 from __future__ import annotations

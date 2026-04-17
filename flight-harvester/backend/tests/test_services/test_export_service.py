@@ -122,7 +122,7 @@ def test_export_zero_duration_shows_dash() -> None:
 
 def test_export_provider_written_to_column_9() -> None:
     rg = make_route_group()
-    excel_bytes = export_route_group(rg, [make_result(provider="travelpayouts")])
+    excel_bytes = export_route_group(rg, [make_result(provider="serpapi")])
     wb = openpyxl.load_workbook(BytesIO(excel_bytes))
     ws = wb["All Results"]
-    assert ws.cell(2, 9).value == "travelpayouts"
+    assert ws.cell(2, 9).value == "serpapi"
