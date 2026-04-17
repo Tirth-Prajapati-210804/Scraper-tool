@@ -12,7 +12,6 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.core.logging import get_logger
 from app.models.all_flight_result import AllFlightResult
-from app.models.daily_cheapest import DailyCheapestPrice  # noqa: F401 — side-effect import
 from app.models.scrape_log import ScrapeLog
 from app.providers.base import FlightProvider, ProviderResult
 from app.utils.airline_codes import normalize_airline
@@ -54,18 +53,8 @@ class PriceCollector:
         destination: str,
         depart_date: date,
         route_group_id: UUID | None,
-        *,
-        leg_id: UUID | None = None,
-        profile_id: UUID | None = None,
     ) -> CollectionResult:
-        """
-        Search all providers for origin→destination on depart_date.
-
-        Writes to:
-        - scrape_logs (always, one row per provider)
-        - daily_cheapest_prices (legacy route-group path, when leg_id is None)
-        - flight_prices (new path, when leg_id + profile_id are provided)
-        """
+        """Search all providers for origin→destination on depart_date."""
         all_results: list[ProviderResult] = []
         provider_results: dict[str, list[ProviderResult]] = {}
         errors: dict[str, str] = {}
@@ -120,37 +109,22 @@ class PriceCollector:
             cheapest = min(all_results, key=lambda r: r.price) if all_results else None
 
             if cheapest:
-                if leg_id and profile_id:
-                    # New path: write to flight_prices (per-leg)
-                    await self._upsert_flight_price(
-                        session=session,
-                        leg_id=leg_id,
-                        profile_id=profile_id,
-                        origin=origin,
-                        destination=destination,
-                        depart_date=depart_date,
-                        result=cheapest,
-                    )
-                else:
-                    # Legacy path: write cheapest to daily_cheapest_prices (route-group)
-                    await self._upsert_cheapest(
-                        session=session,
-                        route_group_id=route_group_id,
-                        origin=origin,
-                        destination=destination,
-                        depart_date=depart_date,
-                        result=cheapest,
-                    )
-                    # Also save every result from every provider so the Excel export
-                    # can include an "All Results" sheet with the full picture.
-                    await self._save_all_results(
-                        session=session,
-                        route_group_id=route_group_id,
-                        origin=origin,
-                        destination=destination,
-                        depart_date=depart_date,
-                        results=all_results,
-                    )
+                await self._upsert_cheapest(
+                    session=session,
+                    route_group_id=route_group_id,
+                    origin=origin,
+                    destination=destination,
+                    depart_date=depart_date,
+                    result=cheapest,
+                )
+                await self._save_all_results(
+                    session=session,
+                    route_group_id=route_group_id,
+                    origin=origin,
+                    destination=destination,
+                    depart_date=depart_date,
+                    results=all_results,
+                )
 
             await session.commit()
 
@@ -163,61 +137,7 @@ class PriceCollector:
             errors=errors,
         )
 
-    # ── flight_prices upsert (new per-leg path) ───────────────────────────────
-
-    async def _upsert_flight_price(
-        self,
-        session: AsyncSession,
-        leg_id: UUID,
-        profile_id: UUID,
-        origin: str,
-        destination: str,
-        depart_date: date,
-        result: ProviderResult,
-    ) -> None:
-        stmt = text("""
-            INSERT INTO flight_prices
-                (id, leg_id, profile_id, origin, destination, depart_date,
-                 airline, price, currency, provider, deep_link,
-                 stops, duration_minutes, scraped_at)
-            VALUES
-                (gen_random_uuid(), :leg_id, :profile_id,
-                 :origin, :destination, :depart_date,
-                 :airline, :price, :currency, :provider, :deep_link,
-                 :stops, :duration_minutes, now())
-            ON CONFLICT (leg_id, origin, destination, depart_date)
-            DO UPDATE SET
-                airline          = EXCLUDED.airline,
-                price            = EXCLUDED.price,
-                currency         = EXCLUDED.currency,
-                provider         = EXCLUDED.provider,
-                deep_link        = EXCLUDED.deep_link,
-                stops            = EXCLUDED.stops,
-                duration_minutes = EXCLUDED.duration_minutes,
-                scraped_at       = now()
-            -- Only update if the new price is strictly cheaper than what's stored.
-            -- If the new price is equal or higher, the existing record is kept unchanged.
-            WHERE flight_prices.price > EXCLUDED.price
-        """)
-        await session.execute(
-            stmt,
-            {
-                "leg_id": str(leg_id),
-                "profile_id": str(profile_id),
-                "origin": origin,
-                "destination": destination,
-                "depart_date": depart_date,
-                "airline": normalize_airline(result.airline),
-                "price": result.price,
-                "currency": result.currency,
-                "provider": result.provider or "unknown",
-                "deep_link": result.deep_link[:2048] if result.deep_link else None,
-                "stops": result.stops if result.stops is not None else None,
-                "duration_minutes": result.duration_minutes or None,
-            },
-        )
-
-    # ── daily_cheapest_prices upsert (legacy route-group path) ───────────────
+    # ── daily_cheapest_prices upsert ─────────────────────────────────────────
 
     async def _upsert_cheapest(
         self,
@@ -320,67 +240,6 @@ class PriceCollector:
                 duration_minutes=result.duration_minutes or None,
             )
             session.add(row)
-
-    # ── batch helpers ─────────────────────────────────────────────────────────
-
-    async def collect_leg_batch(
-        self,
-        leg_id: UUID,
-        profile_id: UUID,
-        origins: list[str],
-        destinations: list[str],
-        dates: list[date],
-        batch_size: int = 5,
-        delay_seconds: float = 1.0,
-        stop_check: Callable[[], bool] | None = None,
-    ) -> dict[str, int]:
-        """
-        Collect prices for all origin×destination pairs for a search leg.
-
-        stop_check: optional callable that returns True when the caller wants the
-        batch loop to abort early (used by the scheduler's stop-collection feature).
-        The current batch finishes before stopping — never halts mid-batch.
-        """
-        stats: dict[str, int] = {"success": 0, "errors": 0, "skipped": 0}
-
-        for origin in origins:
-            for dest in destinations:
-                for i in range(0, len(dates), batch_size):
-                    # Check stop signal before starting each batch
-                    if stop_check and stop_check():
-                        return stats
-
-                    batch = dates[i : i + batch_size]
-                    tasks = [
-                        self.collect_single_date(
-                            origin,
-                            dest,
-                            d,
-                            # Pass None because this is a search profile, not a route
-                            # group. ScrapeLog.route_group_id has a FK to route_groups.id —
-                            # passing profile_id here would violate that constraint.
-                            None,
-                            leg_id=leg_id,
-                            profile_id=profile_id,
-                        )
-                        for d in batch
-                    ]
-                    results = await asyncio.gather(*tasks, return_exceptions=True)
-
-                    for result in results:
-                        if isinstance(result, Exception):
-                            stats["errors"] += 1
-                        elif isinstance(result, CollectionResult):
-                            if result.cheapest:
-                                stats["success"] += 1
-                            else:
-                                stats["skipped"] += 1
-
-                    if i + batch_size < len(dates):
-                        # Pause between batches to avoid hitting provider rate limits
-                        await asyncio.sleep(delay_seconds)
-
-        return stats
 
     async def collect_route_batch(
         self,

@@ -70,18 +70,6 @@ async def trigger_group(
     return {"status": "triggered", "group_id": str(group_id)}
 
 
-@router.post("/trigger-profile/{profile_id}")
-async def trigger_profile(
-    profile_id: uuid.UUID,
-    request: Request,
-    background_tasks: BackgroundTasks,
-    _: Annotated[User, Depends(get_current_user)],
-) -> dict[str, str]:
-    """Trigger a collection run for one specific search profile."""
-    scheduler = request.app.state.scheduler
-    background_tasks.add_task(scheduler.trigger_single_profile, profile_id)
-    return {"status": "triggered", "profile_id": str(profile_id)}
-
 
 @router.get("/runs")
 async def list_runs(

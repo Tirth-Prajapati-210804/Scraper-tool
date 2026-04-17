@@ -9,8 +9,6 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { DataExplorerPage } from "./pages/DataExplorerPage";
 import { LoginPage } from "./pages/LoginPage";
 import { RouteGroupDetailPage } from "./pages/RouteGroupDetailPage";
-import { SearchProfileDetailPage } from "./pages/SearchProfileDetailPage";
-import { SearchProfilesPage } from "./pages/SearchProfilesPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,8 +37,6 @@ export default function App() {
                 }
               >
                 <Route path="/" element={<DashboardPage />} />
-                <Route path="/search-profiles" element={<SearchProfilesPage />} />
-                <Route path="/search-profiles/:id" element={<SearchProfileDetailPage />} />
                 <Route path="/route-groups/:id" element={<RouteGroupDetailPage />} />
                 <Route path="/explorer" element={<DataExplorerPage />} />
                 <Route path="/logs" element={<CollectionLogsPage />} />
