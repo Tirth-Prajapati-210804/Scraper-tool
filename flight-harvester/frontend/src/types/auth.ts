@@ -5,11 +5,6 @@ export interface User {
   role: string;
 }
 
-export interface UserAdmin extends User {
-  is_active: boolean;
-  created_at: string;
-}
-
 export interface TokenResponse {
   access_token: string;
   token_type: string;
@@ -22,8 +17,3 @@ export interface LoginCredentials {
   password: string;
 }
 
-export interface RegisterCredentials {
-  email: string;
-  password: string;
-  full_name: string;
-}
