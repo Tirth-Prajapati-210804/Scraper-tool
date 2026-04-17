@@ -12,7 +12,7 @@ from app.services.price_collector import CollectionResult, PriceCollector
 
 # ── helpers ──────────────────────────────────────────────────────────────────
 
-def make_result(price: float, airline: str = "AC", provider: str = "kiwi") -> ProviderResult:
+def make_result(price: float, airline: str = "AC", provider: str = "serpapi") -> ProviderResult:
     return ProviderResult(
         price=price,
         currency="CAD",
@@ -50,7 +50,7 @@ async def test_collect_single_date_returns_cheapest() -> None:
     session.add = MagicMock()
     session.commit = AsyncMock()
 
-    provider = make_provider("kiwi", [make_result(1500), make_result(2000)])
+    provider = make_provider("serpapi", [make_result(1500), make_result(2000)])
     collector = PriceCollector(
         session_factory=make_session_factory(session),
         providers=[provider],
@@ -76,8 +76,8 @@ async def test_collect_single_date_picks_cheapest_across_providers() -> None:
     session.add = MagicMock()
     session.commit = AsyncMock()
 
-    p1 = make_provider("kiwi", [make_result(1800, provider="kiwi")])
-    p2 = make_provider("flightapi", [make_result(1200, provider="flightapi")])
+    p1 = make_provider("serpapi", [make_result(1800, provider="serpapi")])
+    p2 = make_provider("serpapi_b", [make_result(1200, provider="serpapi_b")])
     collector = PriceCollector(
         session_factory=make_session_factory(session),
         providers=[p1, p2],
@@ -88,7 +88,7 @@ async def test_collect_single_date_picks_cheapest_across_providers() -> None:
 
     assert result.cheapest is not None
     assert result.cheapest.price == 1200
-    assert result.cheapest.provider == "flightapi"
+    assert result.cheapest.provider == "serpapi_b"
 
 
 @pytest.mark.asyncio
@@ -97,9 +97,9 @@ async def test_collect_single_date_one_provider_fails() -> None:
     session.add = MagicMock()
     session.commit = AsyncMock()
 
-    p_good = make_provider("kiwi", [make_result(1500)])
+    p_good = make_provider("serpapi", [make_result(1500)])
     p_bad = MagicMock()
-    p_bad.name = "flightapi"
+    p_bad.name = "serpapi_b"
     p_bad.search_one_way = AsyncMock(side_effect=RuntimeError("API down"))
 
     collector = PriceCollector(
@@ -115,7 +115,7 @@ async def test_collect_single_date_one_provider_fails() -> None:
     assert result.cheapest is not None
     assert result.cheapest.price == 1500
     # Error recorded
-    assert "flightapi" in result.errors
+    assert "serpapi_b" in result.errors
     # Both a success log and an error log were added
     assert session.add.call_count == 2
 
@@ -145,7 +145,7 @@ async def test_collect_route_batch_stats() -> None:
     session.add = MagicMock()
     session.commit = AsyncMock()
 
-    provider = make_provider("kiwi", [make_result(1500)])
+    provider = make_provider("serpapi", [make_result(1500)])
     collector = PriceCollector(
         session_factory=make_session_factory(session),
         providers=[provider],
@@ -177,7 +177,7 @@ async def test_upsert_cheapest_sends_correct_params() -> None:
         session_factory=make_session_factory(session),
         providers=[],
     )
-    result = make_result(1250, airline="AC", provider="kiwi")
+    result = make_result(1250, airline="AC", provider="serpapi")
     result.deep_link = "https://example.com/booking"
 
     await collector._upsert_cheapest(
@@ -195,5 +195,5 @@ async def test_upsert_cheapest_sends_correct_params() -> None:
     assert params["origin"] == "YYZ"
     assert params["destination"] == "NRT"
     assert params["price"] == 1250
-    assert params["provider"] == "kiwi"
+    assert params["provider"] == "serpapi"
     assert params["airline"] == "AC"

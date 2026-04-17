@@ -168,7 +168,7 @@ class PriceCollector:
                 duration_minutes = EXCLUDED.duration_minutes,
                 route_group_id   = EXCLUDED.route_group_id,
                 scraped_at       = now()
-            -- Same cheapest-wins logic as the flight_prices upsert above
+            -- Only update if the new price is cheaper than the stored price
             WHERE daily_cheapest_prices.price > EXCLUDED.price
         """)
         await session.execute(

@@ -13,19 +13,6 @@ export async function login(
   return res.data;
 }
 
-export async function register(
-  email: string,
-  password: string,
-  full_name: string,
-): Promise<User> {
-  const res = await api.post<User>("/api/v1/auth/register", {
-    email,
-    password,
-    full_name,
-  });
-  return res.data;
-}
-
 export async function getMe(): Promise<User> {
   const res = await api.get<User>("/api/v1/auth/me");
   return res.data;

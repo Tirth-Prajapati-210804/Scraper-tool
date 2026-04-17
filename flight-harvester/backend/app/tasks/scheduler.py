@@ -153,6 +153,39 @@ class FlightScheduler:
                             total_errors += 1
                             log.exception("route_collection_failed", origin=origin, error=str(exc))
 
+                    # Collect data for special sheet origins that are not in the
+                    # main origins list (e.g. KIX→Beijing within a Canada→Asia group)
+                    main_origins = set(group.origins)
+                    for spec in (group.special_sheets or []):
+                        spec_origin = spec.get("origin", "")
+                        spec_dests = spec.get("destinations", [])
+                        if not spec_origin or not spec_dests or spec_origin in main_origins:
+                            continue
+                        if self._stop_requested:
+                            break
+                        total_routes += 1
+                        try:
+                            remaining = await self._filter_already_scraped(
+                                session, spec_origin, spec_dests, dates
+                            )
+                            if not remaining:
+                                total_success += 1
+                                continue
+                            stats = await collector.collect_route_batch(
+                                origin=spec_origin,
+                                destinations=spec_dests,
+                                dates=remaining,
+                                route_group_id=group.id,
+                                batch_size=self.settings.scrape_batch_size,
+                                delay_seconds=self.settings.scrape_delay_seconds,
+                                stop_check=lambda: self._stop_requested,
+                            )
+                            total_success += stats["success"]
+                            total_errors += stats["errors"]
+                        except Exception as exc:
+                            total_errors += 1
+                            log.exception("special_sheet_collection_failed", origin=spec_origin, error=str(exc))
+
                 run.status = "stopped" if self._stop_requested else "completed"
                 run.routes_total = total_routes
                 run.routes_success = total_success
@@ -242,6 +275,30 @@ class FlightScheduler:
                 part = await collector.collect_route_batch(
                     origin=origin,
                     destinations=group.destinations,
+                    dates=remaining,
+                    route_group_id=group.id,
+                    batch_size=self.settings.scrape_batch_size,
+                    delay_seconds=self.settings.scrape_delay_seconds,
+                )
+                stats["success"] += part["success"]
+                stats["errors"] += part["errors"]
+                stats["skipped"] += part["skipped"]
+
+            # Collect data for special sheet origins not in the main origins list
+            main_origins = set(group.origins)
+            for spec in (group.special_sheets or []):
+                spec_origin = spec.get("origin", "")
+                spec_dests = spec.get("destinations", [])
+                if not spec_origin or not spec_dests or spec_origin in main_origins:
+                    continue
+                remaining = await self._filter_already_scraped(
+                    session, spec_origin, spec_dests, dates
+                )
+                if not remaining:
+                    continue
+                part = await collector.collect_route_batch(
+                    origin=spec_origin,
+                    destinations=spec_dests,
                     dates=remaining,
                     route_group_id=group.id,
                     batch_size=self.settings.scrape_batch_size,

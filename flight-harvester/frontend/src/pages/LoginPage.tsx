@@ -1,5 +1,5 @@
 import { type FormEvent, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Plane } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "../components/ui/Button";
@@ -7,8 +7,6 @@ import { Button } from "../components/ui/Button";
 export function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const justRegistered = searchParams.get("registered") === "1";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -55,11 +53,6 @@ export function LoginPage() {
 
         {/* Form */}
         <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-          {justRegistered && (
-            <p className="mb-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
-              Account created! Sign in below.
-            </p>
-          )}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="email" className="field-label">
