@@ -37,7 +37,7 @@ class AllFlightResult(Base):
     depart_date: Mapped[date] = mapped_column(Date, nullable=False)
     airline: Mapped[str] = mapped_column(String(100), nullable=False, default="")
     price: Mapped[float] = mapped_column(Float, nullable=False)
-    currency: Mapped[str] = mapped_column(String(8), nullable=False, default="USD")
+    currency: Mapped[str] = mapped_column(String(8), nullable=False, default="CAD")
     provider: Mapped[str] = mapped_column(String(50), nullable=False)
     deep_link: Mapped[str | None] = mapped_column(String(2048), nullable=True)
     stops: Mapped[int | None] = mapped_column(Integer, nullable=True)
