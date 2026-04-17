@@ -1,5 +1,5 @@
 import { type FormEvent, useState } from "react";
-import { useNavigate, Link, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Plane } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "../components/ui/Button";
@@ -21,8 +21,15 @@ export function LoginPage() {
     try {
       await login(email, password);
       navigate("/", { replace: true });
-    } catch {
-      setError("Invalid email or password. Please try again.");
+    } catch (err: unknown) {
+      const isNetworkError =
+        err instanceof TypeError ||
+        (err as { response?: unknown })?.response === undefined;
+      setError(
+        isNetworkError
+          ? "Cannot reach the server. Make sure the backend is running."
+          : "Invalid email or password. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -102,12 +109,6 @@ export function LoginPage() {
             </Button>
           </form>
 
-          <p className="mt-4 text-center text-sm text-slate-500">
-            Don't have an account?{" "}
-            <Link to="/register" className="text-brand-600 hover:underline">
-              Register
-            </Link>
-          </p>
         </div>
       </div>
     </div>
