@@ -102,8 +102,17 @@ class SerpApiProvider:
                     continue
 
                 first_leg = flights[0]
-                airline = first_leg.get("airline", "")
                 flight_number = first_leg.get("flight_number", "")
+                airline_name = first_leg.get("airline", "")
+
+                # Flight numbers always start with the correct 2-letter IATA code
+                # (e.g. "VJ 767" → "VJ"). This is more reliable than the airline
+                # name field which can be garbled or use wrong abbreviations.
+                if flight_number:
+                    airline = flight_number.split()[0]
+                else:
+                    airline = airline_name
+
                 total_duration = offer.get("total_duration", 0)  # already in minutes
 
                 # stops = number of connecting flights in the itinerary
