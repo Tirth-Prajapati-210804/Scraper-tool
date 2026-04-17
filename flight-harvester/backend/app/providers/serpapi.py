@@ -66,7 +66,7 @@ class SerpApiProvider:
             "departure_id": origin,        # IATA code, e.g. "AMD"
             "arrival_id": destination,     # IATA code, e.g. "DEL"
             "outbound_date": depart_date.isoformat(),
-            "currency": "USD",
+            "currency": "CAD",
             "adults": adults,
             "type": 2,             # 1 = round-trip, 2 = one-way
             "travel_class": travel_class,
@@ -132,7 +132,7 @@ class SerpApiProvider:
                 results.append(
                     ProviderResult(
                         price=float(price),
-                        currency="USD",
+                        currency="CAD",
                         airline=airline,
                         deep_link=deep_link,
                         provider=self.name,
