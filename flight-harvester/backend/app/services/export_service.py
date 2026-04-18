@@ -32,7 +32,8 @@ def export_route_group(
     all_dates = sorted({r.depart_date for r in all_results})
 
     # ── Main sheets — one per origin ─────────────────────────────────────────
-    for origin, sheet_name in route_group.sheet_name_map.items():
+    sheet_name_map = route_group.sheet_name_map or {o: o for o in route_group.origins}
+    for origin, sheet_name in sheet_name_map.items():
         ws = wb.create_sheet(title=sheet_name)
         _write_header_row(ws, _MAIN_HEADERS)
 

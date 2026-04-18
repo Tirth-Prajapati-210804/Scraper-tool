@@ -55,7 +55,7 @@ async def create(
         origins=data.origins,
         nights=data.nights,
         days_ahead=data.days_ahead,
-        sheet_name_map=data.sheet_name_map,
+        sheet_name_map=data.sheet_name_map or {o: o for o in data.origins},
         special_sheets=[s.model_dump() for s in data.special_sheets],
         user_id=owner_id,
     )
