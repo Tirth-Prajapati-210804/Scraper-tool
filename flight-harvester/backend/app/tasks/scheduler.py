@@ -244,69 +244,88 @@ class FlightScheduler:
         return [d for d in dates if d not in already_done]
 
     async def trigger_single_group(self, group_id: UUID) -> dict[str, int]:
+        if self._is_collecting:
+            log.warning("trigger_single_group_skipped_already_collecting", group_id=str(group_id))
+            return {"success": 0, "errors": 0, "skipped": 0}
+
+        self._stop_requested = False
+        self._is_collecting = True
         stats: dict[str, int] = {"success": 0, "errors": 0, "skipped": 0}
 
-        async with self.session_factory() as session:
-            result = await session.execute(
-                select(RouteGroup).where(
-                    RouteGroup.id == group_id, RouteGroup.is_active.is_(True)
+        try:
+            async with self.session_factory() as session:
+                result = await session.execute(
+                    select(RouteGroup).where(
+                        RouteGroup.id == group_id, RouteGroup.is_active.is_(True)
+                    )
                 )
-            )
-            group = result.scalar_one_or_none()
-            if not group:
-                return stats
+                group = result.scalar_one_or_none()
+                if not group:
+                    return stats
 
-            providers = self.provider_registry.get_enabled()
-            if not providers:
-                return stats
+                providers = self.provider_registry.get_enabled()
+                if not providers:
+                    return stats
 
-            dates = self._generate_dates(group.days_ahead)
-            collector = PriceCollector(
-                session_factory=self.session_factory,
-                providers=providers,
-            )
+                dates = self._generate_dates(group.days_ahead)
+                collector = PriceCollector(
+                    session_factory=self.session_factory,
+                    providers=providers,
+                )
 
-            for origin in group.origins:
-                remaining = await self._filter_already_scraped(
-                    session, origin, group.destinations, dates
-                )
-                if not remaining:
-                    continue
-                part = await collector.collect_route_batch(
-                    origin=origin,
-                    destinations=group.destinations,
-                    dates=remaining,
-                    route_group_id=group.id,
-                    batch_size=self.settings.scrape_batch_size,
-                    delay_seconds=self.settings.scrape_delay_seconds,
-                )
-                stats["success"] += part["success"]
-                stats["errors"] += part["errors"]
-                stats["skipped"] += part["skipped"]
+                for origin in group.origins:
+                    if self._stop_requested:
+                        break
+                    remaining = await self._filter_already_scraped(
+                        session, origin, group.destinations, dates
+                    )
+                    if not remaining:
+                        continue
+                    part = await collector.collect_route_batch(
+                        origin=origin,
+                        destinations=group.destinations,
+                        dates=remaining,
+                        route_group_id=group.id,
+                        batch_size=self.settings.scrape_batch_size,
+                        delay_seconds=self.settings.scrape_delay_seconds,
+                        stop_check=lambda: self._stop_requested,
+                    )
+                    stats["success"] += part["success"]
+                    stats["errors"] += part["errors"]
+                    stats["skipped"] += part["skipped"]
 
-            # Collect data for special sheet origins not in the main origins list
-            main_origins = set(group.origins)
-            for spec in (group.special_sheets or []):
-                spec_origin = spec.get("origin", "")
-                spec_dests = spec.get("destinations", [])
-                if not spec_origin or not spec_dests or spec_origin in main_origins:
-                    continue
-                remaining = await self._filter_already_scraped(
-                    session, spec_origin, spec_dests, dates
-                )
-                if not remaining:
-                    continue
-                part = await collector.collect_route_batch(
-                    origin=spec_origin,
-                    destinations=spec_dests,
-                    dates=remaining,
-                    route_group_id=group.id,
-                    batch_size=self.settings.scrape_batch_size,
-                    delay_seconds=self.settings.scrape_delay_seconds,
-                )
-                stats["success"] += part["success"]
-                stats["errors"] += part["errors"]
-                stats["skipped"] += part["skipped"]
+                # Collect data for special sheet origins not in the main origins list
+                main_origins = set(group.origins)
+                for spec in (group.special_sheets or []):
+                    if self._stop_requested:
+                        break
+                    spec_origin = spec.get("origin", "")
+                    spec_dests = spec.get("destinations", [])
+                    if not spec_origin or not spec_dests or spec_origin in main_origins:
+                        continue
+                    remaining = await self._filter_already_scraped(
+                        session, spec_origin, spec_dests, dates
+                    )
+                    if not remaining:
+                        continue
+                    part = await collector.collect_route_batch(
+                        origin=spec_origin,
+                        destinations=spec_dests,
+                        dates=remaining,
+                        route_group_id=group.id,
+                        batch_size=self.settings.scrape_batch_size,
+                        delay_seconds=self.settings.scrape_delay_seconds,
+                        stop_check=lambda: self._stop_requested,
+                    )
+                    stats["success"] += part["success"]
+                    stats["errors"] += part["errors"]
+                    stats["skipped"] += part["skipped"]
+
+        except Exception as exc:
+            log.exception("trigger_single_group_failed", group_id=str(group_id), error=str(exc))
+        finally:
+            self._is_collecting = False
+            self._stop_requested = False
 
         return stats
 

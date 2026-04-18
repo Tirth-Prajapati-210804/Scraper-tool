@@ -37,6 +37,15 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
         async with AsyncSessionLocal() as session:
             await ensure_default_admin(session, settings)
+            # Mark any collection runs stuck in "running" (from a previous crash) as failed
+            from sqlalchemy import update as sa_update
+            from app.models.collection_run import CollectionRun
+            await session.execute(
+                sa_update(CollectionRun)
+                .where(CollectionRun.status == "running")
+                .values(status="failed", errors=["Server restarted mid-collection"])
+            )
+            await session.commit()
 
         scheduler = FlightScheduler(
             settings=settings,

@@ -157,7 +157,7 @@ class PriceCollector:
                 (gen_random_uuid(), :route_group_id, :origin, :destination, :depart_date,
                  :airline, :price, :currency, :provider, :deep_link,
                  :stops, :duration_minutes, now())
-            ON CONFLICT (origin, destination, depart_date)
+            ON CONFLICT (route_group_id, origin, destination, depart_date)
             DO UPDATE SET
                 airline          = EXCLUDED.airline,
                 price            = EXCLUDED.price,
@@ -166,7 +166,6 @@ class PriceCollector:
                 deep_link        = EXCLUDED.deep_link,
                 stops            = EXCLUDED.stops,
                 duration_minutes = EXCLUDED.duration_minutes,
-                route_group_id   = EXCLUDED.route_group_id,
                 scraped_at       = now()
             -- Only update if the new price is cheaper than the stored price
             WHERE daily_cheapest_prices.price > EXCLUDED.price
