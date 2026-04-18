@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     scheduler_enabled: bool = True
     scheduler_interval_minutes: int = 60
     scrape_days_ahead: int = 365
-    scrape_batch_size: int = 5
+    scrape_batch_size: int = 10
     scrape_delay_seconds: float = 1.0
     provider_timeout_seconds: int = 30
     provider_max_retries: int = 3
