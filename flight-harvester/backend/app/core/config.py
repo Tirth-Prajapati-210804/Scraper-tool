@@ -30,6 +30,9 @@ class Settings(BaseSettings):
     # Provider API keys (empty = disabled)
     # SerpAPI Google Flights: accurate real-time prices — sign up at serpapi.com
     serpapi_key: str = ""
+    # deep_search=true mirrors exact Google Flights browser prices but is 4-6x slower (~20s/search).
+    # Set SERPAPI_DEEP_SEARCH=false for faster collection at the cost of minor price variance (~5-10%).
+    serpapi_deep_search: bool = True
     # Demo mode: generates realistic fake prices without any API key.
     # Set DEMO_MODE=true for demos/testing. Never use in production.
     demo_mode: bool = False
@@ -37,8 +40,8 @@ class Settings(BaseSettings):
     scheduler_enabled: bool = True
     scheduler_interval_minutes: int = 60
     scrape_days_ahead: int = 365
-    scrape_batch_size: int = 3
-    scrape_delay_seconds: float = 2.0
+    scrape_batch_size: int = 5
+    scrape_delay_seconds: float = 1.0
     provider_timeout_seconds: int = 30
     provider_max_retries: int = 3
 

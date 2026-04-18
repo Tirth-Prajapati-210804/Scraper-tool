@@ -19,6 +19,7 @@ class ProviderRegistry:
             self.providers["serpapi"] = SerpApiProvider(
                 api_key=settings.serpapi_key,
                 timeout=settings.provider_timeout_seconds,
+                deep_search=settings.serpapi_deep_search,
             )
 
     def get_enabled(self) -> list[FlightProvider]:

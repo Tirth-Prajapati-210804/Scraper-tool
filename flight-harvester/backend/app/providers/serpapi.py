@@ -32,11 +32,10 @@ _BASE_URL = "https://serpapi.com/search.json"
 class SerpApiProvider:
     name = "serpapi"
 
-    def __init__(self, api_key: str, timeout: int = 60) -> None:
-        # deep_search=true makes responses significantly slower than normal searches,
-        # so we use a 60-second timeout instead of the default 30
+    def __init__(self, api_key: str, timeout: int = 60, deep_search: bool = True) -> None:
         self._api_key = api_key
         self._timeout = timeout
+        self._deep_search = deep_search
 
     def is_configured(self) -> bool:
         return bool(self._api_key)
@@ -73,7 +72,7 @@ class SerpApiProvider:
             # deep_search=true mirrors the exact prices shown in the browser.
             # Without this flag, SerpAPI may return a faster but less accurate
             # estimate that can differ significantly from the real price.
-            "deep_search": "true",
+            "deep_search": "true" if self._deep_search else "false",
             "api_key": self._api_key,
         }
 
