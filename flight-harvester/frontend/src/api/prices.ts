@@ -15,6 +15,7 @@ export async function fetchPrices(params: {
 export async function fetchPriceTrend(params: {
   origin: string;
   destination: string;
+  route_group_id?: string;
   date_from?: string;
   date_to?: string;
 }): Promise<PriceTrend[]> {

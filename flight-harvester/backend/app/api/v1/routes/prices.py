@@ -50,6 +50,7 @@ async def price_trend(
     _: _Auth,
     origin: str = Query(),
     destination: str = Query(),
+    route_group_id: uuid.UUID | None = Query(default=None),
     date_from: date | None = Query(default=None),
     date_to: date | None = Query(default=None),
 ) -> list[PriceTrendPoint]:
@@ -61,6 +62,8 @@ async def price_trend(
         )
         .order_by(DailyCheapestPrice.depart_date)
     )
+    if route_group_id:
+        q = q.where(DailyCheapestPrice.route_group_id == route_group_id)
     if date_from:
         q = q.where(DailyCheapestPrice.depart_date >= date_from)
     if date_to:

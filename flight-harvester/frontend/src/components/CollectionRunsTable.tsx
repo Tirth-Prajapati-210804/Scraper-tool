@@ -1,4 +1,5 @@
-import { CheckCircle, Loader2, Square, XCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle, Loader2, Square, XCircle } from "lucide-react";
+import { useState } from "react";
 import type { CollectionRun } from "../types/price";
 import { formatRelativeTime } from "../utils/format";
 import { Skeleton } from "./ui/Skeleton";
@@ -25,6 +26,8 @@ export function CollectionRunsTable({
   onStop,
   stopping,
 }: CollectionRunsTableProps) {
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
   if (isLoading) return <Skeleton className="h-48 rounded-xl" />;
 
   if (!runs.length) {
@@ -47,6 +50,7 @@ export function CollectionRunsTable({
             <th className="px-3 py-2.5">Status</th>
             <th className="px-3 py-2.5">Routes</th>
             <th className="px-3 py-2.5 text-right">Prices</th>
+            <th className="px-3 py-2.5">Errors</th>
             {hasRunning && onStop && <th className="px-3 py-2.5" />}
           </tr>
         </thead>
@@ -83,6 +87,28 @@ export function CollectionRunsTable({
               </td>
               <td className="px-3 py-2 text-right text-slate-700">
                 {run.dates_scraped.toLocaleString()}
+              </td>
+              <td className="px-3 py-2">
+                {run.errors && run.errors.length > 0 ? (
+                  <div>
+                    <button
+                      onClick={() => setExpandedId(expandedId === run.id ? null : run.id)}
+                      className="flex items-center gap-1 text-xs text-red-600 hover:text-red-800"
+                    >
+                      <AlertTriangle className="h-3.5 w-3.5" />
+                      {run.errors.length} route{run.errors.length > 1 ? "s" : ""}
+                    </button>
+                    {expandedId === run.id && (
+                      <ul className="mt-1 space-y-0.5">
+                        {run.errors.map((e, i) => (
+                          <li key={i} className="font-mono text-xs text-red-700">{e}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                ) : (
+                  <span className="text-xs text-slate-400">—</span>
+                )}
               </td>
               {hasRunning && onStop && (
                 <td className="px-3 py-2 text-right">

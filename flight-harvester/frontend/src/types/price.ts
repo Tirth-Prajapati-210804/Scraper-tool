@@ -27,6 +27,7 @@ export interface CollectionRun {
   routes_success: number;
   routes_failed: number;
   dates_scraped: number;
+  errors: string[] | null;
 }
 
 export interface ScrapeLogEntry {

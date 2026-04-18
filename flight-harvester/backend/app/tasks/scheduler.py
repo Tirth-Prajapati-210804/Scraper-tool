@@ -233,14 +233,20 @@ class FlightScheduler:
         dates: list[date],
     ) -> list[date]:
         today = date.today()
+        # A date is "done" only when every destination for this origin was scraped
+        # successfully today. Counting distinct destinations per date and comparing
+        # against the full destinations list prevents HAN from being skipped just
+        # because SGN was already scraped for the same date.
         result = await session.execute(
             text("""
-                SELECT DISTINCT depart_date FROM scrape_logs
+                SELECT depart_date, COUNT(DISTINCT destination) AS dest_count
+                FROM scrape_logs
                 WHERE origin = :origin
                   AND destination = ANY(:destinations)
                   AND status = 'success'
                   AND created_at::date = :today
                   AND depart_date = ANY(:dates)
+                GROUP BY depart_date
             """),
             {
                 "origin": origin,
@@ -249,7 +255,8 @@ class FlightScheduler:
                 "dates": dates,
             },
         )
-        already_done = {row[0] for row in result.fetchall()}
+        num_dests = len(destinations)
+        already_done = {row[0] for row in result.fetchall() if row[1] >= num_dests}
         return [d for d in dates if d not in already_done]
 
     async def trigger_single_group(self, group_id: UUID) -> dict[str, int]:
@@ -347,6 +354,11 @@ class FlightScheduler:
                 )
                 await session.execute(
                     text("DELETE FROM collection_runs WHERE started_at < now() - interval '30 days'")
+                )
+                # Remove all_flight_results rows for dates already in the past
+                # (keeps 7 days of history for debugging; older rows are never useful)
+                await session.execute(
+                    text("DELETE FROM all_flight_results WHERE depart_date < current_date - 7")
                 )
                 await session.commit()
             log.info("cleanup_finished")

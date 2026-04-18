@@ -51,7 +51,7 @@ export function RouteGroupDetailPage() {
   const trendQuery = useQuery({
     queryKey: ["price-trend", id, originForQuery, destForQuery],
     queryFn: () =>
-      fetchPriceTrend({ origin: originForQuery, destination: destForQuery }),
+      fetchPriceTrend({ origin: originForQuery, destination: destForQuery, route_group_id: id }),
     enabled: !!originForQuery && !!destForQuery,
   });
 
@@ -236,10 +236,14 @@ export function RouteGroupDetailPage() {
             )}
           </div>
         </div>
-        <PriceTable
-          prices={pricesQuery.data ?? []}
-          isLoading={pricesQuery.isLoading}
-        />
+        {pricesQuery.isError ? (
+          <p className="py-8 text-center text-sm text-red-500">Failed to load price data. Try refreshing the page.</p>
+        ) : (
+          <PriceTable
+            prices={pricesQuery.data ?? []}
+            isLoading={pricesQuery.isLoading}
+          />
+        )}
       </Card>
 
       <RouteGroupForm
