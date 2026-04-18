@@ -177,6 +177,5 @@ def normalize_airline(raw: str) -> str:
         if two_words in AIRLINE_MAP:
             return AIRLINE_MAP[two_words]
 
-    # Unknown airline — return the raw value rather than silently truncating it
-    # so operators can see what the provider actually returned and add a mapping
-    return raw.strip()
+    # Unknown airline — truncate to 10 chars to prevent garbage data in exports
+    return raw.strip()[:10]

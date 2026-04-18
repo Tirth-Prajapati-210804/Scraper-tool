@@ -8,8 +8,10 @@ import {
   saveBlobAsFile,
 } from "../api/route-groups";
 import { triggerGroupCollection } from "../api/collection";
+import { getErrorMessage } from "../api/client";
 import type { RouteGroup } from "../types/route-group";
 import { formatRelativeTime, formatNumber } from "../utils/format";
+import { useToast } from "../context/ToastContext";
 import { Button } from "./ui/Button";
 import { Card } from "./ui/Card";
 import { ProgressBar } from "./ui/ProgressBar";
@@ -20,6 +22,7 @@ interface RouteGroupCardProps {
 }
 
 export function RouteGroupCard({ group }: RouteGroupCardProps) {
+  const { showToast } = useToast();
   const [downloading, setDownloading] = useState(false);
   const [triggering, setTriggering] = useState(false);
 
@@ -37,6 +40,9 @@ export function RouteGroupCard({ group }: RouteGroupCardProps) {
       const blob = await downloadExport(group.id);
       const safeName = group.name.replace(/[^a-z0-9_-]/gi, "_");
       saveBlobAsFile(blob, `${safeName}.xlsx`);
+      showToast("Excel downloaded", "success");
+    } catch (err) {
+      showToast(getErrorMessage(err, "Download failed"), "error");
     } finally {
       setDownloading(false);
     }
@@ -46,6 +52,9 @@ export function RouteGroupCard({ group }: RouteGroupCardProps) {
     setTriggering(true);
     try {
       await triggerGroupCollection(group.id);
+      showToast("Collection triggered", "success");
+    } catch (err) {
+      showToast(getErrorMessage(err, "Failed to trigger collection"), "error");
     } finally {
       setTriggering(false);
     }
@@ -90,6 +99,11 @@ export function RouteGroupCard({ group }: RouteGroupCardProps) {
         </div>
       ) : progress ? (
         <div className="space-y-1.5">
+          {progress.dates_with_data === 0 && (
+            <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
+              Never scraped — trigger collection to start
+            </span>
+          )}
           <ProgressBar
             value={progress.dates_with_data}
             max={progress.total_dates}
@@ -107,8 +121,10 @@ export function RouteGroupCard({ group }: RouteGroupCardProps) {
         </div>
       ) : (
         <div className="space-y-1.5">
+          <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
+            Never scraped — trigger collection to start
+          </span>
           <ProgressBar value={0} max={1} />
-          <p className="text-xs text-slate-400">No data collected yet</p>
         </div>
       )}
 

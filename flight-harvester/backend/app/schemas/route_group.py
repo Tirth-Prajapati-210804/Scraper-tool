@@ -27,8 +27,16 @@ class RouteGroupCreate(BaseModel):
     @field_validator("destinations", "origins", mode="before")
     @classmethod
     def uppercase_iata(cls, v: object) -> list[str]:
+        import re
         if isinstance(v, list):
-            return [str(code).strip().upper() for code in v]
+            codes = [str(code).strip().upper() for code in v]
+            for code in codes:
+                if not re.match(r"^[A-Z0-9]{2,4}$", code):
+                    raise ValueError(
+                        f"'{code}' is not a valid IATA airport code. "
+                        "Codes must be 2-4 uppercase letters or digits (e.g. YVR, DPS, TYO)."
+                    )
+            return codes
         return v  # type: ignore[return-value]
 
 
@@ -46,8 +54,16 @@ class RouteGroupUpdate(BaseModel):
     @field_validator("destinations", "origins", mode="before")
     @classmethod
     def uppercase_iata(cls, v: object) -> list[str] | None:
+        import re
         if isinstance(v, list):
-            return [str(code).strip().upper() for code in v]
+            codes = [str(code).strip().upper() for code in v]
+            for code in codes:
+                if not re.match(r"^[A-Z0-9]{2,4}$", code):
+                    raise ValueError(
+                        f"'{code}' is not a valid IATA airport code. "
+                        "Codes must be 2-4 uppercase letters or digits (e.g. YVR, DPS, TYO)."
+                    )
+            return codes
         return v  # type: ignore[return-value]
 
 

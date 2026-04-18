@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import time
 import uuid
 from typing import Annotated
 
@@ -14,6 +15,23 @@ from app.models.scrape_log import ScrapeLog
 from app.models.user import User
 
 router = APIRouter(prefix="/collection", tags=["collection"])
+
+# Simple in-memory cooldown — prevents accidental double-triggers and quota abuse.
+# Tracks last trigger time per endpoint key.
+_last_trigger_time: dict[str, float] = {}
+_TRIGGER_COOLDOWN_SECONDS = 60
+
+
+def _check_trigger_cooldown(key: str) -> None:
+    last = _last_trigger_time.get(key, 0)
+    elapsed = time.monotonic() - last
+    if elapsed < _TRIGGER_COOLDOWN_SECONDS:
+        remaining = int(_TRIGGER_COOLDOWN_SECONDS - elapsed)
+        raise HTTPException(
+            status_code=429,
+            detail=f"Collection was triggered recently. Please wait {remaining} seconds before triggering again.",
+        )
+    _last_trigger_time[key] = time.monotonic()
 
 
 @router.get("/status")
@@ -35,6 +53,7 @@ async def trigger_collection(
     background_tasks: BackgroundTasks,
     _: Annotated[User, Depends(get_current_user)],
 ) -> dict[str, str]:
+    _check_trigger_cooldown("all")
     scheduler = request.app.state.scheduler
     if scheduler.is_collecting:
         return {"status": "already_running"}
@@ -71,6 +90,7 @@ async def trigger_group(
     background_tasks: BackgroundTasks,
     _: Annotated[User, Depends(get_current_user)],
 ) -> dict[str, str]:
+    _check_trigger_cooldown(f"group:{group_id}")
     scheduler = request.app.state.scheduler
     registry = request.app.state.provider_registry
     if not registry.get_enabled():

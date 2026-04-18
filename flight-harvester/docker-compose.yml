@@ -6,7 +6,9 @@ services:
       POSTGRES_DB: flight_data_scrapper
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
-    ports: ["5432:5432"]
+    # NOTE: Port 5432 is intentionally NOT exposed to the host.
+    # The database is only reachable within the Docker network (by the backend service).
+    # To connect locally for debugging: docker exec -it <container> psql -U postgres
     volumes: [postgres_data:/var/lib/postgresql/data]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
@@ -21,8 +23,10 @@ services:
     # Override Docker-specific vars so the .env host/db-name never matters
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:${DB_PASSWORD:-postgres}@db:5432/flight_data_scrapper
-      CORS_ORIGINS: '["http://localhost","http://localhost:5173"]'
-    ports: ["8000:8000"]
+      # Set CORS_ORIGINS to your production domain, e.g: https://flights.yourdomain.com
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost}
+    # NOTE: Port 8000 is NOT exposed to the host in production.
+    # All traffic goes through nginx (frontend) which proxies /api/ to backend.
     depends_on:
       db: { condition: service_healthy }
 
@@ -31,6 +35,13 @@ services:
     restart: unless-stopped
     ports: ["80:80"]
     depends_on: [backend]
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
+# postgres_data volume persists the database across container restarts.
+# To back up: docker exec <db-container> pg_dump -U postgres flight_data_scrapper > backup.sql
 volumes:
   postgres_data:

@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     # App
     app_name: str = "Flight Data Scrapper API"
     environment: str = "development"
-    debug: bool = True
+    debug: bool = False
     api_v1_prefix: str = "/api/v1"
     cors_origins: list[str] = ["http://localhost:5173"]
 
@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     # Auth
     jwt_secret_key: str
     jwt_algorithm: str = "HS256"
-    jwt_access_token_expire_minutes: int = 720
+    jwt_access_token_expire_minutes: int = 120
     admin_email: str
     admin_password: str
     admin_full_name: str = "System Admin"
@@ -50,17 +50,32 @@ class Settings(BaseSettings):
     telegram_bot_token: str = ""
     telegram_chat_id: str = ""
 
+    @field_validator("jwt_secret_key")
+    @classmethod
+    def validate_jwt_secret(cls, v: str) -> str:
+        if len(v) < 32:
+            raise ValueError("JWT_SECRET_KEY must be at least 32 characters. Generate one with: openssl rand -hex 32")
+        if "change-me" in v.lower() or "change_me" in v.lower():
+            raise ValueError("JWT_SECRET_KEY is still set to the example value. Generate a real secret with: openssl rand -hex 32")
+        return v
+
+    @field_validator("admin_password")
+    @classmethod
+    def validate_admin_password(cls, v: str) -> str:
+        if len(v) < 12:
+            raise ValueError("ADMIN_PASSWORD must be at least 12 characters")
+        if "change-me" in v.lower() or "change_me" in v.lower():
+            raise ValueError("ADMIN_PASSWORD is still set to the example value. Set a real password in .env")
+        return v
+
     @field_validator("cors_origins", mode="before")
     @classmethod
     def parse_cors_origins(cls, v: object) -> list[str]:
         if isinstance(v, str):
             v = v.strip()
-            # Handle JSON array format: '["http://localhost","http://localhost:5173"]'
-            # (used by docker-compose environment block)
             if v.startswith("["):
                 import json
                 return json.loads(v)
-            # Handle comma-separated format: "http://localhost,http://localhost:5173"
             return [origin.strip() for origin in v.split(",") if origin.strip()]
         return v  # type: ignore[return-value]
 

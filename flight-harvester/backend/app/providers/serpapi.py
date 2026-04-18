@@ -17,6 +17,7 @@ Set SERPAPI_KEY in .env to activate.
 from __future__ import annotations
 
 from datetime import date
+from urllib.parse import quote
 
 import httpx
 from tenacity import retry, stop_after_attempt, wait_exponential
@@ -79,7 +80,17 @@ class SerpApiProvider:
         async with httpx.AsyncClient(timeout=self._timeout) as client:
             resp = await client.get(_BASE_URL, params=params)
             resp.raise_for_status()
-            data = resp.json()
+            try:
+                data = resp.json()
+            except Exception:
+                log.warning(
+                    "serpapi_invalid_json",
+                    origin=origin,
+                    destination=destination,
+                    date=depart_date.isoformat(),
+                    body_preview=resp.text[:200],
+                )
+                return []
 
         results: list[ProviderResult] = []
 
@@ -124,7 +135,7 @@ class SerpApiProvider:
                 else:
                     # Fallback: generic Google Flights search link for this route/date
                     deep_link = (
-                        f"https://www.google.com/flights#search;f={origin};t={destination};"
+                        f"https://www.google.com/flights#search;f={quote(origin)};t={quote(destination)};"
                         f"d={depart_date.isoformat()};tt=o"
                     )
 
