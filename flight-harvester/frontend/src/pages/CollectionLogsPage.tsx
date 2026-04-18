@@ -108,6 +108,25 @@ export function CollectionLogsPage() {
           </div>
         )}
 
+        {/* Last run error summary */}
+        {(() => {
+          const last = runsQuery.data?.[0];
+          if (!last || !last.errors?.length) return null;
+          return (
+            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+              <p className="font-semibold">Last collection had {last.errors.length} route failure(s):</p>
+              <ul className="mt-1 list-inside list-disc space-y-0.5 text-red-700">
+                {last.errors.slice(0, 5).map((e: string, i: number) => (
+                  <li key={i} className="font-mono text-xs">{e}</li>
+                ))}
+                {last.errors.length > 5 && (
+                  <li className="text-xs">…and {last.errors.length - 5} more. Check scrape logs below.</li>
+                )}
+              </ul>
+            </div>
+          );
+        })()}
+
         {/* Collection Runs */}
         <Card>
           <h3 className="mb-4 text-sm font-semibold text-slate-700">

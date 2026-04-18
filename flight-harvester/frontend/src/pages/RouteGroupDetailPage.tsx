@@ -167,10 +167,12 @@ export function RouteGroupDetailPage() {
         </h3>
         {progressQuery.isLoading ? (
           <Skeleton className="h-32" />
+        ) : progressQuery.isError ? (
+          <p className="text-sm text-red-500">Failed to load progress. Try refreshing the page.</p>
         ) : progressQuery.data ? (
           <DateCoverageGrid progress={progressQuery.data} />
         ) : (
-          <p className="text-sm text-slate-400">No progress data.</p>
+          <p className="text-sm text-slate-400">No data collected yet. Trigger a collection to start.</p>
         )}
       </Card>
 
@@ -200,6 +202,10 @@ export function RouteGroupDetailPage() {
         </div>
         {trendQuery.isLoading ? (
           <Skeleton className="h-64" />
+        ) : trendQuery.isError ? (
+          <p className="py-8 text-center text-sm text-red-500">Failed to load price trend data.</p>
+        ) : (trendQuery.data ?? []).length === 0 ? (
+          <p className="py-8 text-center text-sm text-slate-400">No price data yet for this route. Trigger a collection first.</p>
         ) : (
           <PriceChart data={trendQuery.data ?? []} />
         )}

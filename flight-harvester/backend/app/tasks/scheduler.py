@@ -109,6 +109,7 @@ class FlightScheduler:
                 total_success = 0
                 total_errors = 0
                 total_routes = 0
+                error_details: list[str] = []
 
                 groups_result = await session.execute(
                     select(RouteGroup).where(RouteGroup.is_active.is_(True))
@@ -151,6 +152,8 @@ class FlightScheduler:
                             total_errors += stats["errors"]
                         except Exception as exc:
                             total_errors += 1
+                            msg = f"{group.name} / {origin}: {exc}"
+                            error_details.append(msg)
                             log.exception("route_collection_failed", origin=origin, error=str(exc))
 
                     # Collect data for special sheet origins that are not in the
@@ -184,6 +187,8 @@ class FlightScheduler:
                             total_errors += stats["errors"]
                         except Exception as exc:
                             total_errors += 1
+                            msg = f"{group.name} / {spec_origin} (special): {exc}"
+                            error_details.append(msg)
                             log.exception("special_sheet_collection_failed", origin=spec_origin, error=str(exc))
 
                 run.status = "stopped" if self._stop_requested else "completed"
@@ -191,14 +196,18 @@ class FlightScheduler:
                 run.routes_success = total_success
                 run.routes_failed = total_errors
                 run.dates_scraped = total_success
+                run.errors = error_details if error_details else []
                 run.finished_at = func.now()
                 await session.commit()
 
                 if not self._stop_requested:
-                    await self.alert_service.send_summary(
-                        f"Collection complete: {total_success} prices, "
+                    summary = (
+                        f"Collection complete: {total_success} prices collected, "
                         f"{total_errors} errors across {len(groups)} route groups."
                     )
+                    if error_details:
+                        summary += f" Failed routes: {'; '.join(error_details[:3])}"
+                    await self.alert_service.send_summary(summary)
 
             except Exception as exc:
                 run.status = "failed"

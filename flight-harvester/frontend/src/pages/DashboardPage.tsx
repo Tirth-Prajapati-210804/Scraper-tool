@@ -8,8 +8,8 @@ import {
   Plus,
   Square,
 } from "lucide-react";
-import { useState } from "react";
-import { getCollectionStatus, stopCollection, triggerCollection } from "../api/collection";
+import { useEffect, useRef, useState } from "react";
+import { fetchCollectionRuns, getCollectionStatus, stopCollection, triggerCollection } from "../api/collection";
 import { getErrorMessage } from "../api/client";
 import { listRouteGroups } from "../api/route-groups";
 import { fetchHealth, fetchOverviewStats } from "../api/stats";
@@ -30,6 +30,7 @@ export function DashboardPage() {
   const qc = useQueryClient();
   const [triggering, setTriggering] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
+  const wasCollecting = useRef(false);
 
   const statsQuery = useQuery({
     queryKey: ["stats"],
@@ -63,10 +64,40 @@ export function DashboardPage() {
     onError: () => showToast("Failed to stop collection", "error"),
   });
 
+  const isCollecting = statusQuery.data?.is_collecting ?? false;
+
+  // Detect when collection finishes and show a summary toast
+  useEffect(() => {
+    if (wasCollecting.current && !isCollecting) {
+      fetchCollectionRuns(1).then((runs) => {
+        const last = runs[0];
+        if (!last) return;
+        if (last.status === "completed") {
+          const errors = last.routes_failed ?? 0;
+          const success = last.routes_success ?? 0;
+          if (errors > 0) {
+            showToast(
+              `Collection finished — ${success} prices collected, ${errors} route(s) failed. Check Collection Logs for details.`,
+              "error"
+            );
+          } else {
+            showToast(`Collection finished — ${success} prices collected successfully.`, "success");
+          }
+        } else if (last.status === "stopped") {
+          showToast("Collection was stopped.", "info" as never);
+        } else if (last.status === "failed") {
+          showToast("Collection failed. Check Collection Logs for details.", "error");
+        }
+        qc.invalidateQueries({ queryKey: ["stats"] });
+        qc.invalidateQueries({ queryKey: ["route-groups"] });
+      }).catch(() => {});
+    }
+    wasCollecting.current = isCollecting;
+  }, [isCollecting, showToast, qc]);
+
   const stats = statsQuery.data;
   const groups = groupsQuery.data ?? [];
   const health = healthQuery.data;
-  const isCollecting = statusQuery.data?.is_collecting ?? false;
   const noProvider =
     !healthQuery.isLoading &&
     health?.provider_status?.serpapi !== "configured" &&

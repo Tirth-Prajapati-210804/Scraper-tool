@@ -79,6 +79,22 @@ class SerpApiProvider:
 
         async with httpx.AsyncClient(timeout=self._timeout) as client:
             resp = await client.get(_BASE_URL, params=params)
+
+            if resp.status_code == 429:
+                retry_after = int(resp.headers.get("Retry-After", 60))
+                log.warning(
+                    "serpapi_rate_limited",
+                    origin=origin,
+                    destination=destination,
+                    date=depart_date.isoformat(),
+                    retry_after=retry_after,
+                )
+                raise httpx.HTTPStatusError(
+                    f"SerpAPI rate limit hit. Retry after {retry_after}s.",
+                    request=resp.request,
+                    response=resp,
+                )
+
             resp.raise_for_status()
             try:
                 data = resp.json()
