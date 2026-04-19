@@ -28,9 +28,10 @@ async def list_prices(
     origin: str | None = Query(default=None),
     date_from: date | None = Query(default=None),
     date_to: date | None = Query(default=None),
-    limit: int = Query(default=500, le=2000),
+    limit: int = Query(default=100, le=500),
+    offset: int = Query(default=0, ge=0),
 ) -> list[DailyPriceResponse]:
-    q = select(DailyCheapestPrice).order_by(DailyCheapestPrice.depart_date).limit(limit)
+    q = select(DailyCheapestPrice).order_by(DailyCheapestPrice.depart_date).offset(offset).limit(limit)
     if route_group_id:
         q = q.where(DailyCheapestPrice.route_group_id == route_group_id)
     if origin:

@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Download, Pencil, RefreshCw } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
+import type { DailyPrice } from "../types/price";
 import { Link, useParams } from "react-router-dom";
 import {
   downloadExport,
@@ -30,6 +31,11 @@ export function RouteGroupDetailPage() {
   const [downloading, setDownloading] = useState(false);
   const [triggering, setTriggering] = useState(false);
   const [selectedOrigin, setSelectedOrigin] = useState<string>("");
+  const [allPrices, setAllPrices] = useState<DailyPrice[]>([]);
+  const [pricesLoading, setPricesLoading] = useState(false);
+  const [priceHasMore, setPriceHasMore] = useState(false);
+  const priceOffsetRef = useRef(0);
+  const PRICE_PAGE = 100;
 
   const groupQuery = useQuery({
     queryKey: ["route-group", id],
@@ -55,12 +61,36 @@ export function RouteGroupDetailPage() {
     enabled: !!originForQuery && !!destForQuery,
   });
 
-  const pricesQuery = useQuery({
-    queryKey: ["prices", id, selectedOrigin],
-    queryFn: () =>
-      fetchPrices({ route_group_id: id, origin: selectedOrigin || undefined }),
-    enabled: !!id,
-  });
+  const loadPrices = useCallback(async (origin: string, newOffset: number) => {
+    if (!id) return;
+    setPricesLoading(true);
+    try {
+      const data = await fetchPrices({
+        route_group_id: id,
+        origin: origin || undefined,
+        limit: PRICE_PAGE,
+        offset: newOffset,
+      });
+      setAllPrices((prev) => (newOffset === 0 ? data : [...prev, ...data]));
+      setPriceHasMore(data.length === PRICE_PAGE);
+      priceOffsetRef.current = newOffset;
+    } finally {
+      setPricesLoading(false);
+    }
+  }, [id, PRICE_PAGE]);
+
+  // Load first page when group is ready
+  const groupLoaded = !!groupQuery.data;
+  const loadedRef = useRef(false);
+  if (groupLoaded && !loadedRef.current) {
+    loadedRef.current = true;
+    loadPrices(selectedOrigin, 0);
+  }
+
+  const handlePriceLoadMore = useCallback(
+    () => loadPrices(selectedOrigin, priceOffsetRef.current + PRICE_PAGE),
+    [selectedOrigin, loadPrices, PRICE_PAGE],
+  );
 
   usePageTitle(group?.name ?? "Route Group");
 
@@ -184,7 +214,7 @@ export function RouteGroupDetailPage() {
             <span className="text-xs text-slate-500">Origin:</span>
             <select
               value={selectedOrigin || group.origins[0]}
-              onChange={(e) => setSelectedOrigin(e.target.value)}
+              onChange={(e) => { const o = e.target.value; setSelectedOrigin(o); setAllPrices([]); loadPrices(o, 0); }}
               className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
             >
               {group.origins.map((o) => (
@@ -219,7 +249,7 @@ export function RouteGroupDetailPage() {
             <span className="text-xs text-slate-500">Filter by origin:</span>
             <select
               value={selectedOrigin}
-              onChange={(e) => setSelectedOrigin(e.target.value)}
+              onChange={(e) => { const o = e.target.value; setSelectedOrigin(o); setAllPrices([]); loadPrices(o, 0); }}
               className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
             >
               <option value="">All origins</option>
@@ -229,21 +259,20 @@ export function RouteGroupDetailPage() {
                 </option>
               ))}
             </select>
-            {pricesQuery.data && (
+            {allPrices.length > 0 && (
               <span className="text-xs text-slate-400">
-                {pricesQuery.data.length} rows
+                {allPrices.length} rows{priceHasMore ? "+" : ""}
               </span>
             )}
           </div>
         </div>
-        {pricesQuery.isError ? (
-          <p className="py-8 text-center text-sm text-red-500">Failed to load price data. Try refreshing the page.</p>
-        ) : (
-          <PriceTable
-            prices={pricesQuery.data ?? []}
-            isLoading={pricesQuery.isLoading}
+        <PriceTable
+            prices={allPrices}
+            isLoading={pricesLoading && allPrices.length === 0}
+            hasMore={priceHasMore}
+            onLoadMore={handlePriceLoadMore}
+            loadingMore={pricesLoading && allPrices.length > 0}
           />
-        )}
       </Card>
 
       {editOpen && (

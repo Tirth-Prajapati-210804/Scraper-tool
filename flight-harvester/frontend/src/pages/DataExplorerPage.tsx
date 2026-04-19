@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
+import type { DailyPrice } from "../types/price";
 import { fetchPriceTrend, fetchPrices } from "../api/prices";
 import { listRouteGroups } from "../api/route-groups";
 import { ErrorBoundary } from "../components/ErrorBoundary";
@@ -25,10 +26,16 @@ const EMPTY_FILTERS: Filters = {
   date_to: "",
 };
 
+const PAGE_SIZE = 100;
+
 export function DataExplorerPage() {
   usePageTitle("Data Explorer");
   const [pending, setPending] = useState<Filters>(EMPTY_FILTERS);
   const [applied, setApplied] = useState<Filters>(EMPTY_FILTERS);
+  const [allPrices, setAllPrices] = useState<DailyPrice[]>([]);
+  const [pricesLoading, setPricesLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
+  const offsetRef = useRef(0);
 
   const groupsQuery = useQuery({
     queryKey: ["route-groups"],
@@ -43,23 +50,36 @@ export function DataExplorerPage() {
     setPending({ ...EMPTY_FILTERS, route_group_id: id });
   }
 
+  const loadPrices = useCallback(async (filters: Filters, newOffset: number) => {
+    if (!filters.route_group_id) return;
+    setPricesLoading(true);
+    try {
+      const data = await fetchPrices({
+        route_group_id: filters.route_group_id,
+        origin: filters.origin || undefined,
+        date_from: filters.date_from || undefined,
+        date_to: filters.date_to || undefined,
+        limit: PAGE_SIZE,
+        offset: newOffset,
+      });
+      setAllPrices((prev) => (newOffset === 0 ? data : [...prev, ...data]));
+      setHasMore(data.length === PAGE_SIZE);
+      offsetRef.current = newOffset;
+    } finally {
+      setPricesLoading(false);
+    }
+  }, []);
+
   function handleApply() {
-    setApplied({ ...pending });
+    const next = { ...pending };
+    setApplied(next);
+    setAllPrices([]);
+    loadPrices(next, 0);
   }
 
-  // Price table query
-  const pricesQuery = useQuery({
-    queryKey: ["explorer-prices", applied],
-    queryFn: () =>
-      fetchPrices({
-        route_group_id: applied.route_group_id || undefined,
-        origin: applied.origin || undefined,
-        date_from: applied.date_from || undefined,
-        date_to: applied.date_to || undefined,
-        limit: 1000,
-      }),
-    enabled: !!applied.route_group_id,
-  });
+  const handleLoadMore = useCallback(() => {
+    loadPrices(applied, offsetRef.current + PAGE_SIZE);
+  }, [applied, loadPrices]);
 
   // Trend chart — needs origin + destination
   const appliedGroup = groupsQuery.data?.find(
@@ -169,15 +189,18 @@ export function DataExplorerPage() {
             <h3 className="text-sm font-semibold text-slate-700">
               Price Data
             </h3>
-            {pricesQuery.data && (
+            {allPrices.length > 0 && (
               <span className="text-xs text-slate-400">
-                Showing {pricesQuery.data.length} results
+                {allPrices.length} rows{hasMore ? "+" : ""}
               </span>
             )}
           </div>
           <PriceTable
-            prices={pricesQuery.data ?? []}
-            isLoading={pricesQuery.isLoading}
+            prices={allPrices}
+            isLoading={pricesLoading && allPrices.length === 0}
+            hasMore={hasMore}
+            onLoadMore={handleLoadMore}
+            loadingMore={pricesLoading && allPrices.length > 0}
           />
         </Card>
       )}

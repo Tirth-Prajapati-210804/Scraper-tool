@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import type { DailyPrice } from "../types/price";
 import { formatRelativeTime } from "../utils/format";
+import { Button } from "./ui/Button";
 import { Skeleton } from "./ui/Skeleton";
 
 interface Column {
@@ -24,9 +25,12 @@ const COLUMNS: Column[] = [
 interface PriceTableProps {
   prices: DailyPrice[];
   isLoading: boolean;
+  hasMore?: boolean;
+  onLoadMore?: () => void;
+  loadingMore?: boolean;
 }
 
-export function PriceTable({ prices, isLoading }: PriceTableProps) {
+export function PriceTable({ prices, isLoading, hasMore, onLoadMore, loadingMore }: PriceTableProps) {
   const [sortKey, setSortKey] = useState<keyof DailyPrice>("depart_date");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
@@ -61,6 +65,7 @@ export function PriceTable({ prices, isLoading }: PriceTableProps) {
   }
 
   return (
+    <>
     <div className="overflow-x-auto">
       <table className="w-full text-left text-sm">
         <thead>
@@ -118,5 +123,15 @@ export function PriceTable({ prices, isLoading }: PriceTableProps) {
         </tbody>
       </table>
     </div>
+    {hasMore && (
+      <div className="mt-3 flex justify-center">
+        <Button variant="secondary" onClick={onLoadMore} loading={loadingMore}>
+          Load more
+        </Button>
+      </div>
+    )}
+  </>
   );
 }
+
+

@@ -7,6 +7,7 @@ export async function fetchPrices(params: {
   date_from?: string;
   date_to?: string;
   limit?: number;
+  offset?: number;
 }): Promise<DailyPrice[]> {
   const res = await api.get<DailyPrice[]>("/api/v1/prices/", { params });
   return res.data;
