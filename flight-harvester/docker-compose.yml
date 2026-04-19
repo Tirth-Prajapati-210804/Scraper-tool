@@ -22,7 +22,7 @@ services:
     env_file: ./backend/.env
     # Override Docker-specific vars so the .env host/db-name never matters
     environment:
-      DATABASE_URL: postgresql+asyncpg://postgres:${DB_PASSWORD:-postgres}@db:5432/flight_data_scrapper
+      DATABASE_URL: postgresql://neondb_owner:npg_ap4mRPn5vYlV@ep-sweet-mode-a1q9gg67-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
       # Set CORS_ORIGINS to your production domain, e.g: https://flights.yourdomain.com
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost}
     # NOTE: Port 8000 is NOT exposed to the host in production.
