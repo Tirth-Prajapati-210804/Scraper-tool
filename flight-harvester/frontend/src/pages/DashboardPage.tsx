@@ -268,11 +268,13 @@ export function DashboardPage() {
         </div>
       </div>
 
-      <RouteGroupForm
-        open={createOpen}
-        onClose={() => setCreateOpen(false)}
-        initial={null}
-      />
+      {createOpen && (
+        <RouteGroupForm
+          open={createOpen}
+          onClose={() => setCreateOpen(false)}
+          initial={null}
+        />
+      )}
     </ErrorBoundary>
   );
 }

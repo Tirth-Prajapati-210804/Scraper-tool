@@ -379,10 +379,6 @@ export function RouteGroupForm({ open, onClose, initial }: RouteGroupFormProps) 
     initial ? "advanced" : "quick",
   );
 
-  useEffect(() => {
-    setTab(initial ? "advanced" : "quick");
-  }, [initial, open]);
-
   async function handleSuccess() {
     await qc.invalidateQueries({ queryKey: ["route-groups"] });
     if (initial) {

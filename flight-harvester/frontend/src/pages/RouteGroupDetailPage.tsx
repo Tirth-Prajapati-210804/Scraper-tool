@@ -246,11 +246,13 @@ export function RouteGroupDetailPage() {
         )}
       </Card>
 
-      <RouteGroupForm
-        open={editOpen}
-        onClose={() => setEditOpen(false)}
-        initial={group}
-      />
+      {editOpen && (
+        <RouteGroupForm
+          open={editOpen}
+          onClose={() => setEditOpen(false)}
+          initial={group}
+        />
+      )}
     </div>
     </ErrorBoundary>
   );
