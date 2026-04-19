@@ -39,12 +39,15 @@ async def collection_status(
     request: Request,
     _: Annotated[User, Depends(get_current_user)],
 ) -> dict:
-    """Return whether a collection cycle is currently running."""
+    """Return whether a collection cycle is currently running, plus live progress."""
     scheduler = request.app.state.scheduler
-    return {
+    result: dict = {
         "is_collecting": scheduler.is_collecting,
         "scheduler_running": scheduler.is_running,
     }
+    if scheduler.is_collecting:
+        result["progress"] = scheduler.progress
+    return result
 
 
 @router.post("/trigger")

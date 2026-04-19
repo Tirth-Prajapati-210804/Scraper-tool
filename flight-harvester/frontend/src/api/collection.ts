@@ -1,9 +1,18 @@
 import type { CollectionRun, ScrapeLogEntry } from "../types/price";
 import { api } from "./client";
 
+export interface CollectionProgress {
+  routes_total: number;
+  routes_done: number;
+  routes_failed: number;
+  dates_scraped: number;
+  current_origin: string;
+}
+
 export interface CollectionStatus {
   is_collecting: boolean;
   scheduler_running: boolean;
+  progress?: CollectionProgress;
 }
 
 export async function getCollectionStatus(): Promise<CollectionStatus> {

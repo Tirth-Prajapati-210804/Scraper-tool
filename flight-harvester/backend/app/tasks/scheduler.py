@@ -33,6 +33,13 @@ class FlightScheduler:
         self._is_running = False
         self._stop_requested: bool = False
         self._is_collecting: bool = False
+        self._progress: dict = {
+            "routes_total": 0,
+            "routes_done": 0,
+            "routes_failed": 0,
+            "dates_scraped": 0,
+            "current_origin": "",
+        }
 
     @property
     def is_running(self) -> bool:
@@ -41,6 +48,10 @@ class FlightScheduler:
     @property
     def is_collecting(self) -> bool:
         return self._is_collecting
+
+    @property
+    def progress(self) -> dict:
+        return dict(self._progress)
 
     def request_stop(self) -> None:
         if self._is_collecting:
@@ -116,6 +127,22 @@ class FlightScheduler:
                 )
                 groups = list(groups_result.scalars().all())
 
+                # Pre-calculate total routes for live progress display
+                pre_total = sum(len(g.origins) for g in groups)
+                for g in groups:
+                    main = set(g.origins)
+                    pre_total += sum(
+                        1 for s in (g.special_sheets or [])
+                        if s.get("origin") and s.get("origin") not in main and s.get("destinations")
+                    )
+                self._progress = {
+                    "routes_total": pre_total,
+                    "routes_done": 0,
+                    "routes_failed": 0,
+                    "dates_scraped": 0,
+                    "current_origin": "",
+                }
+
                 collector = PriceCollector(
                     session_factory=self.session_factory,
                     providers=providers,
@@ -132,12 +159,14 @@ class FlightScheduler:
                             break
 
                         total_routes += 1
+                        self._progress["current_origin"] = origin
                         try:
                             remaining = await self._filter_already_scraped(
                                 session, origin, group.destinations, dates
                             )
                             if not remaining:
                                 total_success += 1
+                                self._progress["routes_done"] += 1
                                 continue
                             stats = await collector.collect_route_batch(
                                 origin=origin,
@@ -150,8 +179,12 @@ class FlightScheduler:
                             )
                             total_success += stats["success"]
                             total_errors += stats["errors"]
+                            self._progress["routes_done"] += 1
+                            self._progress["dates_scraped"] += stats["success"]
                         except Exception as exc:
                             total_errors += 1
+                            self._progress["routes_done"] += 1
+                            self._progress["routes_failed"] += 1
                             msg = f"{group.name} / {origin}: {exc}"
                             error_details.append(msg)
                             log.exception("route_collection_failed", origin=origin, error=str(exc))
@@ -167,12 +200,14 @@ class FlightScheduler:
                         if self._stop_requested:
                             break
                         total_routes += 1
+                        self._progress["current_origin"] = spec_origin
                         try:
                             remaining = await self._filter_already_scraped(
                                 session, spec_origin, spec_dests, dates
                             )
                             if not remaining:
                                 total_success += 1
+                                self._progress["routes_done"] += 1
                                 continue
                             stats = await collector.collect_route_batch(
                                 origin=spec_origin,
@@ -185,8 +220,12 @@ class FlightScheduler:
                             )
                             total_success += stats["success"]
                             total_errors += stats["errors"]
+                            self._progress["routes_done"] += 1
+                            self._progress["dates_scraped"] += stats["success"]
                         except Exception as exc:
                             total_errors += 1
+                            self._progress["routes_done"] += 1
+                            self._progress["routes_failed"] += 1
                             msg = f"{group.name} / {spec_origin} (special): {exc}"
                             error_details.append(msg)
                             log.exception("special_sheet_collection_failed", origin=spec_origin, error=str(exc))

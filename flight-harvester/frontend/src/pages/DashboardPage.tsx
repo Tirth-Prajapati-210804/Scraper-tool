@@ -14,6 +14,7 @@ import { fetchCollectionRuns, getCollectionStatus, stopCollection, triggerCollec
 import { getErrorMessage } from "../api/client";
 import { listRouteGroups } from "../api/route-groups";
 import { fetchHealth, fetchOverviewStats } from "../api/stats";
+import { CollectionProgressBar } from "../components/CollectionProgressBar";
 import { ErrorBoundary } from "../components/ErrorBoundary";
 import { ProviderStatus } from "../components/ProviderStatus";
 import { RouteGroupCard } from "../components/RouteGroupCard";
@@ -190,6 +191,11 @@ export function DashboardPage() {
             )}
           </div>
         </div>
+
+        {/* Live collection progress bar */}
+        {isCollecting && statusQuery.data?.progress && (
+          <CollectionProgressBar progress={statusQuery.data.progress} />
+        )}
 
         {/* Stat cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
