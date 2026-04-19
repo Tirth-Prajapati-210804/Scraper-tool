@@ -14,6 +14,21 @@ jobs:
       run:
         working-directory: flight-harvester/backend
 
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: flight_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
     steps:
       - uses: actions/checkout@v4
 
@@ -24,8 +39,24 @@ jobs:
       - name: Install dependencies
         run: pip install .[dev]
 
-      - name: Run tests
-        run: pytest tests/ -v
+      - name: Run migrations
+        run: python -m alembic upgrade head
+        env:
+          DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost/flight_test
+          JWT_SECRET_KEY: ci-secret-key-that-is-at-least-32-characters-long
+          ADMIN_EMAIL: admin@example.com
+          ADMIN_PASSWORD: CIAdminPassword1!
+
+      - name: Run unit tests
+        run: pytest tests/ -v --ignore=tests/integration
+        env:
+          DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost/flight_test
+          JWT_SECRET_KEY: ci-secret-key-that-is-at-least-32-characters-long
+          ADMIN_EMAIL: admin@example.com
+          ADMIN_PASSWORD: CIAdminPassword1!
+
+      - name: Run integration tests
+        run: pytest tests/integration/ -v
         env:
           DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost/flight_test
           JWT_SECRET_KEY: ci-secret-key-that-is-at-least-32-characters-long
