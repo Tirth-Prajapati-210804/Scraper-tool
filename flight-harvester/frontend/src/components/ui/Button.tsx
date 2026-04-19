@@ -27,6 +27,7 @@ export function Button({
     <button
       className={cn(base, variants[variant], className)}
       disabled={disabled || loading}
+      aria-disabled={disabled || loading}
       {...props}
     >
       {loading ? (

@@ -31,7 +31,7 @@ export function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-0.5 p-2 pt-3">
+      <nav aria-label="Main navigation" className="flex-1 space-y-0.5 p-2 pt-3">
         {navItems.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
@@ -46,8 +46,12 @@ export function Sidebar() {
               )
             }
           >
-            <Icon className="h-4 w-4 flex-shrink-0" />
-            {label}
+            {({ isActive }) => (
+              <>
+                <Icon className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                <span aria-current={isActive ? "page" : undefined}>{label}</span>
+              </>
+            )}
           </NavLink>
         ))}
       </nav>
@@ -62,9 +66,10 @@ export function Sidebar() {
         </div>
         <button
           onClick={logout}
+          aria-label="Sign out"
           className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-600 transition-colors hover:bg-red-50 hover:text-red-600"
         >
-          <LogOut className="h-4 w-4" />
+          <LogOut className="h-4 w-4" aria-hidden="true" />
           Sign out
         </button>
       </div>

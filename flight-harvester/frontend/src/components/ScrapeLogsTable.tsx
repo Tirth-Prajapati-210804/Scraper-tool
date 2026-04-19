@@ -5,12 +5,12 @@ import { Skeleton } from "./ui/Skeleton";
 
 function StatusIcon({ status }: { status: ScrapeLogEntry["status"] }) {
   if (status === "success")
-    return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+    return <span role="img" aria-label="success"><CheckCircle2 className="h-4 w-4 text-green-500" aria-hidden="true" /></span>;
   if (status === "no_results")
-    return <MinusCircle className="h-4 w-4 text-amber-400" />;
+    return <span role="img" aria-label="no results"><MinusCircle className="h-4 w-4 text-amber-400" aria-hidden="true" /></span>;
   if (status === "rate_limited")
-    return <AlertCircle className="h-4 w-4 text-orange-500" />;
-  return <XCircle className="h-4 w-4 text-red-500" />;
+    return <span role="img" aria-label="rate limited"><AlertCircle className="h-4 w-4 text-orange-500" aria-hidden="true" /></span>;
+  return <span role="img" aria-label="error"><XCircle className="h-4 w-4 text-red-500" aria-hidden="true" /></span>;
 }
 
 function DurationCell({ ms }: { ms: number | null }) {

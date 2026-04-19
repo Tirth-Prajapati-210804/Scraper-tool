@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useRef, useState } from "react";
+import { Download, Search } from "lucide-react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import type { DailyPrice } from "../types/price";
 import { fetchPriceTrend, fetchPrices } from "../api/prices";
 import { listRouteGroups } from "../api/route-groups";
@@ -28,6 +29,29 @@ const EMPTY_FILTERS: Filters = {
 
 const PAGE_SIZE = 100;
 
+function exportCsv(rows: DailyPrice[]) {
+  const header = "Date,Origin,Destination,Airline,Price,Currency,Stops,Duration(min),Provider\n";
+  const lines = rows.map((r) =>
+    [
+      r.depart_date,
+      r.origin,
+      r.destination,
+      r.airline,
+      r.price,
+      r.currency ?? "",
+      r.stops ?? "",
+      r.duration_minutes ?? "",
+      r.provider,
+    ].join(","),
+  );
+  const blob = new Blob([header + lines.join("\n")], { type: "text/csv" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "prices.csv";
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
 export function DataExplorerPage() {
   usePageTitle("Data Explorer");
   const [pending, setPending] = useState<Filters>(EMPTY_FILTERS);
@@ -36,6 +60,11 @@ export function DataExplorerPage() {
   const [pricesLoading, setPricesLoading] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const offsetRef = useRef(0);
+
+  // Client-side filters
+  const [airlineFilter, setAirlineFilter] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
 
   const groupsQuery = useQuery({
     queryKey: ["route-groups"],
@@ -74,6 +103,9 @@ export function DataExplorerPage() {
     const next = { ...pending };
     setApplied(next);
     setAllPrices([]);
+    setAirlineFilter("");
+    setMinPrice("");
+    setMaxPrice("");
     loadPrices(next, 0);
   }
 
@@ -99,6 +131,21 @@ export function DataExplorerPage() {
       }),
     enabled: !!trendOrigin && !!trendDest,
   });
+
+  // Unique airlines from fetched rows (for client-side filter dropdown)
+  const airlines = useMemo(
+    () => [...new Set(allPrices.map((p) => p.airline))].filter(Boolean).sort(),
+    [allPrices],
+  );
+
+  // Apply client-side filters
+  const filteredPrices = useMemo(() => {
+    let rows = allPrices;
+    if (airlineFilter) rows = rows.filter((p) => p.airline === airlineFilter);
+    if (minPrice !== "") rows = rows.filter((p) => p.price >= Number(minPrice));
+    if (maxPrice !== "") rows = rows.filter((p) => p.price <= Number(maxPrice));
+    return rows;
+  }, [allPrices, airlineFilter, minPrice, maxPrice]);
 
   return (
     <ErrorBoundary>
@@ -160,10 +207,10 @@ export function DataExplorerPage() {
 
       {/* No group selected */}
       {!applied.route_group_id && (
-        <div className="rounded-xl border border-dashed border-slate-200 p-12 text-center text-slate-400">
-          <p className="text-sm">
-            Select a route group and click Apply to explore prices.
-          </p>
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-slate-200 p-16 text-center text-slate-400">
+          <Search className="h-10 w-10 text-slate-300" />
+          <p className="text-sm font-medium text-slate-500">Select a route group to explore its price data</p>
+          <p className="text-xs">Choose a group above and click Apply to load prices.</p>
         </div>
       )}
 
@@ -185,20 +232,62 @@ export function DataExplorerPage() {
       {/* Price Table */}
       {applied.route_group_id && (
         <Card>
-          <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-slate-700">
-              Price Data
-            </h3>
-            {allPrices.length > 0 && (
-              <span className="text-xs text-slate-400">
-                {allPrices.length} rows{hasMore ? "+" : ""}
-              </span>
-            )}
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+            <h3 className="text-sm font-semibold text-slate-700">Price Data</h3>
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Airline filter */}
+              {airlines.length > 0 && (
+                <select
+                  aria-label="Filter by airline"
+                  value={airlineFilter}
+                  onChange={(e) => setAirlineFilter(e.target.value)}
+                  className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                >
+                  <option value="">All airlines</option>
+                  {airlines.map((a) => (
+                    <option key={a} value={a}>{a}</option>
+                  ))}
+                </select>
+              )}
+              {/* Price range */}
+              <input
+                type="number"
+                aria-label="Min price"
+                placeholder="Min $"
+                value={minPrice}
+                onChange={(e) => setMinPrice(e.target.value)}
+                className="w-20 rounded-lg border border-slate-300 bg-white px-2 py-1 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+              />
+              <input
+                type="number"
+                aria-label="Max price"
+                placeholder="Max $"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(e.target.value)}
+                className="w-20 rounded-lg border border-slate-300 bg-white px-2 py-1 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+              />
+              {/* Row count */}
+              {filteredPrices.length > 0 && (
+                <span className="text-xs text-slate-400">
+                  {filteredPrices.length} row{filteredPrices.length !== 1 ? "s" : ""}{hasMore && !airlineFilter && !minPrice && !maxPrice ? "+" : ""}
+                </span>
+              )}
+              {/* CSV export */}
+              {filteredPrices.length > 0 && (
+                <Button
+                  variant="secondary"
+                  onClick={() => exportCsv(filteredPrices)}
+                >
+                  <Download className="h-3.5 w-3.5" aria-hidden="true" />
+                  Download CSV
+                </Button>
+              )}
+            </div>
           </div>
           <PriceTable
-            prices={allPrices}
+            prices={filteredPrices}
             isLoading={pricesLoading && allPrices.length === 0}
-            hasMore={hasMore}
+            hasMore={hasMore && !airlineFilter && !minPrice && !maxPrice}
             onLoadMore={handleLoadMore}
             loadingMore={pricesLoading && allPrices.length > 0}
           />

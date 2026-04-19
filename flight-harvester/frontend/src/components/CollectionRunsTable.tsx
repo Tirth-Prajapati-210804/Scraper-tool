@@ -95,9 +95,11 @@ export function CollectionRunsTable({
                   <div>
                     <button
                       onClick={() => setExpandedId(expandedId === run.id ? null : run.id)}
+                      aria-expanded={expandedId === run.id}
+                      aria-label={expandedId === run.id ? "Hide errors" : "Show errors"}
                       className="flex items-center gap-1 text-xs text-red-600 hover:text-red-800"
                     >
-                      <AlertTriangle className="h-3.5 w-3.5" />
+                      <AlertTriangle className="h-3.5 w-3.5" aria-hidden="true" />
                       {run.errors.length} route{run.errors.length > 1 ? "s" : ""}
                     </button>
                     {expandedId === run.id && (

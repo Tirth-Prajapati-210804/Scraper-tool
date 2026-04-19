@@ -213,6 +213,7 @@ export function RouteGroupDetailPage() {
           <div className="flex items-center gap-2">
             <span className="text-xs text-slate-500">Origin:</span>
             <select
+              aria-label="Filter by origin"
               value={selectedOrigin || group.origins[0]}
               onChange={(e) => { const o = e.target.value; setSelectedOrigin(o); setAllPrices([]); loadPrices(o, 0); }}
               className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
@@ -248,6 +249,7 @@ export function RouteGroupDetailPage() {
           <div className="flex items-center gap-2">
             <span className="text-xs text-slate-500">Filter by origin:</span>
             <select
+              aria-label="Filter by origin"
               value={selectedOrigin}
               onChange={(e) => { const o = e.target.value; setSelectedOrigin(o); setAllPrices([]); loadPrices(o, 0); }}
               className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
