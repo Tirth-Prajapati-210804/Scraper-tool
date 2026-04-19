@@ -1,7 +1,7 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm install --legacy-peer-deps
+RUN npm ci --legacy-peer-deps
 COPY . .
 # In Docker the API is proxied by nginx (location /api/ → backend:8000),
 # so VITE_API_BASE_URL must be empty to use relative URLs.

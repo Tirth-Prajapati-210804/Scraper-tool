@@ -1,6 +1,13 @@
 FROM python:3.11-slim AS builder
 
 WORKDIR /build
+# Build tools needed for packages that compile C extensions (asyncpg, cryptography, bcrypt)
+# Especially required on ARM64 (Apple Silicon / Render's infrastructure)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libssl-dev \
+    libffi-dev \
+    && rm -rf /var/lib/apt/lists/*
 COPY pyproject.toml .
 # Create a minimal package stub so setuptools can build the wheel and resolve
 # all dependencies. The real app/ source is copied in the final stage.

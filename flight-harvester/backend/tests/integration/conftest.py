@@ -10,15 +10,21 @@ between each test so each test starts with a clean slate.
 """
 from __future__ import annotations
 
+import uuid
+
 import pytest
 import httpx
+import sqlalchemy as sa
 from httpx import ASGITransport
 from sqlalchemy import text
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from app.core.config import Settings
 from app.core.app_factory import create_app
+from app.core.security import hash_password
 from app.db.base import Base
+from app.models.user import User
 # Import all models so their tables are registered in Base.metadata
 import app.models  # noqa: F401
 
@@ -45,18 +51,40 @@ _engine = create_async_engine(_DB_URL, pool_pre_ping=True)
 _SessionFactory = async_sessionmaker(_engine, expire_on_commit=False)
 
 
-# ── Session-scoped: create tables once ───────────────────────────────────────
+# ── Helper: insert admin user (idempotent via ON CONFLICT DO NOTHING) ─────────
+
+async def _seed_admin() -> None:
+    """Create the test admin user. Safe to call multiple times."""
+    async with _engine.begin() as conn:
+        await conn.execute(
+            pg_insert(User.__table__)
+            .values(
+                id=str(uuid.uuid4()),
+                email=_TEST_SETTINGS.admin_email,
+                hashed_password=hash_password(_TEST_SETTINGS.admin_password),
+                full_name=_TEST_SETTINGS.admin_full_name,
+                role="admin",
+                is_active=True,
+            )
+            .on_conflict_do_nothing(index_elements=["email"])
+        )
+
+
+# ── Session-scoped: create tables once, seed admin ───────────────────────────
 
 @pytest.fixture(scope="session", autouse=True)
 async def create_tables():
     async with _engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    # ASGITransport does not dispatch ASGI lifespan events, so ensure_default_admin
+    # in app_factory.py never runs during tests. Seed the admin directly here.
+    await _seed_admin()
     yield
     async with _engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
 
 
-# ── Function-scoped: wipe all rows before each test ──────────────────────────
+# ── Function-scoped: wipe all rows before each test, re-seed admin ───────────
 
 @pytest.fixture(autouse=True)
 async def clean_db():
@@ -64,6 +92,8 @@ async def clean_db():
     async with _engine.begin() as conn:
         for table in reversed(Base.metadata.sorted_tables):
             await conn.execute(text(f'TRUNCATE TABLE "{table.name}" RESTART IDENTITY CASCADE'))
+    # Re-seed admin so auth_client works for the next test
+    await _seed_admin()
 
 
 # ── App + HTTP client ─────────────────────────────────────────────────────────

@@ -115,6 +115,11 @@ jobs:
 
       - name: Run E2E tests
         run: npm run e2e
+        env:
+          # Empty string → axios uses relative URLs (/api/v1/...) so
+          # Playwright's page.route() mocks intercept them reliably.
+          # No real backend is needed for E2E tests.
+          VITE_API_BASE_URL: ""
 
       - name: Upload Playwright report
         if: failure()
