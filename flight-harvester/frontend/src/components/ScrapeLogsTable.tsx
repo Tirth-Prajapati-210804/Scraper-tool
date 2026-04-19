@@ -1,13 +1,16 @@
+import { AlertCircle, CheckCircle2, FileSearch, MinusCircle, XCircle } from "lucide-react";
 import type { ScrapeLogEntry } from "../types/price";
 import { formatRelativeTime } from "../utils/format";
 import { Skeleton } from "./ui/Skeleton";
 
 function StatusIcon({ status }: { status: ScrapeLogEntry["status"] }) {
   if (status === "success")
-    return <span className="font-medium text-green-600">✓</span>;
+    return <CheckCircle2 className="h-4 w-4 text-green-500" />;
   if (status === "no_results")
-    return <span className="font-medium text-amber-500">○</span>;
-  return <span className="font-medium text-red-500">✗</span>;
+    return <MinusCircle className="h-4 w-4 text-amber-400" />;
+  if (status === "rate_limited")
+    return <AlertCircle className="h-4 w-4 text-orange-500" />;
+  return <XCircle className="h-4 w-4 text-red-500" />;
 }
 
 function DurationCell({ ms }: { ms: number | null }) {
@@ -31,9 +34,11 @@ export function ScrapeLogsTable({ logs, isLoading }: ScrapeLogsTableProps) {
 
   if (!logs.length) {
     return (
-      <p className="py-8 text-center text-sm text-slate-400">
-        No scrape logs found.
-      </p>
+      <div className="flex flex-col items-center gap-2 py-12 text-slate-400">
+        <FileSearch className="h-8 w-8 text-slate-300" />
+        <p className="text-sm font-medium">No scrape logs found</p>
+        <p className="text-xs">Logs appear here after a collection run.</p>
+      </div>
     );
   }
 

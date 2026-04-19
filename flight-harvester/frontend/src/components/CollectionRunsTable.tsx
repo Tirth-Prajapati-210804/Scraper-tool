@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle, Loader2, Square, XCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle, History, Loader2, Square, XCircle } from "lucide-react";
 import { useState } from "react";
 import type { CollectionRun } from "../types/price";
 import { formatRelativeTime } from "../utils/format";
@@ -32,9 +32,11 @@ export function CollectionRunsTable({
 
   if (!runs.length) {
     return (
-      <p className="py-8 text-center text-sm text-slate-400">
-        No collection runs yet.
-      </p>
+      <div className="flex flex-col items-center gap-2 py-12 text-slate-400">
+        <History className="h-8 w-8 text-slate-300" />
+        <p className="text-sm font-medium">No collection runs yet</p>
+        <p className="text-xs">Trigger a collection from the dashboard to get started.</p>
+      </div>
     );
   }
 

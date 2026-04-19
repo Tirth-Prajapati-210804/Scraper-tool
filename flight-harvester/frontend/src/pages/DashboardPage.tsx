@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Activity,
   Database,
+  FolderOpen,
   Globe,
   MapPin,
   Play,
@@ -240,11 +241,21 @@ export function DashboardPage() {
               ))}
             </div>
           ) : groups.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-slate-200 p-10 text-center text-slate-400">
-              <p className="text-sm font-medium">No route groups configured.</p>
-              <p className="mt-1 text-xs">
-                Create one to start collecting flight prices.
-              </p>
+            <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-slate-200 p-12 text-center">
+              <FolderOpen className="h-10 w-10 text-slate-300" />
+              <div>
+                <p className="text-sm font-medium text-slate-500">No route groups yet</p>
+                <p className="mt-1 text-xs text-slate-400">
+                  Create a group to start collecting flight prices.
+                </p>
+              </div>
+              <button
+                onClick={() => setCreateOpen(true)}
+                className="mt-1 flex items-center gap-1.5 rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-700"
+              >
+                <Plus className="h-4 w-4" />
+                New group
+              </button>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">

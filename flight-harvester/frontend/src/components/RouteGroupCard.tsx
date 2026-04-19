@@ -61,7 +61,7 @@ export function RouteGroupCard({ group }: RouteGroupCardProps) {
   }
 
   return (
-    <Card className="flex flex-col gap-4">
+    <Card className="flex flex-col gap-4 transition-shadow duration-200 hover:shadow-md">
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
