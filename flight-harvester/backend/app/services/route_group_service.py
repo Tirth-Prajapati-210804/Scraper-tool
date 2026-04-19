@@ -137,6 +137,14 @@ async def get_progress(session: AsyncSession, group_id: uuid.UUID) -> RouteGroup
 
     coverage = (dates_with_data / total_dates * 100.0) if total_dates > 0 else 0.0
 
+    dates_result = await session.execute(
+        select(DailyCheapestPrice.depart_date)
+        .where(DailyCheapestPrice.route_group_id == group_id)
+        .distinct()
+        .order_by(DailyCheapestPrice.depart_date)
+    )
+    scraped_dates = [d.isoformat() for (d,) in dates_result.fetchall()]
+
     return RouteGroupProgress(
         route_group_id=group_id,
         name=group.name,
@@ -145,4 +153,5 @@ async def get_progress(session: AsyncSession, group_id: uuid.UUID) -> RouteGroup
         coverage_percent=round(coverage, 2),
         last_scraped_at=last_scraped_at,
         per_origin=per_origin,
+        scraped_dates=scraped_dates,
     )

@@ -114,3 +114,4 @@ class RouteGroupProgress(BaseModel):
     coverage_percent: float
     last_scraped_at: datetime | None
     per_origin: dict[str, PerOriginProgress]
+    scraped_dates: list[str] = []

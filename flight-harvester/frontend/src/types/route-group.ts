@@ -42,4 +42,5 @@ export interface RouteGroupProgress {
   coverage_percent: number;
   last_scraped_at: string | null;
   per_origin: Record<string, { total: number; collected: number }>;
+  scraped_dates: string[];
 }
