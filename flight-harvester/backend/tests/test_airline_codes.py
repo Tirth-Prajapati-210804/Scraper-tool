@@ -41,4 +41,5 @@ def test_normalize_first_word_match() -> None:
 
 def test_normalize_fallback_truncate() -> None:
     result = normalize_airline("UNKNOWN AIRLINE XYZ")
-    assert result == "UNKNOWN AIRLINE XYZ"  # returns raw name instead of truncating
+    assert result == "UNKNOWN AI"
+    assert len(result) <= 10

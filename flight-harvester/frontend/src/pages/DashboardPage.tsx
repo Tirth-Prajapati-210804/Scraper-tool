@@ -84,7 +84,7 @@ export function DashboardPage() {
             showToast(`Collection finished — ${success} prices collected successfully.`, "success");
           }
         } else if (last.status === "stopped") {
-          showToast("Collection was stopped.", "info" as never);
+          showToast("Collection was stopped.", "info");
         } else if (last.status === "failed") {
           showToast("Collection failed. Check Collection Logs for details.", "error");
         }

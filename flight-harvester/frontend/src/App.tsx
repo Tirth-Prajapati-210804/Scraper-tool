@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import { AppLayout } from "./components/layout/AppLayout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
@@ -8,6 +8,7 @@ import { CollectionLogsPage } from "./pages/CollectionLogsPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { DataExplorerPage } from "./pages/DataExplorerPage";
 import { LoginPage } from "./pages/LoginPage";
+import { NotFoundPage } from "./pages/NotFoundPage";
 import { RouteGroupDetailPage } from "./pages/RouteGroupDetailPage";
 
 const queryClient = new QueryClient({
@@ -41,7 +42,7 @@ export default function App() {
                 <Route path="/explorer" element={<DataExplorerPage />} />
                 <Route path="/logs" element={<CollectionLogsPage />} />
               </Route>
-              <Route path="*" element={<Navigate to="/" replace />} />
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </ToastProvider>
         </AuthProvider>

@@ -60,7 +60,7 @@ export function CollectionLogsPage() {
       if (data.status === "stop_requested") {
         showToast("Stop signal sent — collection will finish its current batch", "success");
       } else {
-        showToast("No collection is running", "info" as never);
+        showToast("No collection is running", "info");
       }
       // Invalidate status + runs so the UI updates promptly
       qc.invalidateQueries({ queryKey: ["collection-status"] });

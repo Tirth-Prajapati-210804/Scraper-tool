@@ -8,9 +8,9 @@ from app.core.config import Settings
 def make_settings(**kwargs: object) -> Settings:
     base = {
         "database_url": "postgresql+asyncpg://u:p@localhost/db",
-        "jwt_secret_key": "secret",
+        "jwt_secret_key": "a-secure-test-secret-key-that-is-at-least-32-chars",
         "admin_email": "admin@example.com",
-        "admin_password": "password123",
+        "admin_password": "StrongPass123!",
     }
     base.update(kwargs)
     return Settings(_env_file=None, **base)  # type: ignore[arg-type]
@@ -44,3 +44,23 @@ def test_missing_database_url_raises() -> None:
 def test_missing_jwt_secret_raises() -> None:
     field = Settings.model_fields["jwt_secret_key"]
     assert field.is_required()
+
+
+def test_short_jwt_secret_raises() -> None:
+    with pytest.raises(ValidationError):
+        make_settings(jwt_secret_key="tooshort")
+
+
+def test_change_me_jwt_raises() -> None:
+    with pytest.raises(ValidationError):
+        make_settings(jwt_secret_key="please-change-me-this-is-definitely-32chars!!")
+
+
+def test_short_admin_password_raises() -> None:
+    with pytest.raises(ValidationError):
+        make_settings(admin_password="short")
+
+
+def test_change_me_password_raises() -> None:
+    with pytest.raises(ValidationError):
+        make_settings(admin_password="change-me-please123")
