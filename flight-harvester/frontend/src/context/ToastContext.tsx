@@ -6,6 +6,7 @@ import {
   useContext,
   useState,
 } from "react";
+import { CheckCircle2, Info, XCircle } from "lucide-react";
 import { cn } from "../utils/cn";
 
 type ToastType = "success" | "error" | "info";
@@ -24,16 +25,16 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 
 let counter = 0;
 
-const borderColor: Record<ToastType, string> = {
-  success: "border-l-green-500",
-  error: "border-l-red-500",
-  info: "border-l-brand-500",
+const toastStyle: Record<ToastType, { border: string; icon: string; bg: string }> = {
+  success: { border: "border-l-green-500", icon: "text-green-500", bg: "" },
+  error:   { border: "border-l-red-500",   icon: "text-red-500",   bg: "" },
+  info:    { border: "border-l-brand-500", icon: "text-brand-500", bg: "" },
 };
 
-const textColor: Record<ToastType, string> = {
-  success: "text-green-700",
-  error: "text-red-700",
-  info: "text-brand-700",
+const ToastIcon: Record<ToastType, typeof CheckCircle2> = {
+  success: CheckCircle2,
+  error: XCircle,
+  info: Info,
 };
 
 export function ToastProvider({ children }: { children: ReactNode }) {
@@ -50,31 +51,32 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      {/* Toast stack — bottom-right */}
-      <div className="fixed bottom-4 right-4 z-[100] flex flex-col gap-2">
-        {toasts.map((toast) => (
-          <div
-            key={toast.id}
-            className={cn(
-              "flex items-start gap-3 rounded-lg border border-slate-200 border-l-4 bg-white px-4 py-3 shadow-md",
-              "min-w-[260px] max-w-sm",
-              borderColor[toast.type],
-            )}
-          >
-            <p className={cn("text-sm font-medium", textColor[toast.type])}>
-              {toast.message}
-            </p>
-            <button
-              onClick={() =>
-                setToasts((prev) => prev.filter((t) => t.id !== toast.id))
-              }
-              className="ml-auto flex-shrink-0 text-slate-400 hover:text-slate-600"
-              aria-label="Dismiss"
+      {/* Toast stack — top-right */}
+      <div className="fixed right-4 top-4 z-[100] flex flex-col gap-2">
+        {toasts.map((toast) => {
+          const style = toastStyle[toast.type];
+          const Icon = ToastIcon[toast.type];
+          return (
+            <div
+              key={toast.id}
+              className={cn(
+                "toast-animate flex items-start gap-3 rounded-lg border border-slate-200 border-l-4 bg-white px-4 py-3 shadow-lg",
+                "min-w-[280px] max-w-sm",
+                style.border,
+              )}
             >
-              ×
-            </button>
-          </div>
-        ))}
+              <Icon className={cn("mt-0.5 h-4 w-4 flex-shrink-0", style.icon)} aria-hidden="true" />
+              <p className="flex-1 text-sm font-medium text-slate-700">{toast.message}</p>
+              <button
+                onClick={() => setToasts((prev) => prev.filter((t) => t.id !== toast.id))}
+                className="flex-shrink-0 text-slate-300 hover:text-slate-500"
+                aria-label="Dismiss"
+              >
+                ×
+              </button>
+            </div>
+          );
+        })}
       </div>
     </ToastContext.Provider>
   );

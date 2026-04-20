@@ -59,7 +59,7 @@ export function ScrapeLogsTable({ logs, isLoading }: ScrapeLogsTableProps) {
           {logs.map((log, i) => (
             <tr
               key={log.id}
-              className={i % 2 !== 0 ? "bg-slate-50/50" : ""}
+              className={`transition-colors hover:bg-brand-50/40 ${i % 2 !== 0 ? "bg-slate-50/50" : ""}`}
               title={log.error_message ?? undefined}
             >
               <td className="px-3 py-2 text-slate-500">

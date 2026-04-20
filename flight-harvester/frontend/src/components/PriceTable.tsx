@@ -89,7 +89,7 @@ export function PriceTable({ prices, isLoading, hasMore, onLoadMore, loadingMore
           {sorted.map((price, i) => (
             <tr
               key={price.id}
-              className={i % 2 !== 0 ? "bg-slate-50/50" : ""}
+              className={`transition-colors hover:bg-brand-50/40 ${i % 2 !== 0 ? "bg-slate-50/50" : ""}`}
             >
               <td className="px-3 py-2 text-slate-700">{price.depart_date}</td>
               <td className="px-3 py-2 font-medium text-slate-800">
