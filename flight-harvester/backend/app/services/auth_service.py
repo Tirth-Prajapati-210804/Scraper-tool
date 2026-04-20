@@ -82,6 +82,8 @@ async def update_user(session: AsyncSession, user_id: uuid.UUID, data: UserUpdat
         user.hashed_password = hash_password(data.password)
     if data.role is not None:
         user.role = data.role
+    if data.is_active is not None:
+        user.is_active = data.is_active
     await session.commit()
     await session.refresh(user)
     return user

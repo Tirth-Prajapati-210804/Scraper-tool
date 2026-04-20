@@ -304,7 +304,7 @@ class FlightScheduler:
         already_done = {row[0] for row in result.fetchall() if row[1] >= num_dests}
         return [d for d in dates if d not in already_done]
 
-    async def trigger_single_group(self, group_id: UUID) -> dict[str, int]:
+    async def trigger_single_group(self, group_id: UUID, target_dates: list[date] | None = None) -> dict[str, int]:
         if self._is_collecting:
             log.warning("trigger_single_group_skipped_already_collecting", group_id=str(group_id))
             return {"success": 0, "errors": 0, "skipped": 0}
@@ -328,7 +328,7 @@ class FlightScheduler:
                 if not providers:
                     return stats
 
-                dates = self._group_dates(group)
+                dates = target_dates if target_dates is not None else self._group_dates(group)
                 collector = PriceCollector(
                     session_factory=self.session_factory,
                     providers=providers,

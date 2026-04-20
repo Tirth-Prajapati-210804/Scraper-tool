@@ -50,10 +50,14 @@ interface ExtraOptions {
 function ExtraOptionsFields({
   values,
   onChange,
+  originalCurrency,
 }: {
   values: ExtraOptions;
   onChange: <K extends keyof ExtraOptions>(key: K, value: ExtraOptions[K]) => void;
+  originalCurrency?: string;
 }) {
+  const currencyChanged = originalCurrency != null && values.currency !== originalCurrency;
+
   return (
     <div className="space-y-4">
       {/* Currency */}
@@ -70,6 +74,11 @@ function ExtraOptionsFields({
             </option>
           ))}
         </select>
+        {currencyChanged && (
+          <p className="mt-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-700">
+            Changing currency only affects new collections. Already-collected prices will still show their original currency.
+          </p>
+        )}
       </div>
 
       {/* Stops */}
@@ -515,6 +524,7 @@ function AdvancedForm({
         <ExtraOptionsFields
           values={{ currency: form.currency, max_stops: form.max_stops, start_date: form.start_date, end_date: form.end_date }}
           onChange={(key, value) => set(key as keyof AdvancedState, value as AdvancedState[typeof key])}
+          originalCurrency={initial?.currency}
         />
       </div>
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import time
 import uuid
+from datetime import date as date_type
 from typing import Annotated
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, Request
@@ -104,6 +105,25 @@ async def trigger_group(
     background_tasks.add_task(scheduler.trigger_single_group, group_id)
     return {"status": "triggered", "group_id": str(group_id)}
 
+
+@router.post("/trigger-group/{group_id}/date/{target_date}")
+async def trigger_group_date(
+    group_id: uuid.UUID,
+    target_date: date_type,
+    request: Request,
+    background_tasks: BackgroundTasks,
+    _: Annotated[User, Depends(get_current_user)],
+) -> dict[str, str]:
+    _check_trigger_cooldown(f"group-date:{group_id}:{target_date}")
+    scheduler = request.app.state.scheduler
+    registry = request.app.state.provider_registry
+    if not registry.get_enabled():
+        raise HTTPException(
+            status_code=400,
+            detail="No flight data provider is configured.",
+        )
+    background_tasks.add_task(scheduler.trigger_single_group, group_id, [target_date])
+    return {"status": "triggered", "group_id": str(group_id), "date": str(target_date)}
 
 
 @router.get("/runs")

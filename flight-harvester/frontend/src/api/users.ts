@@ -21,6 +21,7 @@ export interface UserUpdatePayload {
   email?: string;
   password?: string;
   role?: string;
+  is_active?: boolean;
 }
 
 export async function listUsers(): Promise<UserRecord[]> {

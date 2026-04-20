@@ -2,7 +2,6 @@ import { type FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   createUser,
-  deleteUser,
   listUsers,
   updateUser,
   type UserCreatePayload,
@@ -183,14 +182,15 @@ export function UsersPage() {
     setModalOpen(true);
   }
 
-  async function handleDelete(u: UserRecord) {
-    if (!window.confirm(`Delete user "${u.full_name}"? This cannot be undone.`)) return;
+  async function handleToggleActive(u: UserRecord) {
+    const action = u.is_active ? "deactivate" : "activate";
+    if (!window.confirm(`${u.is_active ? "Deactivate" : "Activate"} user "${u.full_name}"?`)) return;
     try {
-      await deleteUser(u.id);
-      showToast("User deleted", "success");
+      await updateUser(u.id, { is_active: !u.is_active });
+      showToast(`User ${action}d`, "success");
       load();
     } catch {
-      showToast("Failed to delete user", "error");
+      showToast(`Failed to ${action} user`, "error");
     }
   }
 
@@ -216,13 +216,14 @@ export function UsersPage() {
                   <th className="px-3 py-2.5">Full Name</th>
                   <th className="px-3 py-2.5">Email</th>
                   <th className="px-3 py-2.5">Role</th>
+                  <th className="px-3 py-2.5">Status</th>
                   <th className="px-3 py-2.5">Created</th>
                   <th className="px-3 py-2.5 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {users.map((u, i) => (
-                  <tr key={u.id} className={i % 2 !== 0 ? "bg-slate-50/50" : ""}>
+                  <tr key={u.id} className={`${i % 2 !== 0 ? "bg-slate-50/50" : ""} ${!u.is_active ? "opacity-60" : ""}`}>
                     <td className="px-3 py-2 font-medium text-slate-800">{u.full_name}</td>
                     <td className="px-3 py-2 text-slate-600">{u.email}</td>
                     <td className="px-3 py-2">
@@ -234,6 +235,17 @@ export function UsersPage() {
                         }`}
                       >
                         {u.role}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2">
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                          u.is_active
+                            ? "bg-green-100 text-green-700"
+                            : "bg-slate-100 text-slate-500"
+                        }`}
+                      >
+                        {u.is_active ? "Active" : "Inactive"}
                       </span>
                     </td>
                     <td className="px-3 py-2 text-slate-400">
@@ -249,10 +261,14 @@ export function UsersPage() {
                         </button>
                         {u.id !== currentUser?.id && (
                           <button
-                            onClick={() => handleDelete(u)}
-                            className="rounded px-2 py-1 text-xs text-red-500 hover:bg-red-50"
+                            onClick={() => handleToggleActive(u)}
+                            className={`rounded px-2 py-1 text-xs ${
+                              u.is_active
+                                ? "text-amber-600 hover:bg-amber-50"
+                                : "text-green-600 hover:bg-green-50"
+                            }`}
                           >
-                            Delete
+                            {u.is_active ? "Deactivate" : "Activate"}
                           </button>
                         )}
                       </div>

@@ -9,7 +9,7 @@ import {
   getRouteGroupProgress,
   saveBlobAsFile,
 } from "../api/route-groups";
-import { triggerGroupCollection } from "../api/collection";
+import { triggerGroupCollection, triggerGroupCollectionDate } from "../api/collection";
 import { getErrorMessage } from "../api/client";
 import { fetchPriceTrend, fetchPrices } from "../api/prices";
 import { ErrorBoundary } from "../components/ErrorBoundary";
@@ -30,6 +30,7 @@ export function RouteGroupDetailPage() {
   const [editOpen, setEditOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [triggering, setTriggering] = useState(false);
+  const [confirmTrigger, setConfirmTrigger] = useState(false);
   const [selectedOrigin, setSelectedOrigin] = useState<string>("");
   const [allPrices, setAllPrices] = useState<DailyPrice[]>([]);
   const [pricesLoading, setPricesLoading] = useState(false);
@@ -110,6 +111,7 @@ export function RouteGroupDetailPage() {
 
   async function handleTrigger() {
     if (!id) return;
+    setConfirmTrigger(false);
     setTriggering(true);
     try {
       await triggerGroupCollection(id);
@@ -119,6 +121,17 @@ export function RouteGroupDetailPage() {
       showToast(getErrorMessage(err, "Failed to trigger collection"), "error");
     } finally {
       setTriggering(false);
+    }
+  }
+
+  async function handleRescrapeDate(date: string) {
+    if (!id) return;
+    try {
+      await triggerGroupCollectionDate(id, date);
+      showToast(`Re-scrape triggered for ${date}`, "success");
+      qc.invalidateQueries({ queryKey: ["route-group-progress", id] });
+    } catch (err) {
+      showToast(getErrorMessage(err, "Failed to trigger re-scrape"), "error");
     }
   }
 
@@ -161,7 +174,7 @@ export function RouteGroupDetailPage() {
           </Button>
           <Button
             variant="secondary"
-            onClick={handleTrigger}
+            onClick={() => setConfirmTrigger(true)}
             loading={triggering}
           >
             <RefreshCw className="h-4 w-4" />
@@ -184,7 +197,7 @@ export function RouteGroupDetailPage() {
         <p className="mt-1 text-sm text-slate-500">
           Destination: {group.destination_label} · {group.nights} nights ·{" "}
           {group.days_ahead} days ahead · Currency: {group.currency}
-          {group.max_stops != null && ` · Max stops: ${group.max_stops === 0 ? "Direct" : group.max_stops}`}
+          {` · Stops: ${group.max_stops == null ? "Any" : group.max_stops === 0 ? "Direct" : group.max_stops}`}
           {group.start_date && ` · From: ${group.start_date}`}
           {group.end_date && ` · To: ${group.end_date}`}
         </p>
@@ -203,7 +216,7 @@ export function RouteGroupDetailPage() {
         ) : progressQuery.isError ? (
           <p className="text-sm text-red-500">Failed to load progress. Try refreshing the page.</p>
         ) : progressQuery.data ? (
-          <DateCoverageGrid progress={progressQuery.data} />
+          <DateCoverageGrid progress={progressQuery.data} onRescrapeDate={handleRescrapeDate} />
         ) : (
           <p className="text-sm text-slate-400">No data collected yet. Trigger a collection to start.</p>
         )}
@@ -287,6 +300,25 @@ export function RouteGroupDetailPage() {
           onClose={() => setEditOpen(false)}
           initial={group}
         />
+      )}
+
+      {confirmTrigger && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="mx-4 w-full max-w-sm rounded-xl bg-white p-6 shadow-xl">
+            <h3 className="text-base font-semibold text-slate-900">Trigger Full Scrape?</h3>
+            <p className="mt-2 text-sm text-slate-500">
+              This will start a collection run for all dates in <span className="font-medium">{group.name}</span>. Already-collected dates will be overwritten.
+            </p>
+            <div className="mt-5 flex justify-end gap-2">
+              <Button variant="secondary" onClick={() => setConfirmTrigger(false)}>
+                Cancel
+              </Button>
+              <Button variant="primary" onClick={handleTrigger} loading={triggering}>
+                Yes, trigger
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
     </ErrorBoundary>
