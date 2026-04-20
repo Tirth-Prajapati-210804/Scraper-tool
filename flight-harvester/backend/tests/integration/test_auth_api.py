@@ -15,7 +15,7 @@ async def test_login_success(client):
     assert "access_token" in data
     assert data["token_type"] == "bearer"
     assert data["user"]["email"] == "admin@integration.test"
-    assert data["user"]["is_admin"] is True
+    assert data["user"]["role"] == "admin"
 
 
 @pytest.mark.asyncio

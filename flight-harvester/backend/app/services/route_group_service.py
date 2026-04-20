@@ -99,7 +99,7 @@ async def delete(
     group = await get_by_id(session, group_id, requesting_user_id=requesting_user_id, is_admin=is_admin)
     if not group:
         return False
-    await session.delete(group)
+    session.delete(group)
     await session.commit()
     return True
 

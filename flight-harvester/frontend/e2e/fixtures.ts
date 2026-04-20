@@ -8,7 +8,8 @@ export const MOCK_USER = {
   id: "00000000-0000-0000-0000-000000000001",
   email: "admin@example.com",
   full_name: "Test Admin",
-  is_admin: true,
+  role: "admin",
+  is_active: true,
 };
 
 export const MOCK_GROUP = {
@@ -22,6 +23,10 @@ export const MOCK_GROUP = {
   sheet_name_map: { YVR: "YVR", YYZ: "YYZ" },
   special_sheets: [],
   is_active: true,
+  currency: "USD",
+  max_stops: null,
+  start_date: null,
+  end_date: null,
   created_at: "2026-01-01T00:00:00Z",
   updated_at: "2026-01-01T00:00:00Z",
 };
