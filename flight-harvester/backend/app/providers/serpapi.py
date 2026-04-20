@@ -41,6 +41,9 @@ class SerpApiProvider:
     def is_configured(self) -> bool:
         return bool(self._api_key)
 
+    # SerpAPI stops param: 0=any, 1=nonstop only, 2=1-stop-or-fewer, 3=2-stops-or-fewer
+    _STOPS_MAP: dict[int | None, int] = {None: 0, 0: 1, 1: 2, 2: 3}
+
     @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=2, max=15))
     async def search_one_way(
         self,
@@ -49,6 +52,8 @@ class SerpApiProvider:
         depart_date: date,
         adults: int = 1,
         cabin: str = "economy",
+        currency: str = "USD",
+        max_stops: int | None = None,
     ) -> list[ProviderResult]:
         """
         Search Google Flights for origin→destination on depart_date.
@@ -66,10 +71,11 @@ class SerpApiProvider:
             "departure_id": origin,        # IATA code, e.g. "AMD"
             "arrival_id": destination,     # IATA code, e.g. "DEL"
             "outbound_date": depart_date.isoformat(),
-            "currency": "CAD",
+            "currency": currency,
             "adults": adults,
             "type": 2,             # 1 = round-trip, 2 = one-way
             "travel_class": travel_class,
+            "stops": self._STOPS_MAP.get(max_stops, 0),
             # deep_search=true mirrors the exact prices shown in the browser.
             # Without this flag, SerpAPI may return a faster but less accurate
             # estimate that can differ significantly from the real price.
@@ -158,7 +164,7 @@ class SerpApiProvider:
                 results.append(
                     ProviderResult(
                         price=float(price),
-                        currency="CAD",
+                        currency=currency,
                         airline=airline,
                         deep_link=deep_link,
                         provider=self.name,

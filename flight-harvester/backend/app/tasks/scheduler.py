@@ -153,7 +153,7 @@ class FlightScheduler:
                         log.info("collection_stopped_between_groups", group=group.name)
                         break
 
-                    dates = self._generate_dates(group.days_ahead)
+                    dates = self._group_dates(group)
                     for origin in group.origins:
                         if self._stop_requested:
                             break
@@ -176,6 +176,8 @@ class FlightScheduler:
                                 batch_size=self.settings.scrape_batch_size,
                                 delay_seconds=self.settings.scrape_delay_seconds,
                                 stop_check=lambda: self._stop_requested,
+                                currency=group.currency,
+                                max_stops=group.max_stops,
                             )
                             total_success += stats["success"]
                             total_errors += stats["errors"]
@@ -217,6 +219,8 @@ class FlightScheduler:
                                 batch_size=self.settings.scrape_batch_size,
                                 delay_seconds=self.settings.scrape_delay_seconds,
                                 stop_check=lambda: self._stop_requested,
+                                currency=group.currency,
+                                max_stops=group.max_stops,
                             )
                             total_success += stats["success"]
                             total_errors += stats["errors"]
@@ -260,9 +264,11 @@ class FlightScheduler:
 
         log.info("collection_cycle_finished")
 
-    def _generate_dates(self, days_ahead: int) -> list[date]:
+    def _group_dates(self, group: RouteGroup) -> list[date]:
         today = date.today()
-        return [today + timedelta(days=d) for d in range(1, days_ahead + 1)]
+        start = group.start_date or today
+        end = group.end_date or (start + timedelta(days=group.days_ahead))
+        return [start + timedelta(days=d) for d in range((end - start).days + 1)]
 
     async def _filter_already_scraped(
         self,
@@ -322,7 +328,7 @@ class FlightScheduler:
                 if not providers:
                     return stats
 
-                dates = self._generate_dates(group.days_ahead)
+                dates = self._group_dates(group)
                 collector = PriceCollector(
                     session_factory=self.session_factory,
                     providers=providers,
@@ -344,6 +350,8 @@ class FlightScheduler:
                         batch_size=self.settings.scrape_batch_size,
                         delay_seconds=self.settings.scrape_delay_seconds,
                         stop_check=lambda: self._stop_requested,
+                        currency=group.currency,
+                        max_stops=group.max_stops,
                     )
                     stats["success"] += part["success"]
                     stats["errors"] += part["errors"]
@@ -371,6 +379,8 @@ class FlightScheduler:
                         batch_size=self.settings.scrape_batch_size,
                         delay_seconds=self.settings.scrape_delay_seconds,
                         stop_check=lambda: self._stop_requested,
+                        currency=group.currency,
+                        max_stops=group.max_stops,
                     )
                     stats["success"] += part["success"]
                     stats["errors"] += part["errors"]

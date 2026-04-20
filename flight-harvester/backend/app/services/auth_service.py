@@ -2,13 +2,14 @@ from __future__ import annotations
 
 import uuid
 
+from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import Settings
 from app.core.security import create_access_token, hash_password, verify_password
 from app.models.user import User
-from app.schemas.auth import LoginResponse, UserResponse
+from app.schemas.auth import LoginResponse, UserCreate, UserUpdate, UserResponse
 
 
 async def get_user_by_email(session: AsyncSession, email: str) -> User | None:
@@ -41,6 +42,60 @@ async def ensure_default_admin(session: AsyncSession, settings: Settings) -> Non
         is_active=True,
     )
     session.add(admin)
+    await session.commit()
+
+
+async def list_users(session: AsyncSession) -> list[User]:
+    result = await session.execute(select(User).order_by(User.created_at))
+    return list(result.scalars().all())
+
+
+async def create_user(session: AsyncSession, data: UserCreate) -> User:
+    existing = await get_user_by_email(session, data.email)
+    if existing:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already registered")
+    user = User(
+        email=data.email,
+        hashed_password=hash_password(data.password),
+        full_name=data.full_name,
+        role=data.role,
+        is_active=True,
+    )
+    session.add(user)
+    await session.commit()
+    await session.refresh(user)
+    return user
+
+
+async def update_user(session: AsyncSession, user_id: uuid.UUID, data: UserUpdate) -> User:
+    user = await get_user_by_id(session, user_id)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    if data.full_name is not None:
+        user.full_name = data.full_name
+    if data.email is not None:
+        conflict = await get_user_by_email(session, data.email)
+        if conflict and conflict.id != user.id:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already registered")
+        user.email = data.email
+    if data.password is not None:
+        user.hashed_password = hash_password(data.password)
+    if data.role is not None:
+        user.role = data.role
+    await session.commit()
+    await session.refresh(user)
+    return user
+
+
+async def delete_user(
+    session: AsyncSession, user_id: uuid.UUID, current_user_id: uuid.UUID
+) -> None:
+    if user_id == current_user_id:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Cannot delete your own account")
+    user = await get_user_by_id(session, user_id)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    await session.delete(user)
     await session.commit()
 
 

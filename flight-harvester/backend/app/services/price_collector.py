@@ -53,6 +53,8 @@ class PriceCollector:
         destination: str,
         depart_date: date,
         route_group_id: UUID | None,
+        currency: str = "USD",
+        max_stops: int | None = None,
     ) -> CollectionResult:
         """Search all providers for origin→destination on depart_date."""
         all_results: list[ProviderResult] = []
@@ -63,7 +65,10 @@ class PriceCollector:
             for provider in self.providers:
                 start = time.monotonic()
                 try:
-                    results = await provider.search_one_way(origin, destination, depart_date)
+                    results = await provider.search_one_way(
+                        origin, destination, depart_date,
+                        currency=currency, max_stops=max_stops,
+                    )
                     elapsed_ms = int((time.monotonic() - start) * 1000)
 
                     provider_results[provider.name] = results
@@ -249,6 +254,8 @@ class PriceCollector:
         batch_size: int = 3,
         delay_seconds: float = 2.0,
         stop_check: Callable[[], bool] | None = None,
+        currency: str = "USD",
+        max_stops: int | None = None,
     ) -> dict[str, int]:
         """
         Legacy route-group collection path.
@@ -266,7 +273,7 @@ class PriceCollector:
 
                 batch = dates[i : i + batch_size]
                 tasks = [
-                    self.collect_single_date(origin, dest, d, route_group_id)
+                    self.collect_single_date(origin, dest, d, route_group_id, currency, max_stops)
                     for d in batch
                 ]
                 results = await asyncio.gather(*tasks, return_exceptions=True)

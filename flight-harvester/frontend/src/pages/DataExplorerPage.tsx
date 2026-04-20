@@ -290,6 +290,7 @@ export function DataExplorerPage() {
             hasMore={hasMore && !airlineFilter && !minPrice && !maxPrice}
             onLoadMore={handleLoadMore}
             loadingMore={pricesLoading && allPrices.length > 0}
+            groupCurrency={appliedGroup?.currency}
           />
         </Card>
       )}

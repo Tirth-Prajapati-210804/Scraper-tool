@@ -183,7 +183,10 @@ export function RouteGroupDetailPage() {
         <h2 className="text-lg font-bold text-slate-900">{group.name}</h2>
         <p className="mt-1 text-sm text-slate-500">
           Destination: {group.destination_label} · {group.nights} nights ·{" "}
-          {group.days_ahead} days ahead
+          {group.days_ahead} days ahead · Currency: {group.currency}
+          {group.max_stops != null && ` · Max stops: ${group.max_stops === 0 ? "Direct" : group.max_stops}`}
+          {group.start_date && ` · From: ${group.start_date}`}
+          {group.end_date && ` · To: ${group.end_date}`}
         </p>
         <p className="mt-1 text-sm text-slate-500">
           Origins: {group.origins.join(", ")}
@@ -274,6 +277,7 @@ export function RouteGroupDetailPage() {
             hasMore={priceHasMore}
             onLoadMore={handlePriceLoadMore}
             loadingMore={pricesLoading && allPrices.length > 0}
+            groupCurrency={group.currency}
           />
       </Card>
 

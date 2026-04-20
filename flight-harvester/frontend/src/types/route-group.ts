@@ -3,6 +3,10 @@ export interface RouteGroupFromTextCreate {
   destination: string;
   nights?: number;
   days_ahead?: number;
+  currency?: string;
+  max_stops?: number | null;
+  start_date?: string | null;
+  end_date?: string | null;
 }
 
 export interface RouteGroupFromTextResponse {
@@ -22,6 +26,10 @@ export interface RouteGroup {
   sheet_name_map: Record<string, string>;
   special_sheets: SpecialSheet[];
   is_active: boolean;
+  currency: string;
+  max_stops: number | null;
+  start_date: string | null;
+  end_date: string | null;
   created_at: string;
   updated_at: string;
 }

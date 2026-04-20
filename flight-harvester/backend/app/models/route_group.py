@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, func
+from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Integer, String, func
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -23,6 +23,10 @@ class RouteGroup(Base):
     sheet_name_map: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
     special_sheets: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    currency: Mapped[str] = mapped_column(String(8), nullable=False, default="USD")
+    max_stops: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    start_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    end_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     # Owner of this route group — NULL for legacy records created before multi-user support.
     user_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True),

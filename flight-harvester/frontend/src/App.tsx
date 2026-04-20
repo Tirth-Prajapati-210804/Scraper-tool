@@ -10,6 +10,7 @@ import { DataExplorerPage } from "./pages/DataExplorerPage";
 import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { RouteGroupDetailPage } from "./pages/RouteGroupDetailPage";
+import { UsersPage } from "./pages/UsersPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -41,6 +42,7 @@ export default function App() {
                 <Route path="/route-groups/:id" element={<RouteGroupDetailPage />} />
                 <Route path="/explorer" element={<DataExplorerPage />} />
                 <Route path="/logs" element={<CollectionLogsPage />} />
+                <Route path="/users" element={<UsersPage />} />
               </Route>
               <Route path="*" element={<NotFoundPage />} />
             </Routes>

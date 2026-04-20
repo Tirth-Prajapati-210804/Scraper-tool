@@ -1,4 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { type FormEvent, useEffect, useState } from "react";
 import {
   createRouteGroup,
@@ -16,13 +17,118 @@ interface RouteGroupFormProps {
   initial?: RouteGroup | null;
 }
 
-// ── Quick-setup form (plain text: "Canada" → "Vietnam") ──────────────────────
+const CURRENCIES = [
+  { value: "USD", label: "USD – US Dollar" },
+  { value: "EUR", label: "EUR – Euro" },
+  { value: "GBP", label: "GBP – British Pound" },
+  { value: "CAD", label: "CAD – Canadian Dollar" },
+  { value: "AUD", label: "AUD – Australian Dollar" },
+  { value: "JPY", label: "JPY – Japanese Yen" },
+  { value: "SGD", label: "SGD – Singapore Dollar" },
+  { value: "AED", label: "AED – UAE Dirham" },
+  { value: "INR", label: "INR – Indian Rupee" },
+  { value: "THB", label: "THB – Thai Baht" },
+  { value: "VND", label: "VND – Vietnamese Dong" },
+];
+
+const STOP_OPTIONS: { label: string; value: number | null }[] = [
+  { label: "Any", value: null },
+  { label: "Direct", value: 0 },
+  { label: "1", value: 1 },
+  { label: "2", value: 2 },
+];
+
+// ── Shared "additional options" fields ───────────────────────────────────────
+
+interface ExtraOptions {
+  currency: string;
+  max_stops: number | null;
+  start_date: string;
+  end_date: string;
+}
+
+function ExtraOptionsFields({
+  values,
+  onChange,
+}: {
+  values: ExtraOptions;
+  onChange: <K extends keyof ExtraOptions>(key: K, value: ExtraOptions[K]) => void;
+}) {
+  return (
+    <div className="space-y-4">
+      {/* Currency */}
+      <div>
+        <label className="field-label">Display Currency</label>
+        <select
+          className="field-input"
+          value={values.currency}
+          onChange={(e) => onChange("currency", e.target.value)}
+        >
+          {CURRENCIES.map((c) => (
+            <option key={c.value} value={c.value}>
+              {c.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Stops */}
+      <div>
+        <label className="field-label">Max Stops</label>
+        <div className="flex gap-2 flex-wrap">
+          {STOP_OPTIONS.map((opt) => (
+            <button
+              key={String(opt.value)}
+              type="button"
+              onClick={() => onChange("max_stops", opt.value)}
+              className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
+                values.max_stops === opt.value
+                  ? "border-brand-600 bg-brand-600 text-white"
+                  : "border-slate-300 bg-white text-slate-700 hover:border-brand-400"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Date range */}
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="field-label">Start Date <span className="text-slate-400">(optional, default: today)</span></label>
+          <input
+            type="date"
+            className="field-input"
+            value={values.start_date}
+            onChange={(e) => onChange("start_date", e.target.value)}
+          />
+        </div>
+        <div>
+          <label className="field-label">End Date <span className="text-slate-400">(optional)</span></label>
+          <input
+            type="date"
+            className="field-input"
+            value={values.end_date}
+            onChange={(e) => onChange("end_date", e.target.value)}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Quick-setup form ──────────────────────────────────────────────────────────
 
 interface QuickState {
   origin: string;
   destination: string;
   nights: number;
   days_ahead: number;
+  currency: string;
+  max_stops: number | null;
+  start_date: string;
+  end_date: string;
 }
 
 function QuickForm({
@@ -38,6 +144,10 @@ function QuickForm({
     destination: "",
     nights: 10,
     days_ahead: 365,
+    currency: "USD",
+    max_stops: null,
+    start_date: "",
+    end_date: "",
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,6 +156,7 @@ function QuickForm({
     destinations: string[];
     name: string;
   } | null>(null);
+  const [showExtra, setShowExtra] = useState(false);
 
   function set<K extends keyof QuickState>(key: K, value: QuickState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -63,6 +174,10 @@ function QuickForm({
         destination: form.destination.trim(),
         nights: form.nights,
         days_ahead: form.days_ahead,
+        currency: form.currency,
+        max_stops: form.max_stops,
+        start_date: form.start_date || null,
+        end_date: form.end_date || null,
       });
       setResolved({
         origins: res.resolved_origins,
@@ -116,7 +231,7 @@ function QuickForm({
         <em>YYZ, YVR</em>.
       </p>
 
-      {/* Options */}
+      {/* Nights & Days ahead */}
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="field-label">Nights at destination</label>
@@ -144,7 +259,31 @@ function QuickForm({
         </div>
       </div>
 
-      {/* Resolution preview (shown after successful create) */}
+      {/* Additional Options collapsible */}
+      <div className="rounded-lg border border-slate-200">
+        <button
+          type="button"
+          onClick={() => setShowExtra((v) => !v)}
+          className="flex w-full items-center justify-between px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50"
+        >
+          Additional Options
+          {showExtra ? (
+            <ChevronUp className="h-4 w-4 text-slate-400" />
+          ) : (
+            <ChevronDown className="h-4 w-4 text-slate-400" />
+          )}
+        </button>
+        {showExtra && (
+          <div className="border-t border-slate-100 px-3 py-4">
+            <ExtraOptionsFields
+              values={{ currency: form.currency, max_stops: form.max_stops, start_date: form.start_date, end_date: form.end_date }}
+              onChange={(key, value) => set(key as keyof QuickState, value as QuickState[typeof key])}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Resolution preview */}
       {resolved && (
         <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm">
           <p className="font-medium text-green-800">{resolved.name}</p>
@@ -177,7 +316,7 @@ function QuickForm({
   );
 }
 
-// ── Advanced form (raw IATA codes, same as before) ────────────────────────────
+// ── Advanced form ─────────────────────────────────────────────────────────────
 
 interface AdvancedState {
   name: string;
@@ -187,6 +326,10 @@ interface AdvancedState {
   nights: number;
   days_ahead: number;
   is_active: boolean;
+  currency: string;
+  max_stops: number | null;
+  start_date: string;
+  end_date: string;
 }
 
 function toAdvancedState(rg?: RouteGroup | null): AdvancedState {
@@ -199,6 +342,10 @@ function toAdvancedState(rg?: RouteGroup | null): AdvancedState {
       nights: 12,
       days_ahead: 365,
       is_active: true,
+      currency: "USD",
+      max_stops: null,
+      start_date: "",
+      end_date: "",
     };
   }
   return {
@@ -209,6 +356,10 @@ function toAdvancedState(rg?: RouteGroup | null): AdvancedState {
     nights: rg.nights,
     days_ahead: rg.days_ahead,
     is_active: rg.is_active,
+    currency: rg.currency ?? "USD",
+    max_stops: rg.max_stops ?? null,
+    start_date: rg.start_date ?? "",
+    end_date: rg.end_date ?? "",
   };
 }
 
@@ -256,6 +407,10 @@ function AdvancedForm({
         nights: form.nights,
         days_ahead: form.days_ahead,
         is_active: form.is_active,
+        currency: form.currency,
+        max_stops: form.max_stops,
+        start_date: form.start_date || null,
+        end_date: form.end_date || null,
       };
       if (initial) {
         await updateRouteGroup(initial.id, payload);
@@ -352,6 +507,17 @@ function AdvancedForm({
         Active
       </label>
 
+      {/* Additional Options */}
+      <div className="rounded-lg border border-slate-200 px-3 py-4">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+          Additional Options
+        </p>
+        <ExtraOptionsFields
+          values={{ currency: form.currency, max_stops: form.max_stops, start_date: form.start_date, end_date: form.end_date }}
+          onChange={(key, value) => set(key as keyof AdvancedState, value as AdvancedState[typeof key])}
+        />
+      </div>
+
       {error && (
         <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
           {error}
@@ -374,7 +540,6 @@ function AdvancedForm({
 
 export function RouteGroupForm({ open, onClose, initial }: RouteGroupFormProps) {
   const qc = useQueryClient();
-  // When editing an existing group, go straight to advanced mode
   const [tab, setTab] = useState<"quick" | "advanced">(
     initial ? "advanced" : "quick",
   );
@@ -385,15 +550,12 @@ export function RouteGroupForm({ open, onClose, initial }: RouteGroupFormProps) 
       await qc.invalidateQueries({ queryKey: ["route-group", initial.id] });
       onClose();
     }
-    // For new groups in Quick mode, stay open so user sees the confirmation
-    // and can optionally add another. They close manually.
   }
 
   const title = initial ? "Edit Route Group" : "New Route Group";
 
   return (
     <Modal open={open} onClose={onClose} title={title}>
-      {/* Tab bar — only shown when creating a new group */}
       {!initial && (
         <div className="mb-5 flex rounded-lg border border-slate-200 bg-slate-50 p-1">
           <button

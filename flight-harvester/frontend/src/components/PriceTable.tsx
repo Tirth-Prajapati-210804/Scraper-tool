@@ -28,9 +28,10 @@ interface PriceTableProps {
   hasMore?: boolean;
   onLoadMore?: () => void;
   loadingMore?: boolean;
+  groupCurrency?: string;
 }
 
-export function PriceTable({ prices, isLoading, hasMore, onLoadMore, loadingMore }: PriceTableProps) {
+export function PriceTable({ prices, isLoading, hasMore, onLoadMore, loadingMore, groupCurrency }: PriceTableProps) {
   const [sortKey, setSortKey] = useState<keyof DailyPrice>("depart_date");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
@@ -109,8 +110,8 @@ export function PriceTable({ prices, isLoading, hasMore, onLoadMore, loadingMore
                   : `${Math.floor(price.duration_minutes / 60)}h ${price.duration_minutes % 60}m`}
               </td>
               <td className="px-3 py-2 text-right font-medium text-slate-900">
-                ${Math.round(price.price).toLocaleString()}{" "}
-                <span className="text-xs text-slate-400">{price.currency}</span>
+                {Math.round(price.price).toLocaleString()}{" "}
+                <span className="text-xs text-slate-400">{groupCurrency ?? price.currency}</span>
               </td>
               <td className="px-3 py-2 text-slate-500 capitalize">
                 {price.provider}

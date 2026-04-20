@@ -99,6 +99,10 @@ async def create_group_from_text(
         days_ahead=body.days_ahead,
         sheet_name_map={o: o for o in origins},
         special_sheets=[],
+        currency=body.currency,
+        max_stops=body.max_stops,
+        start_date=body.start_date,
+        end_date=body.end_date,
     )
     group = await route_group_service.create(session, create_payload, owner_id=current_user.id)
     return RouteGroupFromTextResponse(

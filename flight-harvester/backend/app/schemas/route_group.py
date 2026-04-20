@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -23,6 +23,10 @@ class RouteGroupCreate(BaseModel):
     days_ahead: int = Field(ge=1, le=730, default=365)
     sheet_name_map: dict[str, str] = {}
     special_sheets: list[SpecialSheetConfig] = []
+    currency: str = "USD"
+    max_stops: int | None = None
+    start_date: date | None = None
+    end_date: date | None = None
 
     @field_validator("destinations", "origins", mode="before")
     @classmethod
@@ -50,6 +54,10 @@ class RouteGroupUpdate(BaseModel):
     sheet_name_map: dict[str, str] | None = None
     special_sheets: list[SpecialSheetConfig] | None = None
     is_active: bool | None = None
+    currency: str | None = None
+    max_stops: int | None = None
+    start_date: date | None = None
+    end_date: date | None = None
 
     @field_validator("destinations", "origins", mode="before")
     @classmethod
@@ -80,6 +88,10 @@ class RouteGroupResponse(BaseModel):
     sheet_name_map: dict[str, str]
     special_sheets: list[SpecialSheetConfig]
     is_active: bool
+    currency: str
+    max_stops: int | None
+    start_date: date | None
+    end_date: date | None
     created_at: datetime
     updated_at: datetime
 
@@ -91,6 +103,10 @@ class RouteGroupFromTextCreate(BaseModel):
     destination: str = Field(min_length=1, max_length=200, description="e.g. 'Vietnam' or 'Tokyo'")
     nights: int = Field(ge=1, le=90, default=10)
     days_ahead: int = Field(ge=1, le=730, default=365)
+    currency: str = "USD"
+    max_stops: int | None = None
+    start_date: date | None = None
+    end_date: date | None = None
 
 
 class RouteGroupFromTextResponse(BaseModel):

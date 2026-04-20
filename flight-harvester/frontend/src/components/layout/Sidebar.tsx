@@ -4,12 +4,13 @@ import {
   LogOut,
   Plane,
   Table,
+  Users,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { cn } from "../../utils/cn";
 
-const navItems = [
+const BASE_NAV = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard" },
   { to: "/explorer", icon: Table, label: "Data Explorer" },
   { to: "/logs", icon: History, label: "Collection Logs" },
@@ -17,6 +18,12 @@ const navItems = [
 
 export function Sidebar() {
   const { user, logout } = useAuth();
+  const navItems = [
+    ...BASE_NAV,
+    ...(user?.role === "admin"
+      ? [{ to: "/users", icon: Users, label: "User Management" }]
+      : []),
+  ];
 
   return (
     <aside className="flex w-56 flex-shrink-0 flex-col border-r border-slate-200 bg-white">

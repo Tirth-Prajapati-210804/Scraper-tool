@@ -57,6 +57,10 @@ async def create(
         days_ahead=data.days_ahead,
         sheet_name_map=data.sheet_name_map or {o: o for o in data.origins},
         special_sheets=[s.model_dump() for s in data.special_sheets],
+        currency=data.currency,
+        max_stops=data.max_stops,
+        start_date=data.start_date,
+        end_date=data.end_date,
         user_id=owner_id,
     )
     session.add(group)
