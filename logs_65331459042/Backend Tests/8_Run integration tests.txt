@@ -1,0 +1,500 @@
+﻿2026-04-20T09:14:58.9529572Z ##[group]Run pytest tests/integration/ -v
+2026-04-20T09:14:58.9530167Z [36;1mpytest tests/integration/ -v[0m
+2026-04-20T09:14:58.9560985Z shell: /usr/bin/bash -e {0}
+2026-04-20T09:14:58.9561366Z env:
+2026-04-20T09:14:58.9561782Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-04-20T09:14:58.9562513Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+2026-04-20T09:14:58.9563232Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-04-20T09:14:58.9563880Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-04-20T09:14:58.9564535Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-04-20T09:14:58.9565196Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+2026-04-20T09:14:58.9566543Z   DATABASE_URL: ***localhost/flight_test
+2026-04-20T09:14:58.9567248Z   JWT_SECRET_KEY: ci-secret-key-that-is-at-least-32-characters-long
+2026-04-20T09:14:58.9567892Z   ADMIN_EMAIL: admin@example.com
+2026-04-20T09:14:58.9568326Z   ADMIN_PASSWORD: CIAdminPassword1!
+2026-04-20T09:14:58.9568788Z ##[endgroup]
+2026-04-20T09:14:59.6817382Z ============================= test session starts ==============================
+2026-04-20T09:14:59.6818453Z platform linux -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /opt/hostedtoolcache/Python/3.11.15/x64/bin/python
+2026-04-20T09:14:59.6819117Z cachedir: .pytest_cache
+2026-04-20T09:14:59.6819573Z rootdir: /home/runner/work/Scraper-tool/Scraper-tool/flight-harvester/backend
+2026-04-20T09:14:59.6820094Z configfile: pyproject.toml
+2026-04-20T09:14:59.6820405Z plugins: asyncio-1.3.0, anyio-4.13.0
+2026-04-20T09:14:59.6821235Z asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=session, asyncio_default_test_loop_scope=session
+2026-04-20T09:14:59.7287332Z collecting ... collected 15 items
+2026-04-20T09:14:59.7287792Z 
+2026-04-20T09:15:00.2231619Z tests/integration/test_auth_api.py::test_login_success FAILED            [  6%]
+2026-04-20T09:15:00.2698061Z tests/integration/test_auth_api.py::test_login_wrong_password PASSED     [ 13%]
+2026-04-20T09:15:00.3114985Z tests/integration/test_auth_api.py::test_login_unknown_email PASSED      [ 20%]
+2026-04-20T09:15:00.4900021Z tests/integration/test_auth_api.py::test_get_me_returns_current_user ERROR [ 26%]
+2026-04-20T09:15:00.5271759Z tests/integration/test_auth_api.py::test_get_me_requires_auth PASSED     [ 33%]
+2026-04-20T09:15:00.5668673Z tests/integration/test_auth_api.py::test_get_me_invalid_token PASSED     [ 40%]
+2026-04-20T09:15:00.6493754Z tests/integration/test_route_groups_api.py::test_create_route_group ERROR [ 46%]
+2026-04-20T09:15:00.7287271Z tests/integration/test_route_groups_api.py::test_list_route_groups ERROR [ 53%]
+2026-04-20T09:15:00.8174646Z tests/integration/test_route_groups_api.py::test_get_route_group_by_id ERROR [ 60%]
+2026-04-20T09:15:00.9006574Z tests/integration/test_route_groups_api.py::test_get_route_group_not_found ERROR [ 66%]
+2026-04-20T09:15:01.0273976Z tests/integration/test_route_groups_api.py::test_update_route_group ERROR [ 73%]
+2026-04-20T09:15:01.1099812Z tests/integration/test_route_groups_api.py::test_delete_route_group ERROR [ 80%]
+2026-04-20T09:15:01.1913083Z tests/integration/test_route_groups_api.py::test_progress_returns_zero_for_new_group ERROR [ 86%]
+2026-04-20T09:15:01.2275240Z tests/integration/test_route_groups_api.py::test_create_route_group_requires_auth PASSED [ 93%]
+2026-04-20T09:15:01.3201956Z tests/integration/test_route_groups_api.py::test_invalid_iata_code_rejected ERROR [100%]
+2026-04-20T09:15:01.3202740Z 
+2026-04-20T09:15:01.3202982Z ==================================== ERRORS ====================================
+2026-04-20T09:15:01.3203718Z ______________ ERROR at setup of test_get_me_returns_current_user ______________
+2026-04-20T09:15:01.3204296Z 
+2026-04-20T09:15:01.3204535Z self = <Coroutine test_get_me_returns_current_user>
+2026-04-20T09:15:01.3204852Z 
+2026-04-20T09:15:01.3204991Z     def setup(self) -> None:
+2026-04-20T09:15:01.3205450Z         runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+2026-04-20T09:15:01.3206936Z         if runner_fixture_id not in self.fixturenames:
+2026-04-20T09:15:01.3207534Z             self.fixturenames.append(runner_fixture_id)
+2026-04-20T09:15:01.3208096Z >       return super().setup()
+2026-04-20T09:15:01.3208520Z                ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3208753Z 
+2026-04-20T09:15:01.3209277Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:458: 
+2026-04-20T09:15:01.3210176Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3211397Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:743: in pytest_fixture_setup
+2026-04-20T09:15:01.3212575Z     hook_result = yield
+2026-04-20T09:15:01.3212958Z                   ^^^^^
+2026-04-20T09:15:01.3213770Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:361: in _async_fixture_wrapper
+2026-04-20T09:15:01.3214413Z     result = runner.run(setup(), context=context)
+2026-04-20T09:15:01.3214702Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3215090Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/runners.py:118: in run
+2026-04-20T09:15:01.3215507Z     return self._loop.run_until_complete(task)
+2026-04-20T09:15:01.3215766Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3216202Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+2026-04-20T09:15:01.3216978Z     return future.result()
+2026-04-20T09:15:01.3217181Z            ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3217605Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:357: in setup
+2026-04-20T09:15:01.3218108Z     res = await fixture_function(*args, **kwargs)
+2026-04-20T09:15:01.3218363Z           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3218652Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3218886Z 
+2026-04-20T09:15:01.3219018Z client = <httpx.AsyncClient object at 0x7f0da3f91ad0>
+2026-04-20T09:15:01.3219292Z 
+2026-04-20T09:15:01.3219364Z     @pytest.fixture
+2026-04-20T09:15:01.3219559Z     async def auth_client(client):
+2026-04-20T09:15:01.3219836Z         """Client pre-authenticated as the default admin."""
+2026-04-20T09:15:01.3220131Z         res = await client.post(
+2026-04-20T09:15:01.3220344Z             "/api/v1/auth/login",
+2026-04-20T09:15:01.3220661Z             json={"email": "admin@example.com", "password": "IntegrationPass1!"},
+2026-04-20T09:15:01.3220992Z         )
+2026-04-20T09:15:01.3221238Z >       assert res.status_code == 200, f"Login fixture failed: {res.text}"
+2026-04-20T09:15:01.3221674Z E       AssertionError: Login fixture failed: {"detail":"Invalid credentials"}
+2026-04-20T09:15:01.3222024Z E       assert 401 == 200
+2026-04-20T09:15:01.3222275Z E        +  where 401 = <Response [401 Unauthorized]>.status_code
+2026-04-20T09:15:01.3222492Z 
+2026-04-20T09:15:01.3222612Z tests/integration/conftest.py:94: AssertionError
+2026-04-20T09:15:01.3222965Z __________________ ERROR at setup of test_create_route_group ___________________
+2026-04-20T09:15:01.3223226Z 
+2026-04-20T09:15:01.3223325Z self = <Coroutine test_create_route_group>
+2026-04-20T09:15:01.3223497Z 
+2026-04-20T09:15:01.3223577Z     def setup(self) -> None:
+2026-04-20T09:15:01.3223847Z         runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+2026-04-20T09:15:01.3224181Z         if runner_fixture_id not in self.fixturenames:
+2026-04-20T09:15:01.3224491Z             self.fixturenames.append(runner_fixture_id)
+2026-04-20T09:15:01.3224761Z >       return super().setup()
+2026-04-20T09:15:01.3224959Z                ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3225083Z 
+2026-04-20T09:15:01.3225367Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:458: 
+2026-04-20T09:15:01.3225857Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3227158Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:743: in pytest_fixture_setup
+2026-04-20T09:15:01.3227679Z     hook_result = yield
+2026-04-20T09:15:01.3227864Z                   ^^^^^
+2026-04-20T09:15:01.3228320Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:361: in _async_fixture_wrapper
+2026-04-20T09:15:01.3228860Z     result = runner.run(setup(), context=context)
+2026-04-20T09:15:01.3229125Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3229490Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/runners.py:118: in run
+2026-04-20T09:15:01.3229898Z     return self._loop.run_until_complete(task)
+2026-04-20T09:15:01.3230145Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3230582Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+2026-04-20T09:15:01.3231047Z     return future.result()
+2026-04-20T09:15:01.3231263Z            ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3231694Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:357: in setup
+2026-04-20T09:15:01.3232193Z     res = await fixture_function(*args, **kwargs)
+2026-04-20T09:15:01.3232448Z           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3232728Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3232949Z 
+2026-04-20T09:15:01.3233072Z client = <httpx.AsyncClient object at 0x7f0da3c1e510>
+2026-04-20T09:15:01.3233295Z 
+2026-04-20T09:15:01.3233364Z     @pytest.fixture
+2026-04-20T09:15:01.3233553Z     async def auth_client(client):
+2026-04-20T09:15:01.3233828Z         """Client pre-authenticated as the default admin."""
+2026-04-20T09:15:01.3234118Z         res = await client.post(
+2026-04-20T09:15:01.3234335Z             "/api/v1/auth/login",
+2026-04-20T09:15:01.3234647Z             json={"email": "admin@example.com", "password": "IntegrationPass1!"},
+2026-04-20T09:15:01.3234976Z         )
+2026-04-20T09:15:01.3235227Z >       assert res.status_code == 200, f"Login fixture failed: {res.text}"
+2026-04-20T09:15:01.3235656Z E       AssertionError: Login fixture failed: {"detail":"Invalid credentials"}
+2026-04-20T09:15:01.3236003Z E       assert 401 == 200
+2026-04-20T09:15:01.3236469Z E        +  where 401 = <Response [401 Unauthorized]>.status_code
+2026-04-20T09:15:01.3236716Z 
+2026-04-20T09:15:01.3236831Z tests/integration/conftest.py:94: AssertionError
+2026-04-20T09:15:01.3237185Z ___________________ ERROR at setup of test_list_route_groups ___________________
+2026-04-20T09:15:01.3237444Z 
+2026-04-20T09:15:01.3237534Z self = <Coroutine test_list_route_groups>
+2026-04-20T09:15:01.3237711Z 
+2026-04-20T09:15:01.3237789Z     def setup(self) -> None:
+2026-04-20T09:15:01.3238060Z         runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+2026-04-20T09:15:01.3238394Z         if runner_fixture_id not in self.fixturenames:
+2026-04-20T09:15:01.3238711Z             self.fixturenames.append(runner_fixture_id)
+2026-04-20T09:15:01.3238979Z >       return super().setup()
+2026-04-20T09:15:01.3239185Z                ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3239309Z 
+2026-04-20T09:15:01.3239578Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:458: 
+2026-04-20T09:15:01.3240070Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3240627Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:743: in pytest_fixture_setup
+2026-04-20T09:15:01.3241128Z     hook_result = yield
+2026-04-20T09:15:01.3241309Z                   ^^^^^
+2026-04-20T09:15:01.3241756Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:361: in _async_fixture_wrapper
+2026-04-20T09:15:01.3242296Z     result = runner.run(setup(), context=context)
+2026-04-20T09:15:01.3242556Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3243177Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/runners.py:118: in run
+2026-04-20T09:15:01.3243595Z     return self._loop.run_until_complete(task)
+2026-04-20T09:15:01.3243844Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3244275Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+2026-04-20T09:15:01.3244718Z     return future.result()
+2026-04-20T09:15:01.3244912Z            ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3245313Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:357: in setup
+2026-04-20T09:15:01.3245802Z     res = await fixture_function(*args, **kwargs)
+2026-04-20T09:15:01.3246060Z           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3246580Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3246922Z 
+2026-04-20T09:15:01.3247072Z client = <httpx.AsyncClient object at 0x7f0da3dfcc50>
+2026-04-20T09:15:01.3247291Z 
+2026-04-20T09:15:01.3247362Z     @pytest.fixture
+2026-04-20T09:15:01.3247547Z     async def auth_client(client):
+2026-04-20T09:15:01.3247819Z         """Client pre-authenticated as the default admin."""
+2026-04-20T09:15:01.3248111Z         res = await client.post(
+2026-04-20T09:15:01.3248328Z             "/api/v1/auth/login",
+2026-04-20T09:15:01.3248635Z             json={"email": "admin@example.com", "password": "IntegrationPass1!"},
+2026-04-20T09:15:01.3248961Z         )
+2026-04-20T09:15:01.3249202Z >       assert res.status_code == 200, f"Login fixture failed: {res.text}"
+2026-04-20T09:15:01.3249763Z E       AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.3250245Z E       assert 429 == 200
+2026-04-20T09:15:01.3250524Z E        +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.3250764Z 
+2026-04-20T09:15:01.3250882Z tests/integration/conftest.py:94: AssertionError
+2026-04-20T09:15:01.3251243Z _________________ ERROR at setup of test_get_route_group_by_id _________________
+2026-04-20T09:15:01.3251532Z 
+2026-04-20T09:15:01.3251637Z self = <Coroutine test_get_route_group_by_id>
+2026-04-20T09:15:01.3251825Z 
+2026-04-20T09:15:01.3251906Z     def setup(self) -> None:
+2026-04-20T09:15:01.3252185Z         runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+2026-04-20T09:15:01.3252517Z         if runner_fixture_id not in self.fixturenames:
+2026-04-20T09:15:01.3252828Z             self.fixturenames.append(runner_fixture_id)
+2026-04-20T09:15:01.3253105Z >       return super().setup()
+2026-04-20T09:15:01.3253316Z                ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3253443Z 
+2026-04-20T09:15:01.3253720Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:458: 
+2026-04-20T09:15:01.3254216Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3254779Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:743: in pytest_fixture_setup
+2026-04-20T09:15:01.3255294Z     hook_result = yield
+2026-04-20T09:15:01.3255479Z                   ^^^^^
+2026-04-20T09:15:01.3255934Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:361: in _async_fixture_wrapper
+2026-04-20T09:15:01.3256756Z     result = runner.run(setup(), context=context)
+2026-04-20T09:15:01.3257035Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3257406Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/runners.py:118: in run
+2026-04-20T09:15:01.3257815Z     return self._loop.run_until_complete(task)
+2026-04-20T09:15:01.3258065Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3258489Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+2026-04-20T09:15:01.3258929Z     return future.result()
+2026-04-20T09:15:01.3259128Z            ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3259784Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:357: in setup
+2026-04-20T09:15:01.3260301Z     res = await fixture_function(*args, **kwargs)
+2026-04-20T09:15:01.3260562Z           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3260844Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3261081Z 
+2026-04-20T09:15:01.3261215Z client = <httpx.AsyncClient object at 0x7f0da3d60310>
+2026-04-20T09:15:01.3261428Z 
+2026-04-20T09:15:01.3261500Z     @pytest.fixture
+2026-04-20T09:15:01.3261693Z     async def auth_client(client):
+2026-04-20T09:15:01.3261982Z         """Client pre-authenticated as the default admin."""
+2026-04-20T09:15:01.3262271Z         res = await client.post(
+2026-04-20T09:15:01.3262493Z             "/api/v1/auth/login",
+2026-04-20T09:15:01.3262807Z             json={"email": "admin@example.com", "password": "IntegrationPass1!"},
+2026-04-20T09:15:01.3263138Z         )
+2026-04-20T09:15:01.3263392Z >       assert res.status_code == 200, f"Login fixture failed: {res.text}"
+2026-04-20T09:15:01.3263961Z E       AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.3264443Z E       assert 429 == 200
+2026-04-20T09:15:01.3264706Z E        +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.3264942Z 
+2026-04-20T09:15:01.3265058Z tests/integration/conftest.py:94: AssertionError
+2026-04-20T09:15:01.3265412Z _______________ ERROR at setup of test_get_route_group_not_found _______________
+2026-04-20T09:15:01.3265683Z 
+2026-04-20T09:15:01.3265788Z self = <Coroutine test_get_route_group_not_found>
+2026-04-20T09:15:01.3265977Z 
+2026-04-20T09:15:01.3266062Z     def setup(self) -> None:
+2026-04-20T09:15:01.3266628Z         runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+2026-04-20T09:15:01.3266996Z         if runner_fixture_id not in self.fixturenames:
+2026-04-20T09:15:01.3267318Z             self.fixturenames.append(runner_fixture_id)
+2026-04-20T09:15:01.3267598Z >       return super().setup()
+2026-04-20T09:15:01.3267794Z                ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3267925Z 
+2026-04-20T09:15:01.3268204Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:458: 
+2026-04-20T09:15:01.3268701Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3269261Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:743: in pytest_fixture_setup
+2026-04-20T09:15:01.3269776Z     hook_result = yield
+2026-04-20T09:15:01.3269958Z                   ^^^^^
+2026-04-20T09:15:01.3270585Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:361: in _async_fixture_wrapper
+2026-04-20T09:15:01.3271543Z     result = runner.run(setup(), context=context)
+2026-04-20T09:15:01.3272057Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3272470Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/runners.py:118: in run
+2026-04-20T09:15:01.3273024Z     return self._loop.run_until_complete(task)
+2026-04-20T09:15:01.3273466Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3274193Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+2026-04-20T09:15:01.3274989Z     return future.result()
+2026-04-20T09:15:01.3275193Z            ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3275810Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:357: in setup
+2026-04-20T09:15:01.3276756Z     res = await fixture_function(*args, **kwargs)
+2026-04-20T09:15:01.3277268Z           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3277738Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3278141Z 
+2026-04-20T09:15:01.3278352Z client = <httpx.AsyncClient object at 0x7f0da9387c90>
+2026-04-20T09:15:01.3279049Z 
+2026-04-20T09:15:01.3279182Z     @pytest.fixture
+2026-04-20T09:15:01.3279508Z     async def auth_client(client):
+2026-04-20T09:15:01.3279983Z         """Client pre-authenticated as the default admin."""
+2026-04-20T09:15:01.3280507Z         res = await client.post(
+2026-04-20T09:15:01.3280872Z             "/api/v1/auth/login",
+2026-04-20T09:15:01.3281443Z             json={"email": "admin@example.com", "password": "IntegrationPass1!"},
+2026-04-20T09:15:01.3282041Z         )
+2026-04-20T09:15:01.3282454Z >       assert res.status_code == 200, f"Login fixture failed: {res.text}"
+2026-04-20T09:15:01.3283436Z E       AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.3284271Z E       assert 429 == 200
+2026-04-20T09:15:01.3284710Z E        +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.3285139Z 
+2026-04-20T09:15:01.3285341Z tests/integration/conftest.py:94: AssertionError
+2026-04-20T09:15:01.3285967Z __________________ ERROR at setup of test_update_route_group ___________________
+2026-04-20T09:15:01.3286665Z 
+2026-04-20T09:15:01.3286853Z self = <Coroutine test_update_route_group>
+2026-04-20T09:15:01.3287185Z 
+2026-04-20T09:15:01.3287356Z     def setup(self) -> None:
+2026-04-20T09:15:01.3287889Z         runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+2026-04-20T09:15:01.3288270Z         if runner_fixture_id not in self.fixturenames:
+2026-04-20T09:15:01.3288645Z             self.fixturenames.append(runner_fixture_id)
+2026-04-20T09:15:01.3289162Z >       return super().setup()
+2026-04-20T09:15:01.3289502Z                ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3289710Z 
+2026-04-20T09:15:01.3290193Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:458: 
+2026-04-20T09:15:01.3291003Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3291998Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:743: in pytest_fixture_setup
+2026-04-20T09:15:01.3292979Z     hook_result = yield
+2026-04-20T09:15:01.3293338Z                   ^^^^^
+2026-04-20T09:15:01.3294154Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:361: in _async_fixture_wrapper
+2026-04-20T09:15:01.3295127Z     result = runner.run(setup(), context=context)
+2026-04-20T09:15:01.3295643Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3296549Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/runners.py:118: in run
+2026-04-20T09:15:01.3297310Z     return self._loop.run_until_complete(task)
+2026-04-20T09:15:01.3297785Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3298529Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+2026-04-20T09:15:01.3299347Z     return future.result()
+2026-04-20T09:15:01.3299689Z            ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3300434Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:357: in setup
+2026-04-20T09:15:01.3301301Z     res = await fixture_function(*args, **kwargs)
+2026-04-20T09:15:01.3301813Z           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3302117Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3302349Z 
+2026-04-20T09:15:01.3302487Z client = <httpx.AsyncClient object at 0x7f0da3d683d0>
+2026-04-20T09:15:01.3302852Z 
+2026-04-20T09:15:01.3302982Z     @pytest.fixture
+2026-04-20T09:15:01.3303240Z     async def auth_client(client):
+2026-04-20T09:15:01.3303537Z         """Client pre-authenticated as the default admin."""
+2026-04-20T09:15:01.3303897Z         res = await client.post(
+2026-04-20T09:15:01.3304292Z             "/api/v1/auth/login",
+2026-04-20T09:15:01.3304758Z             json={"email": "admin@example.com", "password": "IntegrationPass1!"},
+2026-04-20T09:15:01.3305190Z         )
+2026-04-20T09:15:01.3305871Z >       assert res.status_code == 200, f"Login fixture failed: {res.text}"
+2026-04-20T09:15:01.3306813Z E       AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.3307317Z E       assert 429 == 200
+2026-04-20T09:15:01.3307589Z E        +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.3307974Z 
+2026-04-20T09:15:01.3308108Z tests/integration/conftest.py:94: AssertionError
+2026-04-20T09:15:01.3308478Z __________________ ERROR at setup of test_delete_route_group ___________________
+2026-04-20T09:15:01.3308744Z 
+2026-04-20T09:15:01.3308838Z self = <Coroutine test_delete_route_group>
+2026-04-20T09:15:01.3309165Z 
+2026-04-20T09:15:01.3309252Z     def setup(self) -> None:
+2026-04-20T09:15:01.3309536Z         runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+2026-04-20T09:15:01.3309873Z         if runner_fixture_id not in self.fixturenames:
+2026-04-20T09:15:01.3310329Z             self.fixturenames.append(runner_fixture_id)
+2026-04-20T09:15:01.3310625Z >       return super().setup()
+2026-04-20T09:15:01.3310832Z                ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3310957Z 
+2026-04-20T09:15:01.3311279Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:458: 
+2026-04-20T09:15:01.3311890Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3312596Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:743: in pytest_fixture_setup
+2026-04-20T09:15:01.3313154Z     hook_result = yield
+2026-04-20T09:15:01.3313345Z                   ^^^^^
+2026-04-20T09:15:01.3313938Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:361: in _async_fixture_wrapper
+2026-04-20T09:15:01.3314500Z     result = runner.run(setup(), context=context)
+2026-04-20T09:15:01.3314814Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3315318Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/runners.py:118: in run
+2026-04-20T09:15:01.3315750Z     return self._loop.run_until_complete(task)
+2026-04-20T09:15:01.3316108Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3316693Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+2026-04-20T09:15:01.3317275Z     return future.result()
+2026-04-20T09:15:01.3317566Z            ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3317990Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:357: in setup
+2026-04-20T09:15:01.3318622Z     res = await fixture_function(*args, **kwargs)
+2026-04-20T09:15:01.3318901Z           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3319193Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3319419Z 
+2026-04-20T09:15:01.3319566Z client = <httpx.AsyncClient object at 0x7f0da3e59850>
+2026-04-20T09:15:01.3319918Z 
+2026-04-20T09:15:01.3319994Z     @pytest.fixture
+2026-04-20T09:15:01.3320192Z     async def auth_client(client):
+2026-04-20T09:15:01.3320471Z         """Client pre-authenticated as the default admin."""
+2026-04-20T09:15:01.3320833Z         res = await client.post(
+2026-04-20T09:15:01.3321141Z             "/api/v1/auth/login",
+2026-04-20T09:15:01.3321470Z             json={"email": "admin@example.com", "password": "IntegrationPass1!"},
+2026-04-20T09:15:01.3321816Z         )
+2026-04-20T09:15:01.3322199Z >       assert res.status_code == 200, f"Login fixture failed: {res.text}"
+2026-04-20T09:15:01.3322796Z E       AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.3323419Z E       assert 429 == 200
+2026-04-20T09:15:01.3323697Z E        +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.3323933Z 
+2026-04-20T09:15:01.3324053Z tests/integration/conftest.py:94: AssertionError
+2026-04-20T09:15:01.3324937Z __________ ERROR at setup of test_progress_returns_zero_for_new_group __________
+2026-04-20T09:15:01.3325229Z 
+2026-04-20T09:15:01.3325370Z self = <Coroutine test_progress_returns_zero_for_new_group>
+2026-04-20T09:15:01.3325727Z 
+2026-04-20T09:15:01.3325817Z     def setup(self) -> None:
+2026-04-20T09:15:01.3326110Z         runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+2026-04-20T09:15:01.3326595Z         if runner_fixture_id not in self.fixturenames:
+2026-04-20T09:15:01.3327164Z             self.fixturenames.append(runner_fixture_id)
+2026-04-20T09:15:01.3328685Z >       return super().setup()
+2026-04-20T09:15:01.3329592Z                ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3329883Z 
+2026-04-20T09:15:01.5418958Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:458: 
+2026-04-20T09:15:01.5420371Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.5421458Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:743: in pytest_fixture_setup
+2026-04-20T09:15:01.5422423Z     hook_result = yield
+2026-04-20T09:15:01.5422734Z                   ^^^^^
+2026-04-20T09:15:01.5423534Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:361: in _async_fixture_wrapper
+2026-04-20T09:15:01.5424471Z     result = runner.run(setup(), context=context)
+2026-04-20T09:15:01.5424903Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.5425528Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/runners.py:118: in run
+2026-04-20T09:15:01.5426208Z     return self._loop.run_until_complete(task)
+2026-04-20T09:15:01.5426790Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.5427327Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+2026-04-20T09:15:01.5427901Z     return future.result()
+2026-04-20T09:15:01.5428138Z            ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.5428660Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:357: in setup
+2026-04-20T09:15:01.5429256Z     res = await fixture_function(*args, **kwargs)
+2026-04-20T09:15:01.5429570Z           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.5429912Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.5430185Z 
+2026-04-20T09:15:01.5430333Z client = <httpx.AsyncClient object at 0x7f0da3e7e550>
+2026-04-20T09:15:01.5430589Z 
+2026-04-20T09:15:01.5430674Z     @pytest.fixture
+2026-04-20T09:15:01.5430908Z     async def auth_client(client):
+2026-04-20T09:15:01.5431236Z         """Client pre-authenticated as the default admin."""
+2026-04-20T09:15:01.5431599Z         res = await client.post(
+2026-04-20T09:15:01.5431859Z             "/api/v1/auth/login",
+2026-04-20T09:15:01.5432240Z             json={"email": "admin@example.com", "password": "IntegrationPass1!"},
+2026-04-20T09:15:01.5432636Z         )
+2026-04-20T09:15:01.5432996Z >       assert res.status_code == 200, f"Login fixture failed: {res.text}"
+2026-04-20T09:15:01.5433687Z E       AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.5434269Z E       assert 429 == 200
+2026-04-20T09:15:01.5434587Z E        +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.5434870Z 
+2026-04-20T09:15:01.5435002Z tests/integration/conftest.py:94: AssertionError
+2026-04-20T09:15:01.5435461Z ______________ ERROR at setup of test_invalid_iata_code_rejected _______________
+2026-04-20T09:15:01.5435785Z 
+2026-04-20T09:15:01.5435919Z self = <Coroutine test_invalid_iata_code_rejected>
+2026-04-20T09:15:01.5436153Z 
+2026-04-20T09:15:01.5436364Z     def setup(self) -> None:
+2026-04-20T09:15:01.5436698Z         runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+2026-04-20T09:15:01.5437075Z         if runner_fixture_id not in self.fixturenames:
+2026-04-20T09:15:01.5437841Z             self.fixturenames.append(runner_fixture_id)
+2026-04-20T09:15:01.5438119Z >       return super().setup()
+2026-04-20T09:15:01.5438365Z                ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.5438504Z 
+2026-04-20T09:15:01.5438794Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:458: 
+2026-04-20T09:15:01.5439303Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.5439866Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:743: in pytest_fixture_setup
+2026-04-20T09:15:01.5440380Z     hook_result = yield
+2026-04-20T09:15:01.5440562Z                   ^^^^^
+2026-04-20T09:15:01.5441017Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:361: in _async_fixture_wrapper
+2026-04-20T09:15:01.5441562Z     result = runner.run(setup(), context=context)
+2026-04-20T09:15:01.5441831Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.5442212Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/runners.py:118: in run
+2026-04-20T09:15:01.5442628Z     return self._loop.run_until_complete(task)
+2026-04-20T09:15:01.5442888Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.5443320Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+2026-04-20T09:15:01.5443781Z     return future.result()
+2026-04-20T09:15:01.5443976Z            ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.5444384Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:357: in setup
+2026-04-20T09:15:01.5444870Z     res = await fixture_function(*args, **kwargs)
+2026-04-20T09:15:01.5445122Z           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.5445408Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.5445626Z 
+2026-04-20T09:15:01.5445750Z client = <httpx.AsyncClient object at 0x7f0da3e6f990>
+2026-04-20T09:15:01.5445969Z 
+2026-04-20T09:15:01.5446039Z     @pytest.fixture
+2026-04-20T09:15:01.5446231Z     async def auth_client(client):
+2026-04-20T09:15:01.5446656Z         """Client pre-authenticated as the default admin."""
+2026-04-20T09:15:01.5446952Z         res = await client.post(
+2026-04-20T09:15:01.5447169Z             "/api/v1/auth/login",
+2026-04-20T09:15:01.5447485Z             json={"email": "admin@example.com", "password": "IntegrationPass1!"},
+2026-04-20T09:15:01.5447808Z         )
+2026-04-20T09:15:01.5448065Z >       assert res.status_code == 200, f"Login fixture failed: {res.text}"
+2026-04-20T09:15:01.5448626Z E       AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.5449105Z E       assert 429 == 200
+2026-04-20T09:15:01.5449373Z E        +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.5449606Z 
+2026-04-20T09:15:01.5449724Z tests/integration/conftest.py:94: AssertionError
+2026-04-20T09:15:01.5450036Z =================================== FAILURES ===================================
+2026-04-20T09:15:01.5450388Z ______________________________ test_login_success ______________________________
+2026-04-20T09:15:01.5450632Z 
+2026-04-20T09:15:01.5450756Z client = <httpx.AsyncClient object at 0x7f0da99eda50>
+2026-04-20T09:15:01.5450960Z 
+2026-04-20T09:15:01.5451049Z     @pytest.mark.asyncio
+2026-04-20T09:15:01.5451265Z     async def test_login_success(client):
+2026-04-20T09:15:01.5451516Z         res = await client.post(
+2026-04-20T09:15:01.5451735Z             "/api/v1/auth/login",
+2026-04-20T09:15:01.5452064Z             json={"email": "admin@example.com", "password": "IntegrationPass1!"},
+2026-04-20T09:15:01.5452396Z         )
+2026-04-20T09:15:01.5452572Z >       assert res.status_code == 200
+2026-04-20T09:15:01.5452800Z E       assert 401 == 200
+2026-04-20T09:15:01.5453051Z E        +  where 401 = <Response [401 Unauthorized]>.status_code
+2026-04-20T09:15:01.5453270Z 
+2026-04-20T09:15:01.5453695Z tests/integration/test_auth_api.py:13: AssertionError
+2026-04-20T09:15:01.5454022Z =============================== warnings summary ===============================
+2026-04-20T09:15:01.5454393Z tests/integration/test_auth_api.py::test_login_success
+2026-04-20T09:15:01.5455151Z   /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+2026-04-20T09:15:01.5455873Z     from crypt import crypt as _crypt
+2026-04-20T09:15:01.5456035Z 
+2026-04-20T09:15:01.5456236Z -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+2026-04-20T09:15:01.5456821Z =========================== short test summary info ============================
+2026-04-20T09:15:01.5457268Z FAILED tests/integration/test_auth_api.py::test_login_success - assert 401 == 200
+2026-04-20T09:15:01.5457693Z  +  where 401 = <Response [401 Unauthorized]>.status_code
+2026-04-20T09:15:01.5458331Z ERROR tests/integration/test_auth_api.py::test_get_me_returns_current_user - AssertionError: Login fixture failed: {"detail":"Invalid credentials"}
+2026-04-20T09:15:01.5458927Z assert 401 == 200
+2026-04-20T09:15:01.5459144Z  +  where 401 = <Response [401 Unauthorized]>.status_code
+2026-04-20T09:15:01.5459766Z ERROR tests/integration/test_route_groups_api.py::test_create_route_group - AssertionError: Login fixture failed: {"detail":"Invalid credentials"}
+2026-04-20T09:15:01.5460340Z assert 401 == 200
+2026-04-20T09:15:01.5460555Z  +  where 401 = <Response [401 Unauthorized]>.status_code
+2026-04-20T09:15:01.5461759Z ERROR tests/integration/test_route_groups_api.py::test_list_route_groups - AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.5462906Z assert 429 == 200
+2026-04-20T09:15:01.5463304Z  +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.5464635Z ERROR tests/integration/test_route_groups_api.py::test_get_route_group_by_id - AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.5465917Z assert 429 == 200
+2026-04-20T09:15:01.5466604Z  +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.5467999Z ERROR tests/integration/test_route_groups_api.py::test_get_route_group_not_found - AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.5469266Z assert 429 == 200
+2026-04-20T09:15:01.5469657Z  +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.5471005Z ERROR tests/integration/test_route_groups_api.py::test_update_route_group - AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.5472250Z assert 429 == 200
+2026-04-20T09:15:01.5472649Z  +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.5473978Z ERROR tests/integration/test_route_groups_api.py::test_delete_route_group - AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.5475166Z assert 429 == 200
+2026-04-20T09:15:01.5475573Z  +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.5476588Z ERROR tests/integration/test_route_groups_api.py::test_progress_returns_zero_for_new_group - AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.5477371Z assert 429 == 200
+2026-04-20T09:15:01.5477603Z  +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.5478413Z ERROR tests/integration/test_route_groups_api.py::test_invalid_iata_code_rejected - AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.5479163Z assert 429 == 200
+2026-04-20T09:15:01.5479388Z  +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.5480060Z =============== 1 failed, 5 passed, 1 warning, 9 errors in 1.64s ===============
+2026-04-20T09:15:01.6844813Z ##[error]Process completed with exit code 1.

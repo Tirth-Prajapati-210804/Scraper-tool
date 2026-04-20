@@ -1,0 +1,1106 @@
+﻿2026-04-20T09:14:29.0558405Z Current runner version: '2.333.1'
+2026-04-20T09:14:29.0584846Z ##[group]Runner Image Provisioner
+2026-04-20T09:14:29.0585780Z Hosted Compute Agent
+2026-04-20T09:14:29.0586516Z Version: 20260213.493
+2026-04-20T09:14:29.0587156Z Commit: 5c115507f6dd24b8de37d8bbe0bb4509d0cc0fa3
+2026-04-20T09:14:29.0587973Z Build Date: 2026-02-13T00:28:41Z
+2026-04-20T09:14:29.0588595Z Worker ID: {e11d0d87-f065-4cce-ad37-70f7691cbdb8}
+2026-04-20T09:14:29.0589272Z Azure Region: northcentralus
+2026-04-20T09:14:29.0589880Z ##[endgroup]
+2026-04-20T09:14:29.0591312Z ##[group]Operating System
+2026-04-20T09:14:29.0591911Z Ubuntu
+2026-04-20T09:14:29.0592466Z 24.04.4
+2026-04-20T09:14:29.0592885Z LTS
+2026-04-20T09:14:29.0593340Z ##[endgroup]
+2026-04-20T09:14:29.0593876Z ##[group]Runner Image
+2026-04-20T09:14:29.0594386Z Image: ubuntu-24.04
+2026-04-20T09:14:29.0594924Z Version: 20260413.86.1
+2026-04-20T09:14:29.0596111Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260413.86/images/ubuntu/Ubuntu2404-Readme.md
+2026-04-20T09:14:29.0597778Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260413.86
+2026-04-20T09:14:29.0598734Z ##[endgroup]
+2026-04-20T09:14:29.0599851Z ##[group]GITHUB_TOKEN Permissions
+2026-04-20T09:14:29.0602267Z Contents: read
+2026-04-20T09:14:29.0602828Z Metadata: read
+2026-04-20T09:14:29.0603336Z Packages: read
+2026-04-20T09:14:29.0603846Z ##[endgroup]
+2026-04-20T09:14:29.0606239Z Secret source: Actions
+2026-04-20T09:14:29.0607514Z Prepare workflow directory
+2026-04-20T09:14:29.1041225Z Prepare all required actions
+2026-04-20T09:14:29.1078569Z Getting action download info
+2026-04-20T09:14:29.5101439Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+2026-04-20T09:14:29.6208794Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-04-20T09:14:29.8018571Z Complete job name: Backend Tests
+2026-04-20T09:14:29.8517658Z ##[group]Checking docker version
+2026-04-20T09:14:29.8530458Z ##[command]/usr/bin/docker version --format '{{.Server.APIVersion}}'
+2026-04-20T09:14:29.8883408Z '1.48'
+2026-04-20T09:14:29.8899059Z Docker daemon API version: '1.48'
+2026-04-20T09:14:29.8899929Z ##[command]/usr/bin/docker version --format '{{.Client.APIVersion}}'
+2026-04-20T09:14:29.9055299Z '1.48'
+2026-04-20T09:14:29.9066016Z Docker client API version: '1.48'
+2026-04-20T09:14:29.9071526Z ##[endgroup]
+2026-04-20T09:14:29.9074395Z ##[group]Clean up resources from previous jobs
+2026-04-20T09:14:29.9080091Z ##[command]/usr/bin/docker ps --all --quiet --no-trunc --filter "label=2a24b1"
+2026-04-20T09:14:29.9216557Z ##[command]/usr/bin/docker network prune --force --filter "label=2a24b1"
+2026-04-20T09:14:29.9343107Z ##[endgroup]
+2026-04-20T09:14:29.9343627Z ##[group]Create local container network
+2026-04-20T09:14:29.9353771Z ##[command]/usr/bin/docker network create --label 2a24b1 github_network_8ac850e4614e4ca1a1fea3b9cee1b5d4
+2026-04-20T09:14:29.9860468Z 1078d6e48601ec9c8403bd3673c050dad7677fa4287bc3bb4d491d96ce3305e2
+2026-04-20T09:14:29.9879704Z ##[endgroup]
+2026-04-20T09:14:29.9904661Z ##[group]Starting postgres service container
+2026-04-20T09:14:29.9926887Z ##[command]/usr/bin/docker pull postgres:15
+2026-04-20T09:14:30.3918985Z 15: Pulling from library/postgres
+2026-04-20T09:14:30.5037546Z 5435b2dcdf5c: Pulling fs layer
+2026-04-20T09:14:30.5038639Z 71a32c7571f4: Pulling fs layer
+2026-04-20T09:14:30.5039620Z af2a6e5f285c: Pulling fs layer
+2026-04-20T09:14:30.5040665Z af0c3ea2fe5e: Pulling fs layer
+2026-04-20T09:14:30.5041701Z 00f33d580dc3: Pulling fs layer
+2026-04-20T09:14:30.5042524Z 5c152148754e: Pulling fs layer
+2026-04-20T09:14:30.5043124Z f7049a93e93f: Pulling fs layer
+2026-04-20T09:14:30.5043929Z 2c38b75ffca2: Pulling fs layer
+2026-04-20T09:14:30.5044675Z b4765ac2e7e6: Pulling fs layer
+2026-04-20T09:14:30.5045297Z c45b346571fc: Pulling fs layer
+2026-04-20T09:14:30.5046011Z 9328c154beae: Pulling fs layer
+2026-04-20T09:14:30.5047376Z af0c3ea2fe5e: Waiting
+2026-04-20T09:14:30.5047968Z 8ecdbd190da6: Pulling fs layer
+2026-04-20T09:14:30.5048910Z 5ca81a59b0a4: Pulling fs layer
+2026-04-20T09:14:30.5049524Z a8a0725a32a6: Pulling fs layer
+2026-04-20T09:14:30.5050124Z 00f33d580dc3: Waiting
+2026-04-20T09:14:30.5050672Z 5c152148754e: Waiting
+2026-04-20T09:14:30.5051211Z f7049a93e93f: Waiting
+2026-04-20T09:14:30.5051815Z 2c38b75ffca2: Waiting
+2026-04-20T09:14:30.5052356Z b4765ac2e7e6: Waiting
+2026-04-20T09:14:30.5052904Z c45b346571fc: Waiting
+2026-04-20T09:14:30.5053449Z 9328c154beae: Waiting
+2026-04-20T09:14:30.5053996Z 8ecdbd190da6: Waiting
+2026-04-20T09:14:30.5054533Z 5ca81a59b0a4: Waiting
+2026-04-20T09:14:30.5055079Z a8a0725a32a6: Waiting
+2026-04-20T09:14:30.5936033Z 71a32c7571f4: Verifying Checksum
+2026-04-20T09:14:30.5937369Z 71a32c7571f4: Download complete
+2026-04-20T09:14:30.6459205Z af2a6e5f285c: Verifying Checksum
+2026-04-20T09:14:30.6461446Z af2a6e5f285c: Download complete
+2026-04-20T09:14:30.7088453Z 5435b2dcdf5c: Verifying Checksum
+2026-04-20T09:14:30.7089860Z 5435b2dcdf5c: Download complete
+2026-04-20T09:14:30.7122168Z af0c3ea2fe5e: Verifying Checksum
+2026-04-20T09:14:30.7123688Z af0c3ea2fe5e: Download complete
+2026-04-20T09:14:30.7951787Z 00f33d580dc3: Verifying Checksum
+2026-04-20T09:14:30.7953168Z 00f33d580dc3: Download complete
+2026-04-20T09:14:30.8178705Z f7049a93e93f: Verifying Checksum
+2026-04-20T09:14:30.8179710Z f7049a93e93f: Download complete
+2026-04-20T09:14:30.8218052Z 5c152148754e: Verifying Checksum
+2026-04-20T09:14:30.8218674Z 5c152148754e: Download complete
+2026-04-20T09:14:30.8994967Z 2c38b75ffca2: Verifying Checksum
+2026-04-20T09:14:30.8997109Z 2c38b75ffca2: Download complete
+2026-04-20T09:14:30.9279330Z c45b346571fc: Verifying Checksum
+2026-04-20T09:14:30.9281743Z c45b346571fc: Download complete
+2026-04-20T09:14:31.0051014Z 9328c154beae: Verifying Checksum
+2026-04-20T09:14:31.0060726Z 9328c154beae: Download complete
+2026-04-20T09:14:31.0249150Z 8ecdbd190da6: Verifying Checksum
+2026-04-20T09:14:31.0252619Z 8ecdbd190da6: Download complete
+2026-04-20T09:14:31.1077903Z 5ca81a59b0a4: Verifying Checksum
+2026-04-20T09:14:31.1079273Z 5ca81a59b0a4: Download complete
+2026-04-20T09:14:31.1310644Z a8a0725a32a6: Verifying Checksum
+2026-04-20T09:14:31.1314652Z a8a0725a32a6: Download complete
+2026-04-20T09:14:31.3200968Z b4765ac2e7e6: Verifying Checksum
+2026-04-20T09:14:31.3203266Z b4765ac2e7e6: Download complete
+2026-04-20T09:14:31.9116880Z 5435b2dcdf5c: Pull complete
+2026-04-20T09:14:32.1930803Z 71a32c7571f4: Pull complete
+2026-04-20T09:14:32.3743367Z af2a6e5f285c: Pull complete
+2026-04-20T09:14:32.4160911Z af0c3ea2fe5e: Pull complete
+2026-04-20T09:14:32.7201185Z 00f33d580dc3: Pull complete
+2026-04-20T09:14:32.8163519Z 5c152148754e: Pull complete
+2026-04-20T09:14:32.8246964Z f7049a93e93f: Pull complete
+2026-04-20T09:14:32.8361343Z 2c38b75ffca2: Pull complete
+2026-04-20T09:14:35.2628248Z b4765ac2e7e6: Pull complete
+2026-04-20T09:14:35.8013240Z c45b346571fc: Pull complete
+2026-04-20T09:14:35.8272426Z 9328c154beae: Pull complete
+2026-04-20T09:14:35.8389694Z 8ecdbd190da6: Pull complete
+2026-04-20T09:14:35.8494843Z 5ca81a59b0a4: Pull complete
+2026-04-20T09:14:35.8608058Z a8a0725a32a6: Pull complete
+2026-04-20T09:14:35.8648977Z Digest: sha256:3e43515057e113ee741fca2f621f15300be34a6d4a8dfcf2e20651288c8272f3
+2026-04-20T09:14:35.8666125Z Status: Downloaded newer image for postgres:15
+2026-04-20T09:14:35.8674909Z docker.io/library/postgres:15
+2026-04-20T09:14:35.8734188Z ##[command]/usr/bin/docker create --name 97a2b4516c2c45728bd7ec7b409b3e27_postgres15_f1de20 --label 2a24b1 --network github_network_8ac850e4614e4ca1a1fea3b9cee1b5d4 --network-alias postgres -p 5432:5432 --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10 -e "POSTGRES_USER=postgres" -e "POSTGRES_PASSWORD=postgres" -e "POSTGRES_DB=flight_test" -e GITHUB_ACTIONS=true -e CI=true postgres:15
+2026-04-20T09:14:35.8994658Z 96a6ad00e32616c342e5efd22aae4b4948a41f83dacf07220f542debd81d1b96
+2026-04-20T09:14:35.9013560Z ##[command]/usr/bin/docker start 96a6ad00e32616c342e5efd22aae4b4948a41f83dacf07220f542debd81d1b96
+2026-04-20T09:14:36.0549224Z 96a6ad00e32616c342e5efd22aae4b4948a41f83dacf07220f542debd81d1b96
+2026-04-20T09:14:36.0565562Z ##[command]/usr/bin/docker ps --all --filter id=96a6ad00e32616c342e5efd22aae4b4948a41f83dacf07220f542debd81d1b96 --filter status=running --no-trunc --format "{{.ID}} {{.Status}}"
+2026-04-20T09:14:36.0698677Z 96a6ad00e32616c342e5efd22aae4b4948a41f83dacf07220f542debd81d1b96 Up Less than a second (health: starting)
+2026-04-20T09:14:36.0721785Z ##[command]/usr/bin/docker port 96a6ad00e32616c342e5efd22aae4b4948a41f83dacf07220f542debd81d1b96
+2026-04-20T09:14:36.0855226Z 5432/tcp -> 0.0.0.0:5432
+2026-04-20T09:14:36.0857605Z 5432/tcp -> [::]:5432
+2026-04-20T09:14:36.0901486Z ##[endgroup]
+2026-04-20T09:14:36.0910308Z ##[group]Waiting for all services to be ready
+2026-04-20T09:14:36.0923256Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" 96a6ad00e32616c342e5efd22aae4b4948a41f83dacf07220f542debd81d1b96
+2026-04-20T09:14:36.1055002Z starting
+2026-04-20T09:14:36.1077326Z postgres service is starting, waiting 2 seconds before checking again.
+2026-04-20T09:14:38.1087402Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" 96a6ad00e32616c342e5efd22aae4b4948a41f83dacf07220f542debd81d1b96
+2026-04-20T09:14:38.1208714Z starting
+2026-04-20T09:14:38.1220343Z postgres service is starting, waiting 4 seconds before checking again.
+2026-04-20T09:14:42.4668119Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" 96a6ad00e32616c342e5efd22aae4b4948a41f83dacf07220f542debd81d1b96
+2026-04-20T09:14:42.4791633Z healthy
+2026-04-20T09:14:42.4806214Z postgres service is healthy.
+2026-04-20T09:14:42.4807178Z ##[endgroup]
+2026-04-20T09:14:42.5074795Z ##[group]Run actions/checkout@v4
+2026-04-20T09:14:42.5075401Z with:
+2026-04-20T09:14:42.5075638Z   repository: Tirth-Prajapati-210804/Scraper-tool
+2026-04-20T09:14:42.5076093Z   token: ***
+2026-04-20T09:14:42.5076558Z   ssh-strict: true
+2026-04-20T09:14:42.5076760Z   ssh-user: git
+2026-04-20T09:14:42.5076937Z   persist-credentials: true
+2026-04-20T09:14:42.5077146Z   clean: true
+2026-04-20T09:14:42.5077333Z   sparse-checkout-cone-mode: true
+2026-04-20T09:14:42.5077557Z   fetch-depth: 1
+2026-04-20T09:14:42.5077725Z   fetch-tags: false
+2026-04-20T09:14:42.5077903Z   show-progress: true
+2026-04-20T09:14:42.5078081Z   lfs: false
+2026-04-20T09:14:42.5078245Z   submodules: false
+2026-04-20T09:14:42.5078429Z   set-safe-directory: true
+2026-04-20T09:14:42.5078888Z ##[endgroup]
+2026-04-20T09:14:42.6169579Z Syncing repository: Tirth-Prajapati-210804/Scraper-tool
+2026-04-20T09:14:42.6170818Z ##[group]Getting Git version info
+2026-04-20T09:14:42.6171282Z Working directory is '/home/runner/work/Scraper-tool/Scraper-tool'
+2026-04-20T09:14:42.6171838Z [command]/usr/bin/git version
+2026-04-20T09:14:42.6206596Z git version 2.53.0
+2026-04-20T09:14:42.6233036Z ##[endgroup]
+2026-04-20T09:14:42.6255589Z Temporarily overriding HOME='/home/runner/work/_temp/028c7510-7b1f-4111-94bd-177ae296a2f2' before making global git config changes
+2026-04-20T09:14:42.6257236Z Adding repository directory to the temporary git global config as a safe directory
+2026-04-20T09:14:42.6261952Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Scraper-tool/Scraper-tool
+2026-04-20T09:14:42.6293206Z Deleting the contents of '/home/runner/work/Scraper-tool/Scraper-tool'
+2026-04-20T09:14:42.6296872Z ##[group]Initializing the repository
+2026-04-20T09:14:42.6301589Z [command]/usr/bin/git init /home/runner/work/Scraper-tool/Scraper-tool
+2026-04-20T09:14:42.6385944Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-04-20T09:14:42.6387098Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-04-20T09:14:42.6387968Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-04-20T09:14:42.6388690Z hint: call:
+2026-04-20T09:14:42.6388990Z hint:
+2026-04-20T09:14:42.6389756Z hint: 	git config --global init.defaultBranch <name>
+2026-04-20T09:14:42.6390281Z hint:
+2026-04-20T09:14:42.6390796Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-04-20T09:14:42.6391672Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-04-20T09:14:42.6392336Z hint:
+2026-04-20T09:14:42.6392658Z hint: 	git branch -m <name>
+2026-04-20T09:14:42.6393033Z hint:
+2026-04-20T09:14:42.6393588Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-04-20T09:14:42.6394611Z Initialized empty Git repository in /home/runner/work/Scraper-tool/Scraper-tool/.git/
+2026-04-20T09:14:42.6400805Z [command]/usr/bin/git remote add origin https://github.com/Tirth-Prajapati-210804/Scraper-tool
+2026-04-20T09:14:42.6429485Z ##[endgroup]
+2026-04-20T09:14:42.6430081Z ##[group]Disabling automatic garbage collection
+2026-04-20T09:14:42.6434709Z [command]/usr/bin/git config --local gc.auto 0
+2026-04-20T09:14:42.6463100Z ##[endgroup]
+2026-04-20T09:14:42.6463460Z ##[group]Setting up auth
+2026-04-20T09:14:42.6469873Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-04-20T09:14:42.6499184Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-04-20T09:14:42.6774031Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-04-20T09:14:42.6802630Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-04-20T09:14:42.7016019Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-04-20T09:14:42.7045056Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-04-20T09:14:42.7258244Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-04-20T09:14:42.7290522Z ##[endgroup]
+2026-04-20T09:14:42.7291717Z ##[group]Fetching the repository
+2026-04-20T09:14:42.7299483Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +1cfa0f75b26a066c9162e1801611cc6330b44b59:refs/remotes/origin/claude/continue-project-CF0S4
+2026-04-20T09:14:43.1310074Z From https://github.com/Tirth-Prajapati-210804/Scraper-tool
+2026-04-20T09:14:43.1311462Z  * [new ref]         1cfa0f75b26a066c9162e1801611cc6330b44b59 -> origin/claude/continue-project-CF0S4
+2026-04-20T09:14:43.1340549Z ##[endgroup]
+2026-04-20T09:14:43.1341182Z ##[group]Determining the checkout info
+2026-04-20T09:14:43.1343193Z ##[endgroup]
+2026-04-20T09:14:43.1349063Z [command]/usr/bin/git sparse-checkout disable
+2026-04-20T09:14:43.1386043Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-04-20T09:14:43.1412024Z ##[group]Checking out the ref
+2026-04-20T09:14:43.1417018Z [command]/usr/bin/git checkout --progress --force -B claude/continue-project-CF0S4 refs/remotes/origin/claude/continue-project-CF0S4
+2026-04-20T09:14:43.1582308Z Switched to a new branch 'claude/continue-project-CF0S4'
+2026-04-20T09:14:43.1584948Z branch 'claude/continue-project-CF0S4' set up to track 'origin/claude/continue-project-CF0S4'.
+2026-04-20T09:14:43.1591810Z ##[endgroup]
+2026-04-20T09:14:43.1624654Z [command]/usr/bin/git log -1 --format=%H
+2026-04-20T09:14:43.1645619Z 1cfa0f75b26a066c9162e1801611cc6330b44b59
+2026-04-20T09:14:43.1869233Z ##[group]Run actions/setup-python@v5
+2026-04-20T09:14:43.1869512Z with:
+2026-04-20T09:14:43.1869690Z   python-version: 3.11
+2026-04-20T09:14:43.1869885Z   check-latest: false
+2026-04-20T09:14:43.1870221Z   token: ***
+2026-04-20T09:14:43.1870405Z   update-environment: true
+2026-04-20T09:14:43.1870621Z   allow-prereleases: false
+2026-04-20T09:14:43.1870813Z   freethreaded: false
+2026-04-20T09:14:43.1871178Z ##[endgroup]
+2026-04-20T09:14:43.3523617Z ##[group]Installed versions
+2026-04-20T09:14:43.3618223Z Successfully set up CPython (3.11.15)
+2026-04-20T09:14:43.3618809Z ##[endgroup]
+2026-04-20T09:14:43.3734818Z ##[group]Run pip install .[dev]
+2026-04-20T09:14:43.3735130Z [36;1mpip install .[dev][0m
+2026-04-20T09:14:43.3772992Z shell: /usr/bin/bash -e {0}
+2026-04-20T09:14:43.3773238Z env:
+2026-04-20T09:14:43.3773490Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-04-20T09:14:43.3773941Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+2026-04-20T09:14:43.3774354Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-04-20T09:14:43.3774713Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-04-20T09:14:43.3775066Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-04-20T09:14:43.3775428Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+2026-04-20T09:14:43.3775727Z ##[endgroup]
+2026-04-20T09:14:45.2425730Z Processing ./.
+2026-04-20T09:14:45.2442589Z   Installing build dependencies: started
+2026-04-20T09:14:45.9628152Z   Installing build dependencies: finished with status 'done'
+2026-04-20T09:14:45.9634791Z   Getting requirements to build wheel: started
+2026-04-20T09:14:46.4982769Z   Getting requirements to build wheel: finished with status 'done'
+2026-04-20T09:14:46.4991380Z   Preparing metadata (pyproject.toml): started
+2026-04-20T09:14:46.6683993Z   Preparing metadata (pyproject.toml): finished with status 'done'
+2026-04-20T09:14:46.7778897Z Collecting fastapi>=0.115.0 (from flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:46.8299189Z   Downloading fastapi-0.136.0-py3-none-any.whl.metadata (28 kB)
+2026-04-20T09:14:46.8619913Z Collecting uvicorn>=0.32.0 (from uvicorn[standard]>=0.32.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:46.8654037Z   Downloading uvicorn-0.44.0-py3-none-any.whl.metadata (6.7 kB)
+2026-04-20T09:14:46.8822406Z Collecting httpx>=0.28.0 (from flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:46.8854755Z   Downloading httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+2026-04-20T09:14:46.9925364Z Collecting pydantic>=2.10.0 (from flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:46.9966610Z   Downloading pydantic-2.13.2-py3-none-any.whl.metadata (108 kB)
+2026-04-20T09:14:47.0201843Z Collecting pydantic-settings>=2.7.0 (from flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:47.0235671Z   Downloading pydantic_settings-2.13.1-py3-none-any.whl.metadata (3.4 kB)
+2026-04-20T09:14:47.0359565Z Collecting email-validator>=2.2.0 (from flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:47.0392256Z   Downloading email_validator-2.3.0-py3-none-any.whl.metadata (26 kB)
+2026-04-20T09:14:47.2769322Z Collecting sqlalchemy>=2.0.36 (from sqlalchemy[asyncio]>=2.0.36->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:47.2815858Z   Downloading sqlalchemy-2.0.49-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (9.5 kB)
+2026-04-20T09:14:47.3400508Z Collecting asyncpg>=0.30.0 (from flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:47.3442520Z   Downloading asyncpg-0.31.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (4.4 kB)
+2026-04-20T09:14:47.3625766Z Collecting alembic>=1.14.0 (from flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:47.3657246Z   Downloading alembic-1.18.4-py3-none-any.whl.metadata (7.2 kB)
+2026-04-20T09:14:47.3796210Z Collecting apscheduler>=3.11.0 (from flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:47.3828650Z   Downloading apscheduler-3.11.2-py3-none-any.whl.metadata (6.4 kB)
+2026-04-20T09:14:47.3992442Z Collecting python-dotenv>=1.0.1 (from flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:47.4024416Z   Downloading python_dotenv-1.2.2-py3-none-any.whl.metadata (27 kB)
+2026-04-20T09:14:47.4161191Z Collecting structlog>=24.4.0 (from flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:47.4202405Z   Downloading structlog-25.5.0-py3-none-any.whl.metadata (9.5 kB)
+2026-04-20T09:14:47.4312503Z Collecting passlib>=1.7.4 (from passlib[bcrypt]>=1.7.4->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:47.4346072Z   Downloading passlib-1.7.4-py2.py3-none-any.whl.metadata (1.7 kB)
+2026-04-20T09:14:47.4700690Z Collecting bcrypt<5.0.0,>=4.0.0 (from flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:47.4736190Z   Downloading bcrypt-4.3.0-cp39-abi3-manylinux_2_34_x86_64.whl.metadata (10 kB)
+2026-04-20T09:14:47.4851021Z Collecting python-jose>=3.3.0 (from python-jose[cryptography]>=3.3.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:47.4885435Z   Downloading python_jose-3.5.0-py2.py3-none-any.whl.metadata (5.5 kB)
+2026-04-20T09:14:47.5016186Z Collecting python-multipart>=0.0.17 (from flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:47.5050222Z   Downloading python_multipart-0.0.26-py3-none-any.whl.metadata (2.1 kB)
+2026-04-20T09:14:47.5177533Z Collecting openpyxl>=3.1.5 (from flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:47.5212316Z   Downloading openpyxl-3.1.5-py2.py3-none-any.whl.metadata (2.5 kB)
+2026-04-20T09:14:47.5600436Z Collecting sentry-sdk>=2.19.0 (from sentry-sdk[fastapi]>=2.19.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:47.5635987Z   Downloading sentry_sdk-2.58.0-py2.py3-none-any.whl.metadata (10 kB)
+2026-04-20T09:14:47.5865711Z Collecting tenacity>=9.0.0 (from flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:47.5898554Z   Downloading tenacity-9.1.4-py3-none-any.whl.metadata (1.2 kB)
+2026-04-20T09:14:47.6161992Z Collecting pytest>=8.3.0 (from flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:47.6194031Z   Downloading pytest-9.0.3-py3-none-any.whl.metadata (7.6 kB)
+2026-04-20T09:14:47.6358635Z Collecting pytest-asyncio>=0.24.0 (from flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:47.6390726Z   Downloading pytest_asyncio-1.3.0-py3-none-any.whl.metadata (4.1 kB)
+2026-04-20T09:14:47.9701722Z Collecting ruff>=0.8.0 (from flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:47.9737778Z   Downloading ruff-0.15.11-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (26 kB)
+2026-04-20T09:14:47.9937799Z Collecting Mako (from alembic>=1.14.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:47.9971002Z   Downloading mako-1.3.11-py3-none-any.whl.metadata (2.9 kB)
+2026-04-20T09:14:48.0114149Z Collecting typing-extensions>=4.12 (from alembic>=1.14.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:48.0144988Z   Downloading typing_extensions-4.15.0-py3-none-any.whl.metadata (3.3 kB)
+2026-04-20T09:14:48.0275299Z Collecting tzlocal>=3.0 (from apscheduler>=3.11.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:48.0305706Z   Downloading tzlocal-5.3.1-py3-none-any.whl.metadata (7.6 kB)
+2026-04-20T09:14:48.0443800Z Collecting dnspython>=2.0.0 (from email-validator>=2.2.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:48.0476221Z   Downloading dnspython-2.8.0-py3-none-any.whl.metadata (5.7 kB)
+2026-04-20T09:14:48.0613991Z Collecting idna>=2.0.0 (from email-validator>=2.2.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:48.0644546Z   Downloading idna-3.11-py3-none-any.whl.metadata (8.4 kB)
+2026-04-20T09:14:48.0863542Z Collecting starlette>=0.46.0 (from fastapi>=0.115.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:48.0895661Z   Downloading starlette-1.0.0-py3-none-any.whl.metadata (6.3 kB)
+2026-04-20T09:14:48.1033765Z Collecting typing-inspection>=0.4.2 (from fastapi>=0.115.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:48.1065420Z   Downloading typing_inspection-0.4.2-py3-none-any.whl.metadata (2.6 kB)
+2026-04-20T09:14:48.1150851Z Collecting annotated-doc>=0.0.2 (from fastapi>=0.115.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:48.1182248Z   Downloading annotated_doc-0.0.4-py3-none-any.whl.metadata (6.6 kB)
+2026-04-20T09:14:48.1364336Z Collecting anyio (from httpx>=0.28.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:48.1396712Z   Downloading anyio-4.13.0-py3-none-any.whl.metadata (4.5 kB)
+2026-04-20T09:14:48.1570021Z Collecting certifi (from httpx>=0.28.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:48.1602654Z   Downloading certifi-2026.2.25-py3-none-any.whl.metadata (2.5 kB)
+2026-04-20T09:14:48.1748743Z Collecting httpcore==1.* (from httpx>=0.28.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:48.1780973Z   Downloading httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+2026-04-20T09:14:48.1895658Z Collecting h11>=0.16 (from httpcore==1.*->httpx>=0.28.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:48.1926907Z   Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+2026-04-20T09:14:48.2032851Z Collecting et-xmlfile (from openpyxl>=3.1.5->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:48.2065970Z   Downloading et_xmlfile-2.0.0-py3-none-any.whl.metadata (2.7 kB)
+2026-04-20T09:14:48.2191238Z Collecting annotated-types>=0.6.0 (from pydantic>=2.10.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:48.2223726Z   Downloading annotated_types-0.7.0-py3-none-any.whl.metadata (15 kB)
+2026-04-20T09:14:48.9013707Z Collecting pydantic-core==2.46.2 (from pydantic>=2.10.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:48.9048780Z   Downloading pydantic_core-2.46.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.6 kB)
+2026-04-20T09:14:48.9220690Z Collecting iniconfig>=1.0.1 (from pytest>=8.3.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:48.9252460Z   Downloading iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+2026-04-20T09:14:48.9384405Z Collecting packaging>=22 (from pytest>=8.3.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:48.9416819Z   Downloading packaging-26.1-py3-none-any.whl.metadata (3.5 kB)
+2026-04-20T09:14:48.9523894Z Collecting pluggy<2,>=1.5 (from pytest>=8.3.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:48.9558395Z   Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+2026-04-20T09:14:48.9730759Z Collecting pygments>=2.7.2 (from pytest>=8.3.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:48.9764210Z   Downloading pygments-2.20.0-py3-none-any.whl.metadata (2.5 kB)
+2026-04-20T09:14:48.9935879Z Collecting ecdsa!=0.15 (from python-jose>=3.3.0->python-jose[cryptography]>=3.3.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:48.9968391Z   Downloading ecdsa-0.19.2-py2.py3-none-any.whl.metadata (29 kB)
+2026-04-20T09:14:49.0119228Z Collecting rsa!=4.1.1,!=4.4,<5.0,>=4.0 (from python-jose>=3.3.0->python-jose[cryptography]>=3.3.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:49.0152290Z   Downloading rsa-4.9.1-py3-none-any.whl.metadata (5.6 kB)
+2026-04-20T09:14:49.0337216Z Collecting pyasn1>=0.5.0 (from python-jose>=3.3.0->python-jose[cryptography]>=3.3.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:49.0369040Z   Downloading pyasn1-0.6.3-py3-none-any.whl.metadata (8.4 kB)
+2026-04-20T09:14:49.0503385Z Collecting six>=1.9.0 (from ecdsa!=0.15->python-jose>=3.3.0->python-jose[cryptography]>=3.3.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:49.0535927Z   Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+2026-04-20T09:14:49.2144664Z Collecting cryptography>=3.4.0 (from python-jose[cryptography]>=3.3.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:49.2182338Z   Downloading cryptography-46.0.7-cp311-abi3-manylinux_2_34_x86_64.whl.metadata (5.7 kB)
+2026-04-20T09:14:49.3100898Z Collecting cffi>=2.0.0 (from cryptography>=3.4.0->python-jose[cryptography]>=3.3.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:49.3137240Z   Downloading cffi-2.0.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.6 kB)
+2026-04-20T09:14:49.3277569Z Collecting pycparser (from cffi>=2.0.0->cryptography>=3.4.0->python-jose[cryptography]>=3.3.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:49.3309044Z   Downloading pycparser-3.0-py3-none-any.whl.metadata (8.2 kB)
+2026-04-20T09:14:49.3527783Z Collecting urllib3>=1.26.11 (from sentry-sdk>=2.19.0->sentry-sdk[fastapi]>=2.19.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:49.3561621Z   Downloading urllib3-2.6.3-py3-none-any.whl.metadata (6.9 kB)
+2026-04-20T09:14:49.5470970Z Collecting greenlet>=1 (from sqlalchemy>=2.0.36->sqlalchemy[asyncio]>=2.0.36->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:49.5505201Z   Downloading greenlet-3.4.0-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (3.7 kB)
+2026-04-20T09:14:49.5841359Z Collecting click>=7.0 (from uvicorn>=0.32.0->uvicorn[standard]>=0.32.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:49.5875933Z   Downloading click-8.3.2-py3-none-any.whl.metadata (2.6 kB)
+2026-04-20T09:14:49.6159548Z Collecting httptools>=0.6.3 (from uvicorn[standard]>=0.32.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:49.6193378Z   Downloading httptools-0.7.1-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (3.5 kB)
+2026-04-20T09:14:49.6537243Z Collecting pyyaml>=5.1 (from uvicorn[standard]>=0.32.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:49.6574006Z   Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+2026-04-20T09:14:49.6914971Z Collecting uvloop>=0.15.1 (from uvicorn[standard]>=0.32.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:49.6951109Z   Downloading uvloop-0.22.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (4.9 kB)
+2026-04-20T09:14:49.7599967Z Collecting watchfiles>=0.20 (from uvicorn[standard]>=0.32.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:49.7631655Z   Downloading watchfiles-1.1.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.9 kB)
+2026-04-20T09:14:49.8411413Z Collecting websockets>=10.4 (from uvicorn[standard]>=0.32.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:49.8445121Z   Downloading websockets-16.0-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (6.8 kB)
+2026-04-20T09:14:49.8967701Z Collecting MarkupSafe>=0.9.2 (from Mako->alembic>=1.14.0->flight-data-scrapper-backend==1.0.0)
+2026-04-20T09:14:49.9003135Z   Downloading markupsafe-3.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+2026-04-20T09:14:49.9090616Z Downloading bcrypt-4.3.0-cp39-abi3-manylinux_2_34_x86_64.whl (284 kB)
+2026-04-20T09:14:49.9186617Z Downloading alembic-1.18.4-py3-none-any.whl (263 kB)
+2026-04-20T09:14:49.9256142Z Downloading apscheduler-3.11.2-py3-none-any.whl (64 kB)
+2026-04-20T09:14:49.9311013Z Downloading asyncpg-0.31.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (3.0 MB)
+2026-04-20T09:14:49.9460486Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.0/3.0 MB 222.0 MB/s  0:00:00
+2026-04-20T09:14:49.9494834Z Downloading email_validator-2.3.0-py3-none-any.whl (35 kB)
+2026-04-20T09:14:49.9546957Z Downloading dnspython-2.8.0-py3-none-any.whl (331 kB)
+2026-04-20T09:14:49.9606874Z Downloading fastapi-0.136.0-py3-none-any.whl (117 kB)
+2026-04-20T09:14:49.9663952Z Downloading annotated_doc-0.0.4-py3-none-any.whl (5.3 kB)
+2026-04-20T09:14:49.9713430Z Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
+2026-04-20T09:14:49.9766872Z Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
+2026-04-20T09:14:49.9819945Z Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+2026-04-20T09:14:49.9871286Z Downloading idna-3.11-py3-none-any.whl (71 kB)
+2026-04-20T09:14:49.9925569Z Downloading openpyxl-3.1.5-py2.py3-none-any.whl (250 kB)
+2026-04-20T09:14:49.9996138Z Downloading passlib-1.7.4-py2.py3-none-any.whl (525 kB)
+2026-04-20T09:14:50.0042544Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 525.6/525.6 kB 106.4 MB/s  0:00:00
+2026-04-20T09:14:50.0078071Z Downloading pydantic-2.13.2-py3-none-any.whl (471 kB)
+2026-04-20T09:14:50.0143575Z Downloading pydantic_core-2.46.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+2026-04-20T09:14:50.0232361Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 265.9 MB/s  0:00:00
+2026-04-20T09:14:50.0265119Z Downloading annotated_types-0.7.0-py3-none-any.whl (13 kB)
+2026-04-20T09:14:50.0314487Z Downloading pydantic_settings-2.13.1-py3-none-any.whl (58 kB)
+2026-04-20T09:14:50.0367504Z Downloading pytest-9.0.3-py3-none-any.whl (375 kB)
+2026-04-20T09:14:50.0428665Z Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+2026-04-20T09:14:50.0479665Z Downloading iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+2026-04-20T09:14:50.0528357Z Downloading packaging-26.1-py3-none-any.whl (95 kB)
+2026-04-20T09:14:50.0589755Z Downloading pygments-2.20.0-py3-none-any.whl (1.2 MB)
+2026-04-20T09:14:50.0654323Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 243.9 MB/s  0:00:00
+2026-04-20T09:14:50.0686023Z Downloading pytest_asyncio-1.3.0-py3-none-any.whl (15 kB)
+2026-04-20T09:14:50.0744412Z Downloading python_dotenv-1.2.2-py3-none-any.whl (22 kB)
+2026-04-20T09:14:50.0793808Z Downloading python_jose-3.5.0-py2.py3-none-any.whl (34 kB)
+2026-04-20T09:14:50.0844278Z Downloading rsa-4.9.1-py3-none-any.whl (34 kB)
+2026-04-20T09:14:50.0896922Z Downloading ecdsa-0.19.2-py2.py3-none-any.whl (150 kB)
+2026-04-20T09:14:50.0949975Z Downloading pyasn1-0.6.3-py3-none-any.whl (83 kB)
+2026-04-20T09:14:50.1008582Z Downloading cryptography-46.0.7-cp311-abi3-manylinux_2_34_x86_64.whl (4.5 MB)
+2026-04-20T09:14:50.1165568Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.5/4.5 MB 319.8 MB/s  0:00:00
+2026-04-20T09:14:50.1202114Z Downloading cffi-2.0.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (215 kB)
+2026-04-20T09:14:50.1256294Z Downloading python_multipart-0.0.26-py3-none-any.whl (28 kB)
+2026-04-20T09:14:50.1310045Z Downloading ruff-0.15.11-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (11.3 MB)
+2026-04-20T09:14:50.1698598Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.3/11.3 MB 304.7 MB/s  0:00:00
+2026-04-20T09:14:50.1735431Z Downloading sentry_sdk-2.58.0-py2.py3-none-any.whl (460 kB)
+2026-04-20T09:14:50.1795831Z Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+2026-04-20T09:14:50.1853059Z Downloading sqlalchemy-2.0.49-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (3.3 MB)
+2026-04-20T09:14:50.1973403Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.3/3.3 MB 312.5 MB/s  0:00:00
+2026-04-20T09:14:50.2010419Z Downloading greenlet-3.4.0-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (613 kB)
+2026-04-20T09:14:50.2055596Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 613.5/613.5 kB 138.9 MB/s  0:00:00
+2026-04-20T09:14:50.2089431Z Downloading starlette-1.0.0-py3-none-any.whl (72 kB)
+2026-04-20T09:14:50.2170710Z Downloading anyio-4.13.0-py3-none-any.whl (114 kB)
+2026-04-20T09:14:50.2224565Z Downloading structlog-25.5.0-py3-none-any.whl (72 kB)
+2026-04-20T09:14:50.2276034Z Downloading tenacity-9.1.4-py3-none-any.whl (28 kB)
+2026-04-20T09:14:50.2325654Z Downloading typing_extensions-4.15.0-py3-none-any.whl (44 kB)
+2026-04-20T09:14:50.2396212Z Downloading typing_inspection-0.4.2-py3-none-any.whl (14 kB)
+2026-04-20T09:14:50.2453423Z Downloading tzlocal-5.3.1-py3-none-any.whl (18 kB)
+2026-04-20T09:14:50.2505080Z Downloading urllib3-2.6.3-py3-none-any.whl (131 kB)
+2026-04-20T09:14:50.2557951Z Downloading uvicorn-0.44.0-py3-none-any.whl (69 kB)
+2026-04-20T09:14:50.2613885Z Downloading click-8.3.2-py3-none-any.whl (108 kB)
+2026-04-20T09:14:50.2671456Z Downloading httptools-0.7.1-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (456 kB)
+2026-04-20T09:14:50.2737094Z Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (806 kB)
+2026-04-20T09:14:50.2800141Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 806.6/806.6 kB 174.6 MB/s  0:00:00
+2026-04-20T09:14:50.2839195Z Downloading uvloop-0.22.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (3.8 MB)
+2026-04-20T09:14:50.2986809Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.8/3.8 MB 293.9 MB/s  0:00:00
+2026-04-20T09:14:50.3030362Z Downloading watchfiles-1.1.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (456 kB)
+2026-04-20T09:14:50.3094956Z Downloading websockets-16.0-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (184 kB)
+2026-04-20T09:14:50.3153437Z Downloading certifi-2026.2.25-py3-none-any.whl (153 kB)
+2026-04-20T09:14:50.3209347Z Downloading et_xmlfile-2.0.0-py3-none-any.whl (18 kB)
+2026-04-20T09:14:50.3275236Z Downloading mako-1.3.11-py3-none-any.whl (78 kB)
+2026-04-20T09:14:50.3329802Z Downloading markupsafe-3.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+2026-04-20T09:14:50.3379570Z Downloading pycparser-3.0-py3-none-any.whl (48 kB)
+2026-04-20T09:14:50.4059779Z Building wheels for collected packages: flight-data-scrapper-backend
+2026-04-20T09:14:50.4068155Z   Building wheel for flight-data-scrapper-backend (pyproject.toml): started
+2026-04-20T09:14:50.6319725Z   Building wheel for flight-data-scrapper-backend (pyproject.toml): finished with status 'done'
+2026-04-20T09:14:50.6325996Z   Created wheel for flight-data-scrapper-backend: filename=flight_data_scrapper_backend-1.0.0-py3-none-any.whl size=51637 sha256=df3f6b4a5961ed937e6450191eb71019f18a87c5715a9c90dd2a89494b054ae9
+2026-04-20T09:14:50.6327764Z   Stored in directory: /tmp/pip-ephem-wheel-cache-cw1b6l3d/wheels/e1/a9/99/4c9e02f0b3b7976ebefc639f8d3a32b22cac5feac4826e2091
+2026-04-20T09:14:50.6344136Z Successfully built flight-data-scrapper-backend
+2026-04-20T09:14:50.7159624Z Installing collected packages: passlib, websockets, uvloop, urllib3, tzlocal, typing-extensions, tenacity, structlog, six, ruff, pyyaml, python-multipart, python-dotenv, pygments, pycparser, pyasn1, pluggy, packaging, MarkupSafe, iniconfig, idna, httptools, h11, greenlet, et-xmlfile, dnspython, click, certifi, bcrypt, asyncpg, annotated-types, annotated-doc, uvicorn, typing-inspection, sqlalchemy, sentry-sdk, rsa, pytest, pydantic-core, openpyxl, Mako, httpcore, email-validator, ecdsa, cffi, apscheduler, anyio, watchfiles, starlette, python-jose, pytest-asyncio, pydantic, httpx, cryptography, alembic, pydantic-settings, fastapi, flight-data-scrapper-backend
+2026-04-20T09:14:55.8964678Z 
+2026-04-20T09:14:55.8995222Z Successfully installed Mako-1.3.11 MarkupSafe-3.0.3 alembic-1.18.4 annotated-doc-0.0.4 annotated-types-0.7.0 anyio-4.13.0 apscheduler-3.11.2 asyncpg-0.31.0 bcrypt-4.3.0 certifi-2026.2.25 cffi-2.0.0 click-8.3.2 cryptography-46.0.7 dnspython-2.8.0 ecdsa-0.19.2 email-validator-2.3.0 et-xmlfile-2.0.0 fastapi-0.136.0 flight-data-scrapper-backend-1.0.0 greenlet-3.4.0 h11-0.16.0 httpcore-1.0.9 httptools-0.7.1 httpx-0.28.1 idna-3.11 iniconfig-2.3.0 openpyxl-3.1.5 packaging-26.1 passlib-1.7.4 pluggy-1.6.0 pyasn1-0.6.3 pycparser-3.0 pydantic-2.13.2 pydantic-core-2.46.2 pydantic-settings-2.13.1 pygments-2.20.0 pytest-9.0.3 pytest-asyncio-1.3.0 python-dotenv-1.2.2 python-jose-3.5.0 python-multipart-0.0.26 pyyaml-6.0.3 rsa-4.9.1 ruff-0.15.11 sentry-sdk-2.58.0 six-1.17.0 sqlalchemy-2.0.49 starlette-1.0.0 structlog-25.5.0 tenacity-9.1.4 typing-extensions-4.15.0 typing-inspection-0.4.2 tzlocal-5.3.1 urllib3-2.6.3 uvicorn-0.44.0 uvloop-0.22.1 watchfiles-1.1.1 websockets-16.0
+2026-04-20T09:14:56.5077384Z ##[group]Run python -m alembic upgrade head
+2026-04-20T09:14:56.5077769Z [36;1mpython -m alembic upgrade head[0m
+2026-04-20T09:14:56.5099403Z shell: /usr/bin/bash -e {0}
+2026-04-20T09:14:56.5099627Z env:
+2026-04-20T09:14:56.5099876Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-04-20T09:14:56.5100306Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+2026-04-20T09:14:56.5100707Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-04-20T09:14:56.5101062Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-04-20T09:14:56.5101417Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-04-20T09:14:56.5101777Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+2026-04-20T09:14:56.5102437Z   DATABASE_URL: ***localhost/flight_test
+2026-04-20T09:14:56.5102792Z   JWT_SECRET_KEY: ci-secret-key-that-is-at-least-32-characters-long
+2026-04-20T09:14:56.5103147Z   ADMIN_EMAIL: admin@example.com
+2026-04-20T09:14:56.5103412Z   ADMIN_PASSWORD: CIAdminPassword1!
+2026-04-20T09:14:56.5103639Z ##[endgroup]
+2026-04-20T09:14:57.0653208Z INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+2026-04-20T09:14:57.0653973Z INFO  [alembic.runtime.migration] Will assume transactional DDL.
+2026-04-20T09:14:57.0839088Z INFO  [alembic.runtime.migration] Running upgrade  -> 0b2f4d5cbeb7, initial schema
+2026-04-20T09:14:57.1089724Z INFO  [alembic.runtime.migration] Running upgrade 0b2f4d5cbeb7 -> e8f3a1b2c4d5, add stops and duration_minutes to daily_cheapest_prices
+2026-04-20T09:14:57.1118319Z INFO  [alembic.runtime.migration] Running upgrade e8f3a1b2c4d5 -> c3d4e5f6a7b8, add_search_profiles_legs_prices
+2026-04-20T09:14:57.1249631Z INFO  [alembic.runtime.migration] Running upgrade c3d4e5f6a7b8 -> d1e2f3a4b5c6, add_user_id_to_profiles_and_groups
+2026-04-20T09:14:57.1335821Z INFO  [alembic.runtime.migration] Running upgrade d1e2f3a4b5c6 -> e2f3a4b5c6d7, add_all_flight_results
+2026-04-20T09:14:57.1394853Z INFO  [alembic.runtime.migration] Running upgrade e2f3a4b5c6d7 -> f1a2b3c4d5e6, cleanup_removed_features
+2026-04-20T09:14:57.1454923Z INFO  [alembic.runtime.migration] Running upgrade f1a2b3c4d5e6 -> b2c3d4e5f6a7, Fix daily_cheapest_prices unique constraint to include route_group_id
+2026-04-20T09:14:57.1486891Z INFO  [alembic.runtime.migration] Running upgrade b2c3d4e5f6a7 -> a1b2c3d4e5f6, add_currency_stops_dates
+2026-04-20T09:14:57.2244476Z ##[group]Run pytest tests/ -v --ignore=tests/integration
+2026-04-20T09:14:57.2244899Z [36;1mpytest tests/ -v --ignore=tests/integration[0m
+2026-04-20T09:14:57.2266845Z shell: /usr/bin/bash -e {0}
+2026-04-20T09:14:57.2267067Z env:
+2026-04-20T09:14:57.2267309Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-04-20T09:14:57.2267739Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+2026-04-20T09:14:57.2268141Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-04-20T09:14:57.2268491Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-04-20T09:14:57.2268844Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-04-20T09:14:57.2269214Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+2026-04-20T09:14:57.2270003Z   DATABASE_URL: ***localhost/flight_test
+2026-04-20T09:14:57.2270367Z   JWT_SECRET_KEY: ci-secret-key-that-is-at-least-32-characters-long
+2026-04-20T09:14:57.2270745Z   ADMIN_EMAIL: admin@example.com
+2026-04-20T09:14:57.2270980Z   ADMIN_PASSWORD: CIAdminPassword1!
+2026-04-20T09:14:57.2271213Z ##[endgroup]
+2026-04-20T09:14:57.9061424Z ============================= test session starts ==============================
+2026-04-20T09:14:57.9062554Z platform linux -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /opt/hostedtoolcache/Python/3.11.15/x64/bin/python
+2026-04-20T09:14:57.9063529Z cachedir: .pytest_cache
+2026-04-20T09:14:57.9064186Z rootdir: /home/runner/work/Scraper-tool/Scraper-tool/flight-harvester/backend
+2026-04-20T09:14:57.9064932Z configfile: pyproject.toml
+2026-04-20T09:14:57.9065221Z plugins: asyncio-1.3.0, anyio-4.13.0
+2026-04-20T09:14:57.9065894Z asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=session, asyncio_default_test_loop_scope=session
+2026-04-20T09:14:58.5727460Z collecting ... collected 41 items
+2026-04-20T09:14:58.5727841Z 
+2026-04-20T09:14:58.5738958Z tests/test_airline_codes.py::test_normalize_full_name PASSED             [  2%]
+2026-04-20T09:14:58.5746051Z tests/test_airline_codes.py::test_normalize_typos PASSED                 [  4%]
+2026-04-20T09:14:58.5753752Z tests/test_airline_codes.py::test_normalize_short_code PASSED            [  7%]
+2026-04-20T09:14:58.5761074Z tests/test_airline_codes.py::test_normalize_empty PASSED                 [  9%]
+2026-04-20T09:14:58.5768154Z tests/test_airline_codes.py::test_normalize_spaced_codes PASSED          [ 12%]
+2026-04-20T09:14:58.5774875Z tests/test_airline_codes.py::test_normalize_case_insensitive PASSED      [ 14%]
+2026-04-20T09:14:58.5781903Z tests/test_airline_codes.py::test_normalize_first_word_match PASSED      [ 17%]
+2026-04-20T09:14:58.5789445Z tests/test_airline_codes.py::test_normalize_fallback_truncate PASSED     [ 19%]
+2026-04-20T09:14:58.5834996Z tests/test_auth_schema.py::test_login_request_valid PASSED               [ 21%]
+2026-04-20T09:14:58.5843231Z tests/test_auth_schema.py::test_login_request_invalid_email PASSED       [ 24%]
+2026-04-20T09:14:58.5852177Z tests/test_auth_schema.py::test_login_request_short_password PASSED      [ 26%]
+2026-04-20T09:14:58.5860553Z tests/test_auth_schema.py::test_user_response_from_orm PASSED            [ 29%]
+2026-04-20T09:14:58.5880608Z tests/test_config.py::test_debug_true_when_true_string PASSED            [ 31%]
+2026-04-20T09:14:58.5895249Z tests/test_config.py::test_debug_false_when_release PASSED               [ 34%]
+2026-04-20T09:14:58.5909601Z tests/test_config.py::test_debug_false_when_production PASSED            [ 36%]
+2026-04-20T09:14:58.5923847Z tests/test_config.py::test_cors_origins_from_comma_string PASSED         [ 39%]
+2026-04-20T09:14:58.5930628Z tests/test_config.py::test_missing_database_url_raises PASSED            [ 41%]
+2026-04-20T09:14:58.5937079Z tests/test_config.py::test_missing_jwt_secret_raises PASSED              [ 43%]
+2026-04-20T09:14:58.5951577Z tests/test_config.py::test_short_jwt_secret_raises PASSED                [ 46%]
+2026-04-20T09:14:58.5966689Z tests/test_config.py::test_change_me_jwt_raises PASSED                   [ 48%]
+2026-04-20T09:14:58.5980821Z tests/test_config.py::test_short_admin_password_raises PASSED            [ 51%]
+2026-04-20T09:14:58.5995640Z tests/test_config.py::test_change_me_password_raises PASSED              [ 53%]
+2026-04-20T09:14:58.6130859Z tests/test_services/test_export_service.py::test_export_creates_one_sheet_per_origin PASSED [ 56%]
+2026-04-20T09:14:58.6209187Z tests/test_services/test_export_service.py::test_export_has_correct_headers PASSED [ 58%]
+2026-04-20T09:14:58.6297620Z tests/test_services/test_export_service.py::test_export_destination_label_in_arrivel_column PASSED [ 60%]
+2026-04-20T09:14:58.6380553Z tests/test_services/test_export_service.py::test_export_nights_in_night_column PASSED [ 63%]
+2026-04-20T09:14:58.6463957Z tests/test_services/test_export_service.py::test_export_prices_are_integers PASSED [ 65%]
+2026-04-20T09:14:58.6548473Z tests/test_services/test_export_service.py::test_export_cheapest_per_date PASSED [ 68%]
+2026-04-20T09:14:58.6653765Z tests/test_services/test_export_service.py::test_export_missing_date_shows_none_price PASSED [ 70%]
+2026-04-20T09:14:58.6756575Z tests/test_services/test_export_service.py::test_export_special_sheet_4_columns PASSED [ 73%]
+2026-04-20T09:14:58.6872622Z tests/test_services/test_export_service.py::test_export_special_sheet_6_columns PASSED [ 75%]
+2026-04-20T09:14:58.7024556Z tests/test_services/test_price_collector.py::test_collect_single_date_returns_cheapest PASSED [ 78%]
+2026-04-20T09:14:58.7092297Z tests/test_services/test_price_collector.py::test_collect_single_date_picks_cheapest_across_providers PASSED [ 80%]
+2026-04-20T09:14:58.7159911Z tests/test_services/test_price_collector.py::test_collect_single_date_one_provider_fails PASSED [ 82%]
+2026-04-20T09:14:58.7216326Z tests/test_services/test_price_collector.py::test_collect_single_date_no_results PASSED [ 85%]
+2026-04-20T09:14:58.7279896Z tests/test_services/test_price_collector.py::test_collect_route_batch_stats PASSED [ 87%]
+2026-04-20T09:14:58.7312802Z tests/test_services/test_price_collector.py::test_upsert_cheapest_sends_correct_params PASSED [ 90%]
+2026-04-20T09:14:58.7338548Z tests/test_services/test_scheduler_filter.py::test_partial_destination_not_excluded PASSED [ 92%]
+2026-04-20T09:14:58.7364183Z tests/test_services/test_scheduler_filter.py::test_all_destinations_excludes_date PASSED [ 95%]
+2026-04-20T09:14:58.7389271Z tests/test_services/test_scheduler_filter.py::test_all_dates_fully_scraped_returns_empty PASSED [ 97%]
+2026-04-20T09:14:58.8450850Z tests/test_services/test_scheduler_filter.py::test_no_scrapes_returns_all_dates PASSED [100%]
+2026-04-20T09:14:58.8451457Z 
+2026-04-20T09:14:58.8451636Z ============================== 41 passed in 0.84s ==============================
+2026-04-20T09:14:58.9529590Z ##[group]Run pytest tests/integration/ -v
+2026-04-20T09:14:58.9530174Z [36;1mpytest tests/integration/ -v[0m
+2026-04-20T09:14:58.9560994Z shell: /usr/bin/bash -e {0}
+2026-04-20T09:14:58.9561370Z env:
+2026-04-20T09:14:58.9561788Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-04-20T09:14:58.9562520Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+2026-04-20T09:14:58.9563241Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-04-20T09:14:58.9563893Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-04-20T09:14:58.9564543Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-04-20T09:14:58.9565206Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+2026-04-20T09:14:58.9566553Z   DATABASE_URL: ***localhost/flight_test
+2026-04-20T09:14:58.9567254Z   JWT_SECRET_KEY: ci-secret-key-that-is-at-least-32-characters-long
+2026-04-20T09:14:58.9567898Z   ADMIN_EMAIL: admin@example.com
+2026-04-20T09:14:58.9568377Z   ADMIN_PASSWORD: CIAdminPassword1!
+2026-04-20T09:14:58.9568792Z ##[endgroup]
+2026-04-20T09:14:59.6817423Z ============================= test session starts ==============================
+2026-04-20T09:14:59.6818458Z platform linux -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /opt/hostedtoolcache/Python/3.11.15/x64/bin/python
+2026-04-20T09:14:59.6819120Z cachedir: .pytest_cache
+2026-04-20T09:14:59.6819577Z rootdir: /home/runner/work/Scraper-tool/Scraper-tool/flight-harvester/backend
+2026-04-20T09:14:59.6820096Z configfile: pyproject.toml
+2026-04-20T09:14:59.6820408Z plugins: asyncio-1.3.0, anyio-4.13.0
+2026-04-20T09:14:59.6821238Z asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=session, asyncio_default_test_loop_scope=session
+2026-04-20T09:14:59.7287374Z collecting ... collected 15 items
+2026-04-20T09:14:59.7287798Z 
+2026-04-20T09:15:00.2231647Z tests/integration/test_auth_api.py::test_login_success FAILED            [  6%]
+2026-04-20T09:15:00.2698139Z tests/integration/test_auth_api.py::test_login_wrong_password PASSED     [ 13%]
+2026-04-20T09:15:00.3115026Z tests/integration/test_auth_api.py::test_login_unknown_email PASSED      [ 20%]
+2026-04-20T09:15:00.4900055Z tests/integration/test_auth_api.py::test_get_me_returns_current_user ERROR [ 26%]
+2026-04-20T09:15:00.5271777Z tests/integration/test_auth_api.py::test_get_me_requires_auth PASSED     [ 33%]
+2026-04-20T09:15:00.5668693Z tests/integration/test_auth_api.py::test_get_me_invalid_token PASSED     [ 40%]
+2026-04-20T09:15:00.6493781Z tests/integration/test_route_groups_api.py::test_create_route_group ERROR [ 46%]
+2026-04-20T09:15:00.7287303Z tests/integration/test_route_groups_api.py::test_list_route_groups ERROR [ 53%]
+2026-04-20T09:15:00.8174683Z tests/integration/test_route_groups_api.py::test_get_route_group_by_id ERROR [ 60%]
+2026-04-20T09:15:00.9006624Z tests/integration/test_route_groups_api.py::test_get_route_group_not_found ERROR [ 66%]
+2026-04-20T09:15:01.0274043Z tests/integration/test_route_groups_api.py::test_update_route_group ERROR [ 73%]
+2026-04-20T09:15:01.1099841Z tests/integration/test_route_groups_api.py::test_delete_route_group ERROR [ 80%]
+2026-04-20T09:15:01.1913117Z tests/integration/test_route_groups_api.py::test_progress_returns_zero_for_new_group ERROR [ 86%]
+2026-04-20T09:15:01.2275264Z tests/integration/test_route_groups_api.py::test_create_route_group_requires_auth PASSED [ 93%]
+2026-04-20T09:15:01.3201993Z tests/integration/test_route_groups_api.py::test_invalid_iata_code_rejected ERROR [100%]
+2026-04-20T09:15:01.3202748Z 
+2026-04-20T09:15:01.3202987Z ==================================== ERRORS ====================================
+2026-04-20T09:15:01.3203725Z ______________ ERROR at setup of test_get_me_returns_current_user ______________
+2026-04-20T09:15:01.3204302Z 
+2026-04-20T09:15:01.3204539Z self = <Coroutine test_get_me_returns_current_user>
+2026-04-20T09:15:01.3204855Z 
+2026-04-20T09:15:01.3204995Z     def setup(self) -> None:
+2026-04-20T09:15:01.3205800Z         runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+2026-04-20T09:15:01.3206944Z         if runner_fixture_id not in self.fixturenames:
+2026-04-20T09:15:01.3207546Z             self.fixturenames.append(runner_fixture_id)
+2026-04-20T09:15:01.3208101Z >       return super().setup()
+2026-04-20T09:15:01.3208523Z                ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3208758Z 
+2026-04-20T09:15:01.3209282Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:458: 
+2026-04-20T09:15:01.3210183Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3211409Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:743: in pytest_fixture_setup
+2026-04-20T09:15:01.3212580Z     hook_result = yield
+2026-04-20T09:15:01.3212962Z                   ^^^^^
+2026-04-20T09:15:01.3213774Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:361: in _async_fixture_wrapper
+2026-04-20T09:15:01.3214426Z     result = runner.run(setup(), context=context)
+2026-04-20T09:15:01.3214705Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3215092Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/runners.py:118: in run
+2026-04-20T09:15:01.3215510Z     return self._loop.run_until_complete(task)
+2026-04-20T09:15:01.3215769Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3216205Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+2026-04-20T09:15:01.3216982Z     return future.result()
+2026-04-20T09:15:01.3217183Z            ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3217608Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:357: in setup
+2026-04-20T09:15:01.3218110Z     res = await fixture_function(*args, **kwargs)
+2026-04-20T09:15:01.3218366Z           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3218659Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3218889Z 
+2026-04-20T09:15:01.3219021Z client = <httpx.AsyncClient object at 0x7f0da3f91ad0>
+2026-04-20T09:15:01.3219294Z 
+2026-04-20T09:15:01.3219367Z     @pytest.fixture
+2026-04-20T09:15:01.3219561Z     async def auth_client(client):
+2026-04-20T09:15:01.3219839Z         """Client pre-authenticated as the default admin."""
+2026-04-20T09:15:01.3220133Z         res = await client.post(
+2026-04-20T09:15:01.3220350Z             "/api/v1/auth/login",
+2026-04-20T09:15:01.3220664Z             json={"email": "admin@example.com", "password": "IntegrationPass1!"},
+2026-04-20T09:15:01.3220994Z         )
+2026-04-20T09:15:01.3221240Z >       assert res.status_code == 200, f"Login fixture failed: {res.text}"
+2026-04-20T09:15:01.3221676Z E       AssertionError: Login fixture failed: {"detail":"Invalid credentials"}
+2026-04-20T09:15:01.3222026Z E       assert 401 == 200
+2026-04-20T09:15:01.3222277Z E        +  where 401 = <Response [401 Unauthorized]>.status_code
+2026-04-20T09:15:01.3222498Z 
+2026-04-20T09:15:01.3222620Z tests/integration/conftest.py:94: AssertionError
+2026-04-20T09:15:01.3222968Z __________________ ERROR at setup of test_create_route_group ___________________
+2026-04-20T09:15:01.3223228Z 
+2026-04-20T09:15:01.3223327Z self = <Coroutine test_create_route_group>
+2026-04-20T09:15:01.3223499Z 
+2026-04-20T09:15:01.3223579Z     def setup(self) -> None:
+2026-04-20T09:15:01.3223849Z         runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+2026-04-20T09:15:01.3224184Z         if runner_fixture_id not in self.fixturenames:
+2026-04-20T09:15:01.3224493Z             self.fixturenames.append(runner_fixture_id)
+2026-04-20T09:15:01.3224764Z >       return super().setup()
+2026-04-20T09:15:01.3224961Z                ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3225085Z 
+2026-04-20T09:15:01.3225370Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:458: 
+2026-04-20T09:15:01.3226101Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3227164Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:743: in pytest_fixture_setup
+2026-04-20T09:15:01.3227687Z     hook_result = yield
+2026-04-20T09:15:01.3227866Z                   ^^^^^
+2026-04-20T09:15:01.3228323Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:361: in _async_fixture_wrapper
+2026-04-20T09:15:01.3228862Z     result = runner.run(setup(), context=context)
+2026-04-20T09:15:01.3229127Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3229493Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/runners.py:118: in run
+2026-04-20T09:15:01.3229901Z     return self._loop.run_until_complete(task)
+2026-04-20T09:15:01.3230147Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3230585Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+2026-04-20T09:15:01.3231056Z     return future.result()
+2026-04-20T09:15:01.3231265Z            ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3231697Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:357: in setup
+2026-04-20T09:15:01.3232195Z     res = await fixture_function(*args, **kwargs)
+2026-04-20T09:15:01.3232450Z           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3232731Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3232951Z 
+2026-04-20T09:15:01.3233074Z client = <httpx.AsyncClient object at 0x7f0da3c1e510>
+2026-04-20T09:15:01.3233298Z 
+2026-04-20T09:15:01.3233366Z     @pytest.fixture
+2026-04-20T09:15:01.3233556Z     async def auth_client(client):
+2026-04-20T09:15:01.3233830Z         """Client pre-authenticated as the default admin."""
+2026-04-20T09:15:01.3234120Z         res = await client.post(
+2026-04-20T09:15:01.3234337Z             "/api/v1/auth/login",
+2026-04-20T09:15:01.3234654Z             json={"email": "admin@example.com", "password": "IntegrationPass1!"},
+2026-04-20T09:15:01.3234979Z         )
+2026-04-20T09:15:01.3235230Z >       assert res.status_code == 200, f"Login fixture failed: {res.text}"
+2026-04-20T09:15:01.3235658Z E       AssertionError: Login fixture failed: {"detail":"Invalid credentials"}
+2026-04-20T09:15:01.3236006Z E       assert 401 == 200
+2026-04-20T09:15:01.3236474Z E        +  where 401 = <Response [401 Unauthorized]>.status_code
+2026-04-20T09:15:01.3236718Z 
+2026-04-20T09:15:01.3236833Z tests/integration/conftest.py:94: AssertionError
+2026-04-20T09:15:01.3237187Z ___________________ ERROR at setup of test_list_route_groups ___________________
+2026-04-20T09:15:01.3237446Z 
+2026-04-20T09:15:01.3237536Z self = <Coroutine test_list_route_groups>
+2026-04-20T09:15:01.3237712Z 
+2026-04-20T09:15:01.3237791Z     def setup(self) -> None:
+2026-04-20T09:15:01.3238063Z         runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+2026-04-20T09:15:01.3238401Z         if runner_fixture_id not in self.fixturenames:
+2026-04-20T09:15:01.3238713Z             self.fixturenames.append(runner_fixture_id)
+2026-04-20T09:15:01.3238982Z >       return super().setup()
+2026-04-20T09:15:01.3239187Z                ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3239311Z 
+2026-04-20T09:15:01.3239580Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:458: 
+2026-04-20T09:15:01.3240072Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3240630Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:743: in pytest_fixture_setup
+2026-04-20T09:15:01.3241130Z     hook_result = yield
+2026-04-20T09:15:01.3241310Z                   ^^^^^
+2026-04-20T09:15:01.3241759Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:361: in _async_fixture_wrapper
+2026-04-20T09:15:01.3242298Z     result = runner.run(setup(), context=context)
+2026-04-20T09:15:01.3242700Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3243180Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/runners.py:118: in run
+2026-04-20T09:15:01.3243598Z     return self._loop.run_until_complete(task)
+2026-04-20T09:15:01.3243846Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3244278Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+2026-04-20T09:15:01.3244720Z     return future.result()
+2026-04-20T09:15:01.3244914Z            ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3245315Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:357: in setup
+2026-04-20T09:15:01.3245804Z     res = await fixture_function(*args, **kwargs)
+2026-04-20T09:15:01.3246062Z           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3246584Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3246932Z 
+2026-04-20T09:15:01.3247080Z client = <httpx.AsyncClient object at 0x7f0da3dfcc50>
+2026-04-20T09:15:01.3247294Z 
+2026-04-20T09:15:01.3247364Z     @pytest.fixture
+2026-04-20T09:15:01.3247549Z     async def auth_client(client):
+2026-04-20T09:15:01.3247827Z         """Client pre-authenticated as the default admin."""
+2026-04-20T09:15:01.3248113Z         res = await client.post(
+2026-04-20T09:15:01.3248330Z             "/api/v1/auth/login",
+2026-04-20T09:15:01.3248637Z             json={"email": "admin@example.com", "password": "IntegrationPass1!"},
+2026-04-20T09:15:01.3248964Z         )
+2026-04-20T09:15:01.3249204Z >       assert res.status_code == 200, f"Login fixture failed: {res.text}"
+2026-04-20T09:15:01.3249765Z E       AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.3250247Z E       assert 429 == 200
+2026-04-20T09:15:01.3250527Z E        +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.3250766Z 
+2026-04-20T09:15:01.3250888Z tests/integration/conftest.py:94: AssertionError
+2026-04-20T09:15:01.3251245Z _________________ ERROR at setup of test_get_route_group_by_id _________________
+2026-04-20T09:15:01.3251534Z 
+2026-04-20T09:15:01.3251645Z self = <Coroutine test_get_route_group_by_id>
+2026-04-20T09:15:01.3251827Z 
+2026-04-20T09:15:01.3251908Z     def setup(self) -> None:
+2026-04-20T09:15:01.3252187Z         runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+2026-04-20T09:15:01.3252519Z         if runner_fixture_id not in self.fixturenames:
+2026-04-20T09:15:01.3252831Z             self.fixturenames.append(runner_fixture_id)
+2026-04-20T09:15:01.3253107Z >       return super().setup()
+2026-04-20T09:15:01.3253318Z                ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3253444Z 
+2026-04-20T09:15:01.3253729Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:458: 
+2026-04-20T09:15:01.3254219Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3254786Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:743: in pytest_fixture_setup
+2026-04-20T09:15:01.3255296Z     hook_result = yield
+2026-04-20T09:15:01.3255481Z                   ^^^^^
+2026-04-20T09:15:01.3255936Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:361: in _async_fixture_wrapper
+2026-04-20T09:15:01.3256761Z     result = runner.run(setup(), context=context)
+2026-04-20T09:15:01.3257038Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3257409Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/runners.py:118: in run
+2026-04-20T09:15:01.3257817Z     return self._loop.run_until_complete(task)
+2026-04-20T09:15:01.3258066Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3258492Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+2026-04-20T09:15:01.3258931Z     return future.result()
+2026-04-20T09:15:01.3259271Z            ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3259787Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:357: in setup
+2026-04-20T09:15:01.3260303Z     res = await fixture_function(*args, **kwargs)
+2026-04-20T09:15:01.3260564Z           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3260846Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3261083Z 
+2026-04-20T09:15:01.3261217Z client = <httpx.AsyncClient object at 0x7f0da3d60310>
+2026-04-20T09:15:01.3261431Z 
+2026-04-20T09:15:01.3261508Z     @pytest.fixture
+2026-04-20T09:15:01.3261695Z     async def auth_client(client):
+2026-04-20T09:15:01.3261985Z         """Client pre-authenticated as the default admin."""
+2026-04-20T09:15:01.3262273Z         res = await client.post(
+2026-04-20T09:15:01.3262495Z             "/api/v1/auth/login",
+2026-04-20T09:15:01.3262809Z             json={"email": "admin@example.com", "password": "IntegrationPass1!"},
+2026-04-20T09:15:01.3263145Z         )
+2026-04-20T09:15:01.3263395Z >       assert res.status_code == 200, f"Login fixture failed: {res.text}"
+2026-04-20T09:15:01.3263963Z E       AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.3264445Z E       assert 429 == 200
+2026-04-20T09:15:01.3264708Z E        +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.3264944Z 
+2026-04-20T09:15:01.3265060Z tests/integration/conftest.py:94: AssertionError
+2026-04-20T09:15:01.3265414Z _______________ ERROR at setup of test_get_route_group_not_found _______________
+2026-04-20T09:15:01.3265685Z 
+2026-04-20T09:15:01.3265790Z self = <Coroutine test_get_route_group_not_found>
+2026-04-20T09:15:01.3265979Z 
+2026-04-20T09:15:01.3266064Z     def setup(self) -> None:
+2026-04-20T09:15:01.3266636Z         runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+2026-04-20T09:15:01.3267004Z         if runner_fixture_id not in self.fixturenames:
+2026-04-20T09:15:01.3267321Z             self.fixturenames.append(runner_fixture_id)
+2026-04-20T09:15:01.3267600Z >       return super().setup()
+2026-04-20T09:15:01.3267796Z                ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3267927Z 
+2026-04-20T09:15:01.3268206Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:458: 
+2026-04-20T09:15:01.3268703Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3269264Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:743: in pytest_fixture_setup
+2026-04-20T09:15:01.3269778Z     hook_result = yield
+2026-04-20T09:15:01.3269960Z                   ^^^^^
+2026-04-20T09:15:01.3270590Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:361: in _async_fixture_wrapper
+2026-04-20T09:15:01.3271551Z     result = runner.run(setup(), context=context)
+2026-04-20T09:15:01.3272073Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3272473Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/runners.py:118: in run
+2026-04-20T09:15:01.3273029Z     return self._loop.run_until_complete(task)
+2026-04-20T09:15:01.3273470Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3274203Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+2026-04-20T09:15:01.3274993Z     return future.result()
+2026-04-20T09:15:01.3275196Z            ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3275815Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:357: in setup
+2026-04-20T09:15:01.3276763Z     res = await fixture_function(*args, **kwargs)
+2026-04-20T09:15:01.3277274Z           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3277744Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3278146Z 
+2026-04-20T09:15:01.3278566Z client = <httpx.AsyncClient object at 0x7f0da9387c90>
+2026-04-20T09:15:01.3279054Z 
+2026-04-20T09:15:01.3279186Z     @pytest.fixture
+2026-04-20T09:15:01.3279521Z     async def auth_client(client):
+2026-04-20T09:15:01.3279987Z         """Client pre-authenticated as the default admin."""
+2026-04-20T09:15:01.3280512Z         res = await client.post(
+2026-04-20T09:15:01.3280876Z             "/api/v1/auth/login",
+2026-04-20T09:15:01.3281446Z             json={"email": "admin@example.com", "password": "IntegrationPass1!"},
+2026-04-20T09:15:01.3282045Z         )
+2026-04-20T09:15:01.3282458Z >       assert res.status_code == 200, f"Login fixture failed: {res.text}"
+2026-04-20T09:15:01.3283442Z E       AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.3284275Z E       assert 429 == 200
+2026-04-20T09:15:01.3284714Z E        +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.3285145Z 
+2026-04-20T09:15:01.3285354Z tests/integration/conftest.py:94: AssertionError
+2026-04-20T09:15:01.3285973Z __________________ ERROR at setup of test_update_route_group ___________________
+2026-04-20T09:15:01.3286674Z 
+2026-04-20T09:15:01.3286858Z self = <Coroutine test_update_route_group>
+2026-04-20T09:15:01.3287189Z 
+2026-04-20T09:15:01.3287360Z     def setup(self) -> None:
+2026-04-20T09:15:01.3287896Z         runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+2026-04-20T09:15:01.3288273Z         if runner_fixture_id not in self.fixturenames:
+2026-04-20T09:15:01.3288649Z             self.fixturenames.append(runner_fixture_id)
+2026-04-20T09:15:01.3289168Z >       return super().setup()
+2026-04-20T09:15:01.3289506Z                ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3289713Z 
+2026-04-20T09:15:01.3290198Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:458: 
+2026-04-20T09:15:01.3291008Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3292016Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:743: in pytest_fixture_setup
+2026-04-20T09:15:01.3292987Z     hook_result = yield
+2026-04-20T09:15:01.3293344Z                   ^^^^^
+2026-04-20T09:15:01.3294163Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:361: in _async_fixture_wrapper
+2026-04-20T09:15:01.3295136Z     result = runner.run(setup(), context=context)
+2026-04-20T09:15:01.3295649Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3296562Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/runners.py:118: in run
+2026-04-20T09:15:01.3297319Z     return self._loop.run_until_complete(task)
+2026-04-20T09:15:01.3297790Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3298536Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+2026-04-20T09:15:01.3299353Z     return future.result()
+2026-04-20T09:15:01.3299704Z            ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3300440Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:357: in setup
+2026-04-20T09:15:01.3301309Z     res = await fixture_function(*args, **kwargs)
+2026-04-20T09:15:01.3301817Z           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3302120Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3302352Z 
+2026-04-20T09:15:01.3302489Z client = <httpx.AsyncClient object at 0x7f0da3d683d0>
+2026-04-20T09:15:01.3302857Z 
+2026-04-20T09:15:01.3302985Z     @pytest.fixture
+2026-04-20T09:15:01.3303243Z     async def auth_client(client):
+2026-04-20T09:15:01.3303539Z         """Client pre-authenticated as the default admin."""
+2026-04-20T09:15:01.3303900Z         res = await client.post(
+2026-04-20T09:15:01.3304299Z             "/api/v1/auth/login",
+2026-04-20T09:15:01.3304761Z             json={"email": "admin@example.com", "password": "IntegrationPass1!"},
+2026-04-20T09:15:01.3305427Z         )
+2026-04-20T09:15:01.3305875Z >       assert res.status_code == 200, f"Login fixture failed: {res.text}"
+2026-04-20T09:15:01.3306819Z E       AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.3307320Z E       assert 429 == 200
+2026-04-20T09:15:01.3307591Z E        +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.3307979Z 
+2026-04-20T09:15:01.3308111Z tests/integration/conftest.py:94: AssertionError
+2026-04-20T09:15:01.3308481Z __________________ ERROR at setup of test_delete_route_group ___________________
+2026-04-20T09:15:01.3308746Z 
+2026-04-20T09:15:01.3308840Z self = <Coroutine test_delete_route_group>
+2026-04-20T09:15:01.3309167Z 
+2026-04-20T09:15:01.3309254Z     def setup(self) -> None:
+2026-04-20T09:15:01.3309538Z         runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+2026-04-20T09:15:01.3309876Z         if runner_fixture_id not in self.fixturenames:
+2026-04-20T09:15:01.3310340Z             self.fixturenames.append(runner_fixture_id)
+2026-04-20T09:15:01.3310628Z >       return super().setup()
+2026-04-20T09:15:01.3310834Z                ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3310960Z 
+2026-04-20T09:15:01.3311282Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:458: 
+2026-04-20T09:15:01.3311893Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3312601Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:743: in pytest_fixture_setup
+2026-04-20T09:15:01.3313157Z     hook_result = yield
+2026-04-20T09:15:01.3313347Z                   ^^^^^
+2026-04-20T09:15:01.3313941Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:361: in _async_fixture_wrapper
+2026-04-20T09:15:01.3314503Z     result = runner.run(setup(), context=context)
+2026-04-20T09:15:01.3314827Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3315322Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/runners.py:118: in run
+2026-04-20T09:15:01.3315752Z     return self._loop.run_until_complete(task)
+2026-04-20T09:15:01.3316113Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3316696Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+2026-04-20T09:15:01.3317279Z     return future.result()
+2026-04-20T09:15:01.3317569Z            ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3317993Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:357: in setup
+2026-04-20T09:15:01.3318627Z     res = await fixture_function(*args, **kwargs)
+2026-04-20T09:15:01.3318904Z           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3319196Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.3319430Z 
+2026-04-20T09:15:01.3319604Z client = <httpx.AsyncClient object at 0x7f0da3e59850>
+2026-04-20T09:15:01.3319921Z 
+2026-04-20T09:15:01.3319996Z     @pytest.fixture
+2026-04-20T09:15:01.3320194Z     async def auth_client(client):
+2026-04-20T09:15:01.3320473Z         """Client pre-authenticated as the default admin."""
+2026-04-20T09:15:01.3320838Z         res = await client.post(
+2026-04-20T09:15:01.3321144Z             "/api/v1/auth/login",
+2026-04-20T09:15:01.3321473Z             json={"email": "admin@example.com", "password": "IntegrationPass1!"},
+2026-04-20T09:15:01.3321818Z         )
+2026-04-20T09:15:01.3322202Z >       assert res.status_code == 200, f"Login fixture failed: {res.text}"
+2026-04-20T09:15:01.3322799Z E       AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.3323422Z E       assert 429 == 200
+2026-04-20T09:15:01.3323700Z E        +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.3323935Z 
+2026-04-20T09:15:01.3324264Z tests/integration/conftest.py:94: AssertionError
+2026-04-20T09:15:01.3324941Z __________ ERROR at setup of test_progress_returns_zero_for_new_group __________
+2026-04-20T09:15:01.3325232Z 
+2026-04-20T09:15:01.3325372Z self = <Coroutine test_progress_returns_zero_for_new_group>
+2026-04-20T09:15:01.3325731Z 
+2026-04-20T09:15:01.3325819Z     def setup(self) -> None:
+2026-04-20T09:15:01.3326113Z         runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+2026-04-20T09:15:01.3326600Z         if runner_fixture_id not in self.fixturenames:
+2026-04-20T09:15:01.3327170Z             self.fixturenames.append(runner_fixture_id)
+2026-04-20T09:15:01.3328696Z >       return super().setup()
+2026-04-20T09:15:01.3329601Z                ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.3329891Z 
+2026-04-20T09:15:01.5418998Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:458: 
+2026-04-20T09:15:01.5420378Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.5421494Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:743: in pytest_fixture_setup
+2026-04-20T09:15:01.5422426Z     hook_result = yield
+2026-04-20T09:15:01.5422736Z                   ^^^^^
+2026-04-20T09:15:01.5423538Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:361: in _async_fixture_wrapper
+2026-04-20T09:15:01.5424474Z     result = runner.run(setup(), context=context)
+2026-04-20T09:15:01.5424906Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.5425531Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/runners.py:118: in run
+2026-04-20T09:15:01.5426210Z     return self._loop.run_until_complete(task)
+2026-04-20T09:15:01.5426793Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.5427330Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+2026-04-20T09:15:01.5427904Z     return future.result()
+2026-04-20T09:15:01.5428151Z            ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.5428663Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:357: in setup
+2026-04-20T09:15:01.5429258Z     res = await fixture_function(*args, **kwargs)
+2026-04-20T09:15:01.5429571Z           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.5429915Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.5430188Z 
+2026-04-20T09:15:01.5430335Z client = <httpx.AsyncClient object at 0x7f0da3e7e550>
+2026-04-20T09:15:01.5430591Z 
+2026-04-20T09:15:01.5430676Z     @pytest.fixture
+2026-04-20T09:15:01.5430910Z     async def auth_client(client):
+2026-04-20T09:15:01.5431239Z         """Client pre-authenticated as the default admin."""
+2026-04-20T09:15:01.5431601Z         res = await client.post(
+2026-04-20T09:15:01.5431861Z             "/api/v1/auth/login",
+2026-04-20T09:15:01.5432242Z             json={"email": "admin@example.com", "password": "IntegrationPass1!"},
+2026-04-20T09:15:01.5432642Z         )
+2026-04-20T09:15:01.5432999Z >       assert res.status_code == 200, f"Login fixture failed: {res.text}"
+2026-04-20T09:15:01.5433690Z E       AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.5434271Z E       assert 429 == 200
+2026-04-20T09:15:01.5434590Z E        +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.5434872Z 
+2026-04-20T09:15:01.5435004Z tests/integration/conftest.py:94: AssertionError
+2026-04-20T09:15:01.5435463Z ______________ ERROR at setup of test_invalid_iata_code_rejected _______________
+2026-04-20T09:15:01.5435787Z 
+2026-04-20T09:15:01.5435921Z self = <Coroutine test_invalid_iata_code_rejected>
+2026-04-20T09:15:01.5436155Z 
+2026-04-20T09:15:01.5436367Z     def setup(self) -> None:
+2026-04-20T09:15:01.5436701Z         runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+2026-04-20T09:15:01.5437388Z         if runner_fixture_id not in self.fixturenames:
+2026-04-20T09:15:01.5437844Z             self.fixturenames.append(runner_fixture_id)
+2026-04-20T09:15:01.5438127Z >       return super().setup()
+2026-04-20T09:15:01.5438367Z                ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.5438507Z 
+2026-04-20T09:15:01.5438797Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:458: 
+2026-04-20T09:15:01.5439305Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.5439869Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:743: in pytest_fixture_setup
+2026-04-20T09:15:01.5440383Z     hook_result = yield
+2026-04-20T09:15:01.5440564Z                   ^^^^^
+2026-04-20T09:15:01.5441020Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:361: in _async_fixture_wrapper
+2026-04-20T09:15:01.5441564Z     result = runner.run(setup(), context=context)
+2026-04-20T09:15:01.5441838Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.5442215Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/runners.py:118: in run
+2026-04-20T09:15:01.5442630Z     return self._loop.run_until_complete(task)
+2026-04-20T09:15:01.5442890Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.5443323Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+2026-04-20T09:15:01.5443783Z     return future.result()
+2026-04-20T09:15:01.5443977Z            ^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.5444386Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/pytest_asyncio/plugin.py:357: in setup
+2026-04-20T09:15:01.5444872Z     res = await fixture_function(*args, **kwargs)
+2026-04-20T09:15:01.5445125Z           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-20T09:15:01.5445410Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+2026-04-20T09:15:01.5445628Z 
+2026-04-20T09:15:01.5445755Z client = <httpx.AsyncClient object at 0x7f0da3e6f990>
+2026-04-20T09:15:01.5445971Z 
+2026-04-20T09:15:01.5446041Z     @pytest.fixture
+2026-04-20T09:15:01.5446238Z     async def auth_client(client):
+2026-04-20T09:15:01.5446659Z         """Client pre-authenticated as the default admin."""
+2026-04-20T09:15:01.5446953Z         res = await client.post(
+2026-04-20T09:15:01.5447171Z             "/api/v1/auth/login",
+2026-04-20T09:15:01.5447487Z             json={"email": "admin@example.com", "password": "IntegrationPass1!"},
+2026-04-20T09:15:01.5447811Z         )
+2026-04-20T09:15:01.5448067Z >       assert res.status_code == 200, f"Login fixture failed: {res.text}"
+2026-04-20T09:15:01.5448629Z E       AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.5449107Z E       assert 429 == 200
+2026-04-20T09:15:01.5449376Z E        +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.5449608Z 
+2026-04-20T09:15:01.5449730Z tests/integration/conftest.py:94: AssertionError
+2026-04-20T09:15:01.5450038Z =================================== FAILURES ===================================
+2026-04-20T09:15:01.5450390Z ______________________________ test_login_success ______________________________
+2026-04-20T09:15:01.5450634Z 
+2026-04-20T09:15:01.5450758Z client = <httpx.AsyncClient object at 0x7f0da99eda50>
+2026-04-20T09:15:01.5450962Z 
+2026-04-20T09:15:01.5451051Z     @pytest.mark.asyncio
+2026-04-20T09:15:01.5451268Z     async def test_login_success(client):
+2026-04-20T09:15:01.5451519Z         res = await client.post(
+2026-04-20T09:15:01.5451737Z             "/api/v1/auth/login",
+2026-04-20T09:15:01.5452067Z             json={"email": "admin@example.com", "password": "IntegrationPass1!"},
+2026-04-20T09:15:01.5452398Z         )
+2026-04-20T09:15:01.5452574Z >       assert res.status_code == 200
+2026-04-20T09:15:01.5452802Z E       assert 401 == 200
+2026-04-20T09:15:01.5453054Z E        +  where 401 = <Response [401 Unauthorized]>.status_code
+2026-04-20T09:15:01.5453396Z 
+2026-04-20T09:15:01.5453698Z tests/integration/test_auth_api.py:13: AssertionError
+2026-04-20T09:15:01.5454024Z =============================== warnings summary ===============================
+2026-04-20T09:15:01.5454395Z tests/integration/test_auth_api.py::test_login_success
+2026-04-20T09:15:01.5455154Z   /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+2026-04-20T09:15:01.5455876Z     from crypt import crypt as _crypt
+2026-04-20T09:15:01.5456037Z 
+2026-04-20T09:15:01.5456238Z -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+2026-04-20T09:15:01.5456824Z =========================== short test summary info ============================
+2026-04-20T09:15:01.5457271Z FAILED tests/integration/test_auth_api.py::test_login_success - assert 401 == 200
+2026-04-20T09:15:01.5457696Z  +  where 401 = <Response [401 Unauthorized]>.status_code
+2026-04-20T09:15:01.5458341Z ERROR tests/integration/test_auth_api.py::test_get_me_returns_current_user - AssertionError: Login fixture failed: {"detail":"Invalid credentials"}
+2026-04-20T09:15:01.5458929Z assert 401 == 200
+2026-04-20T09:15:01.5459145Z  +  where 401 = <Response [401 Unauthorized]>.status_code
+2026-04-20T09:15:01.5459768Z ERROR tests/integration/test_route_groups_api.py::test_create_route_group - AssertionError: Login fixture failed: {"detail":"Invalid credentials"}
+2026-04-20T09:15:01.5460342Z assert 401 == 200
+2026-04-20T09:15:01.5460557Z  +  where 401 = <Response [401 Unauthorized]>.status_code
+2026-04-20T09:15:01.5461767Z ERROR tests/integration/test_route_groups_api.py::test_list_route_groups - AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.5462912Z assert 429 == 200
+2026-04-20T09:15:01.5463309Z  +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.5464651Z ERROR tests/integration/test_route_groups_api.py::test_get_route_group_by_id - AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.5465925Z assert 429 == 200
+2026-04-20T09:15:01.5466612Z  +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.5468006Z ERROR tests/integration/test_route_groups_api.py::test_get_route_group_not_found - AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.5469273Z assert 429 == 200
+2026-04-20T09:15:01.5469661Z  +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.5471011Z ERROR tests/integration/test_route_groups_api.py::test_update_route_group - AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.5472255Z assert 429 == 200
+2026-04-20T09:15:01.5472653Z  +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.5473994Z ERROR tests/integration/test_route_groups_api.py::test_delete_route_group - AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.5475172Z assert 429 == 200
+2026-04-20T09:15:01.5475576Z  +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.5476592Z ERROR tests/integration/test_route_groups_api.py::test_progress_returns_zero_for_new_group - AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.5477373Z assert 429 == 200
+2026-04-20T09:15:01.5477612Z  +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.5478416Z ERROR tests/integration/test_route_groups_api.py::test_invalid_iata_code_rejected - AssertionError: Login fixture failed: {"detail":"Too many login attempts. Please wait a minute and try again."}
+2026-04-20T09:15:01.5479166Z assert 429 == 200
+2026-04-20T09:15:01.5479576Z  +  where 429 = <Response [429 Too Many Requests]>.status_code
+2026-04-20T09:15:01.5480063Z =============== 1 failed, 5 passed, 1 warning, 9 errors in 1.64s ===============
+2026-04-20T09:15:01.6844833Z ##[error]Process completed with exit code 1.
+2026-04-20T09:15:01.6930544Z Post job cleanup.
+2026-04-20T09:15:01.7865779Z [command]/usr/bin/git version
+2026-04-20T09:15:01.7901763Z git version 2.53.0
+2026-04-20T09:15:01.7944628Z Temporarily overriding HOME='/home/runner/work/_temp/710982dc-2ebb-4779-8f31-f4fc2b93a769' before making global git config changes
+2026-04-20T09:15:01.7945956Z Adding repository directory to the temporary git global config as a safe directory
+2026-04-20T09:15:01.7957110Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Scraper-tool/Scraper-tool
+2026-04-20T09:15:01.7991490Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-04-20T09:15:01.8023410Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-04-20T09:15:01.8244680Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-04-20T09:15:01.8264903Z http.https://github.com/.extraheader
+2026-04-20T09:15:01.8277375Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-04-20T09:15:01.8306792Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-04-20T09:15:01.8522346Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-04-20T09:15:01.8551684Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-04-20T09:15:01.8859085Z Print service container logs: 97a2b4516c2c45728bd7ec7b409b3e27_postgres15_f1de20
+2026-04-20T09:15:01.8863876Z ##[command]/usr/bin/docker logs --details 96a6ad00e32616c342e5efd22aae4b4948a41f83dacf07220f542debd81d1b96
+2026-04-20T09:15:01.8985691Z  The files belonging to this database system will be owned by user "postgres".
+2026-04-20T09:15:01.8986903Z  This user must also own the server process.
+2026-04-20T09:15:01.8987579Z  
+2026-04-20T09:15:01.8987865Z  The database cluster will be initialized with locale "en_US.utf8".
+2026-04-20T09:15:01.8988520Z  The default database encoding has accordingly been set to "UTF8".
+2026-04-20T09:15:01.8989071Z  The default text search configuration will be set to "english".
+2026-04-20T09:15:01.8989385Z  
+2026-04-20T09:15:01.8989558Z  Data page checksums are disabled.
+2026-04-20T09:15:01.8989799Z  
+2026-04-20T09:15:01.8990079Z  fixing permissions on existing directory /var/lib/postgresql/data ... ok
+2026-04-20T09:15:01.8990510Z  creating subdirectories ... ok
+2026-04-20T09:15:01.8990804Z  selecting dynamic shared memory implementation ... posix
+2026-04-20T09:15:01.8991845Z  initdb: warning: enabling "trust" authentication for local connections
+2026-04-20T09:15:01.8992590Z  initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+2026-04-20T09:15:01.8993534Z  2026-04-20 09:14:36.980 UTC [1] LOG:  starting PostgreSQL 15.17 (Debian 15.17-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+2026-04-20T09:15:01.8994244Z  2026-04-20 09:14:36.980 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-04-20T09:15:01.8994751Z  2026-04-20 09:14:36.980 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2026-04-20T09:15:01.8995236Z  2026-04-20 09:14:36.981 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-04-20T09:15:01.8995801Z  2026-04-20 09:14:36.984 UTC [64] LOG:  database system was shut down at 2026-04-20 09:14:36 UTC
+2026-04-20T09:15:01.8996561Z  2026-04-20 09:14:36.987 UTC [1] LOG:  database system is ready to accept connections
+2026-04-20T09:15:01.8997338Z  selecting default max_connections ... 100
+2026-04-20T09:15:01.8997621Z  selecting default shared_buffers ... 128MB
+2026-04-20T09:15:01.8998012Z  selecting default time zone ... Etc/UTC
+2026-04-20T09:15:01.8998478Z  creating configuration files ... ok
+2026-04-20T09:15:01.8999129Z  running bootstrap script ... ok
+2026-04-20T09:15:01.8999488Z  performing post-bootstrap initialization ... ok
+2026-04-20T09:15:01.8999825Z  syncing data to disk ... ok
+2026-04-20T09:15:01.9000038Z  
+2026-04-20T09:15:01.9000175Z  
+2026-04-20T09:15:01.9000376Z  Success. You can now start the database server using:
+2026-04-20T09:15:01.9000649Z  
+2026-04-20T09:15:01.9000857Z      pg_ctl -D /var/lib/postgresql/data -l logfile start
+2026-04-20T09:15:01.9001127Z  
+2026-04-20T09:15:01.9001744Z  waiting for server to start....2026-04-20 09:14:36.674 UTC [48] LOG:  starting PostgreSQL 15.17 (Debian 15.17-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+2026-04-20T09:15:01.9002603Z  2026-04-20 09:14:36.674 UTC [48] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-04-20T09:15:01.9003135Z  2026-04-20 09:14:36.677 UTC [51] LOG:  database system was shut down at 2026-04-20 09:14:36 UTC
+2026-04-20T09:15:01.9003636Z  2026-04-20 09:14:36.680 UTC [48] LOG:  database system is ready to accept connections
+2026-04-20T09:15:01.9003999Z   done
+2026-04-20T09:15:01.9004157Z  server started
+2026-04-20T09:15:01.9004320Z  CREATE DATABASE
+2026-04-20T09:15:01.9004480Z  
+2026-04-20T09:15:01.9004613Z  
+2026-04-20T09:15:01.9004900Z  /usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+2026-04-20T09:15:01.9005267Z  
+2026-04-20T09:15:01.9005491Z  2026-04-20 09:14:36.861 UTC [48] LOG:  received fast shutdown request
+2026-04-20T09:15:01.9006190Z  waiting for server to shut down....2026-04-20 09:14:36.862 UTC [48] LOG:  aborting any active transactions
+2026-04-20T09:15:01.9007101Z  2026-04-20 09:14:36.864 UTC [48] LOG:  background worker "logical replication launcher" (PID 54) exited with exit code 1
+2026-04-20T09:15:01.9007618Z  2026-04-20 09:14:36.864 UTC [49] LOG:  shutting down
+2026-04-20T09:15:01.9007972Z  2026-04-20 09:14:36.865 UTC [49] LOG:  checkpoint starting: shutdown immediate
+2026-04-20T09:15:01.9008922Z  2026-04-20 09:14:36.885 UTC [49] LOG:  checkpoint complete: wrote 922 buffers (5.6%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.013 s, sync=0.005 s, total=0.021 s; sync files=301, longest=0.004 s, average=0.001 s; distance=4239 kB, estimate=4239 kB
+2026-04-20T09:15:01.9009847Z  2026-04-20 09:14:36.891 UTC [48] LOG:  database system is shut down
+2026-04-20T09:15:01.9010136Z   done
+2026-04-20T09:15:01.9010283Z  server stopped
+2026-04-20T09:15:01.9010451Z  
+2026-04-20T09:15:01.9010656Z  PostgreSQL init process complete; ready for start up.
+2026-04-20T09:15:01.9010924Z  
+2026-04-20T09:15:01.9017388Z Stop and remove container: 97a2b4516c2c45728bd7ec7b409b3e27_postgres15_f1de20
+2026-04-20T09:15:01.9021617Z ##[command]/usr/bin/docker rm --force 96a6ad00e32616c342e5efd22aae4b4948a41f83dacf07220f542debd81d1b96
+2026-04-20T09:15:02.1787143Z 96a6ad00e32616c342e5efd22aae4b4948a41f83dacf07220f542debd81d1b96
+2026-04-20T09:15:02.1822325Z Remove container network: github_network_8ac850e4614e4ca1a1fea3b9cee1b5d4
+2026-04-20T09:15:02.1835751Z ##[command]/usr/bin/docker network rm github_network_8ac850e4614e4ca1a1fea3b9cee1b5d4
+2026-04-20T09:15:02.2771432Z github_network_8ac850e4614e4ca1a1fea3b9cee1b5d4
+2026-04-20T09:15:02.2834600Z Cleaning up orphan processes
+2026-04-20T09:15:02.3139797Z ##[warning]Node.js 20 actions are deprecated. The following actions are running on Node.js 20 and may not work as expected: actions/checkout@v4, actions/setup-python@v5. Actions will be forced to run with Node.js 24 by default starting June 2nd, 2026. Node.js 20 will be removed from the runner on September 16th, 2026. Please check if updated versions of these actions are available that support Node.js 24. To opt into Node.js 24 now, set the FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true environment variable on the runner or in your workflow file. Once Node.js 24 becomes the default, you can temporarily opt out by setting ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

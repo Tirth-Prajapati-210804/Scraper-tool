@@ -1,0 +1,23 @@
+﻿2026-04-20T09:14:31.7104643Z ##[group]Run actions/setup-node@v4
+2026-04-20T09:14:31.7105904Z with:
+2026-04-20T09:14:31.7106709Z   node-version: 20
+2026-04-20T09:14:31.7107914Z   cache: npm
+2026-04-20T09:14:31.7109240Z   cache-dependency-path: flight-harvester/frontend/package-lock.json
+2026-04-20T09:14:31.7110875Z   always-auth: false
+2026-04-20T09:14:31.7111811Z   check-latest: false
+2026-04-20T09:14:31.7113530Z   token: ***
+2026-04-20T09:14:31.7114392Z ##[endgroup]
+2026-04-20T09:14:31.8997552Z Found in cache @ /opt/hostedtoolcache/node/20.20.2/x64
+2026-04-20T09:14:31.9004212Z ##[group]Environment details
+2026-04-20T09:14:34.7143727Z node: v20.20.2
+2026-04-20T09:14:34.7144429Z npm: 10.8.2
+2026-04-20T09:14:34.7144710Z yarn: 1.22.22
+2026-04-20T09:14:34.7145518Z ##[endgroup]
+2026-04-20T09:14:34.7168367Z [command]/opt/hostedtoolcache/node/20.20.2/x64/bin/npm config get cache
+2026-04-20T09:14:34.9078792Z /home/runner/.npm
+2026-04-20T09:14:35.1038957Z Cache hit for: node-cache-Linux-x64-npm-d0506c7b55a1c8fcbb6f6a116044c95c38b2bf529df45c52f8bc64ed430917fe
+2026-04-20T09:14:36.1492382Z Received 70092178 of 70092178 (100.0%), 74.1 MBs/sec
+2026-04-20T09:14:36.1494527Z Cache Size: ~67 MB (70092178 B)
+2026-04-20T09:14:36.1572677Z [command]/usr/bin/tar -xf /home/runner/work/_temp/07cee15f-f1e7-4dbe-b09a-3ea276975762/cache.tzst -P -C /home/runner/work/Scraper-tool/Scraper-tool --use-compress-program unzstd
+2026-04-20T09:14:36.3406209Z Cache restored successfully
+2026-04-20T09:14:36.3446805Z Cache restored from key: node-cache-Linux-x64-npm-d0506c7b55a1c8fcbb6f6a116044c95c38b2bf529df45c52f8bc64ed430917fe

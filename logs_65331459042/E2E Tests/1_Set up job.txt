@@ -1,0 +1,33 @@
+﻿2026-04-20T09:14:29.9053302Z Current runner version: '2.333.1'
+2026-04-20T09:14:29.9090473Z ##[group]Runner Image Provisioner
+2026-04-20T09:14:29.9091858Z Hosted Compute Agent
+2026-04-20T09:14:29.9093030Z Version: 20260213.493
+2026-04-20T09:14:29.9094154Z Commit: 5c115507f6dd24b8de37d8bbe0bb4509d0cc0fa3
+2026-04-20T09:14:29.9095327Z Build Date: 2026-02-13T00:28:41Z
+2026-04-20T09:14:29.9096468Z Worker ID: {10bc1b1f-952c-4415-9102-a14982a7a23d}
+2026-04-20T09:14:29.9097717Z Azure Region: centralus
+2026-04-20T09:14:29.9098696Z ##[endgroup]
+2026-04-20T09:14:29.9101105Z ##[group]Operating System
+2026-04-20T09:14:29.9102261Z Ubuntu
+2026-04-20T09:14:29.9103226Z 24.04.4
+2026-04-20T09:14:29.9103996Z LTS
+2026-04-20T09:14:29.9104933Z ##[endgroup]
+2026-04-20T09:14:29.9105784Z ##[group]Runner Image
+2026-04-20T09:14:29.9106778Z Image: ubuntu-24.04
+2026-04-20T09:14:29.9107688Z Version: 20260413.86.1
+2026-04-20T09:14:29.9109505Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260413.86/images/ubuntu/Ubuntu2404-Readme.md
+2026-04-20T09:14:29.9112423Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260413.86
+2026-04-20T09:14:29.9114408Z ##[endgroup]
+2026-04-20T09:14:29.9116165Z ##[group]GITHUB_TOKEN Permissions
+2026-04-20T09:14:29.9119160Z Contents: read
+2026-04-20T09:14:29.9120089Z Metadata: read
+2026-04-20T09:14:29.9120965Z Packages: read
+2026-04-20T09:14:29.9121979Z ##[endgroup]
+2026-04-20T09:14:29.9125430Z Secret source: Actions
+2026-04-20T09:14:29.9127086Z Prepare workflow directory
+2026-04-20T09:14:29.9614705Z Prepare all required actions
+2026-04-20T09:14:29.9672087Z Getting action download info
+2026-04-20T09:14:30.3866544Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+2026-04-20T09:14:30.5368848Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-04-20T09:14:30.6202436Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-04-20T09:14:30.8287553Z Complete job name: E2E Tests

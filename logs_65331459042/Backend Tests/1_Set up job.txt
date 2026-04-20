@@ -1,0 +1,32 @@
+﻿2026-04-20T09:14:29.0557529Z Current runner version: '2.333.1'
+2026-04-20T09:14:29.0584822Z ##[group]Runner Image Provisioner
+2026-04-20T09:14:29.0585772Z Hosted Compute Agent
+2026-04-20T09:14:29.0586469Z Version: 20260213.493
+2026-04-20T09:14:29.0587151Z Commit: 5c115507f6dd24b8de37d8bbe0bb4509d0cc0fa3
+2026-04-20T09:14:29.0587969Z Build Date: 2026-02-13T00:28:41Z
+2026-04-20T09:14:29.0588591Z Worker ID: {e11d0d87-f065-4cce-ad37-70f7691cbdb8}
+2026-04-20T09:14:29.0589268Z Azure Region: northcentralus
+2026-04-20T09:14:29.0589877Z ##[endgroup]
+2026-04-20T09:14:29.0591299Z ##[group]Operating System
+2026-04-20T09:14:29.0591907Z Ubuntu
+2026-04-20T09:14:29.0592459Z 24.04.4
+2026-04-20T09:14:29.0592882Z LTS
+2026-04-20T09:14:29.0593337Z ##[endgroup]
+2026-04-20T09:14:29.0593872Z ##[group]Runner Image
+2026-04-20T09:14:29.0594383Z Image: ubuntu-24.04
+2026-04-20T09:14:29.0594920Z Version: 20260413.86.1
+2026-04-20T09:14:29.0595911Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260413.86/images/ubuntu/Ubuntu2404-Readme.md
+2026-04-20T09:14:29.0597772Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260413.86
+2026-04-20T09:14:29.0598730Z ##[endgroup]
+2026-04-20T09:14:29.0599847Z ##[group]GITHUB_TOKEN Permissions
+2026-04-20T09:14:29.0602246Z Contents: read
+2026-04-20T09:14:29.0602824Z Metadata: read
+2026-04-20T09:14:29.0603332Z Packages: read
+2026-04-20T09:14:29.0603843Z ##[endgroup]
+2026-04-20T09:14:29.0606219Z Secret source: Actions
+2026-04-20T09:14:29.0607502Z Prepare workflow directory
+2026-04-20T09:14:29.1041195Z Prepare all required actions
+2026-04-20T09:14:29.1078539Z Getting action download info
+2026-04-20T09:14:29.5101400Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+2026-04-20T09:14:29.6208759Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-04-20T09:14:29.8018539Z Complete job name: Backend Tests

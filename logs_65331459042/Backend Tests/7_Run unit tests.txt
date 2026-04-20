@@ -1,0 +1,67 @@
+﻿2026-04-20T09:14:57.2244463Z ##[group]Run pytest tests/ -v --ignore=tests/integration
+2026-04-20T09:14:57.2244896Z [36;1mpytest tests/ -v --ignore=tests/integration[0m
+2026-04-20T09:14:57.2266839Z shell: /usr/bin/bash -e {0}
+2026-04-20T09:14:57.2267064Z env:
+2026-04-20T09:14:57.2267306Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-04-20T09:14:57.2267737Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+2026-04-20T09:14:57.2268139Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-04-20T09:14:57.2268489Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-04-20T09:14:57.2268842Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-04-20T09:14:57.2269212Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+2026-04-20T09:14:57.2270000Z   DATABASE_URL: ***localhost/flight_test
+2026-04-20T09:14:57.2270364Z   JWT_SECRET_KEY: ci-secret-key-that-is-at-least-32-characters-long
+2026-04-20T09:14:57.2270709Z   ADMIN_EMAIL: admin@example.com
+2026-04-20T09:14:57.2270978Z   ADMIN_PASSWORD: CIAdminPassword1!
+2026-04-20T09:14:57.2271211Z ##[endgroup]
+2026-04-20T09:14:57.9061388Z ============================= test session starts ==============================
+2026-04-20T09:14:57.9062550Z platform linux -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /opt/hostedtoolcache/Python/3.11.15/x64/bin/python
+2026-04-20T09:14:57.9063526Z cachedir: .pytest_cache
+2026-04-20T09:14:57.9064182Z rootdir: /home/runner/work/Scraper-tool/Scraper-tool/flight-harvester/backend
+2026-04-20T09:14:57.9064927Z configfile: pyproject.toml
+2026-04-20T09:14:57.9065218Z plugins: asyncio-1.3.0, anyio-4.13.0
+2026-04-20T09:14:57.9065890Z asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=session, asyncio_default_test_loop_scope=session
+2026-04-20T09:14:58.5727425Z collecting ... collected 41 items
+2026-04-20T09:14:58.5727837Z 
+2026-04-20T09:14:58.5738949Z tests/test_airline_codes.py::test_normalize_full_name PASSED             [  2%]
+2026-04-20T09:14:58.5746008Z tests/test_airline_codes.py::test_normalize_typos PASSED                 [  4%]
+2026-04-20T09:14:58.5753743Z tests/test_airline_codes.py::test_normalize_short_code PASSED            [  7%]
+2026-04-20T09:14:58.5761066Z tests/test_airline_codes.py::test_normalize_empty PASSED                 [  9%]
+2026-04-20T09:14:58.5768146Z tests/test_airline_codes.py::test_normalize_spaced_codes PASSED          [ 12%]
+2026-04-20T09:14:58.5774860Z tests/test_airline_codes.py::test_normalize_case_insensitive PASSED      [ 14%]
+2026-04-20T09:14:58.5781895Z tests/test_airline_codes.py::test_normalize_first_word_match PASSED      [ 17%]
+2026-04-20T09:14:58.5789439Z tests/test_airline_codes.py::test_normalize_fallback_truncate PASSED     [ 19%]
+2026-04-20T09:14:58.5834987Z tests/test_auth_schema.py::test_login_request_valid PASSED               [ 21%]
+2026-04-20T09:14:58.5843219Z tests/test_auth_schema.py::test_login_request_invalid_email PASSED       [ 24%]
+2026-04-20T09:14:58.5852153Z tests/test_auth_schema.py::test_login_request_short_password PASSED      [ 26%]
+2026-04-20T09:14:58.5860544Z tests/test_auth_schema.py::test_user_response_from_orm PASSED            [ 29%]
+2026-04-20T09:14:58.5880601Z tests/test_config.py::test_debug_true_when_true_string PASSED            [ 31%]
+2026-04-20T09:14:58.5895243Z tests/test_config.py::test_debug_false_when_release PASSED               [ 34%]
+2026-04-20T09:14:58.5909592Z tests/test_config.py::test_debug_false_when_production PASSED            [ 36%]
+2026-04-20T09:14:58.5923840Z tests/test_config.py::test_cors_origins_from_comma_string PASSED         [ 39%]
+2026-04-20T09:14:58.5930622Z tests/test_config.py::test_missing_database_url_raises PASSED            [ 41%]
+2026-04-20T09:14:58.5937072Z tests/test_config.py::test_missing_jwt_secret_raises PASSED              [ 43%]
+2026-04-20T09:14:58.5951571Z tests/test_config.py::test_short_jwt_secret_raises PASSED                [ 46%]
+2026-04-20T09:14:58.5965955Z tests/test_config.py::test_change_me_jwt_raises PASSED                   [ 48%]
+2026-04-20T09:14:58.5980812Z tests/test_config.py::test_short_admin_password_raises PASSED            [ 51%]
+2026-04-20T09:14:58.5995632Z tests/test_config.py::test_change_me_password_raises PASSED              [ 53%]
+2026-04-20T09:14:58.6130847Z tests/test_services/test_export_service.py::test_export_creates_one_sheet_per_origin PASSED [ 56%]
+2026-04-20T09:14:58.6209174Z tests/test_services/test_export_service.py::test_export_has_correct_headers PASSED [ 58%]
+2026-04-20T09:14:58.6297606Z tests/test_services/test_export_service.py::test_export_destination_label_in_arrivel_column PASSED [ 60%]
+2026-04-20T09:14:58.6380541Z tests/test_services/test_export_service.py::test_export_nights_in_night_column PASSED [ 63%]
+2026-04-20T09:14:58.6463944Z tests/test_services/test_export_service.py::test_export_prices_are_integers PASSED [ 65%]
+2026-04-20T09:14:58.6548462Z tests/test_services/test_export_service.py::test_export_cheapest_per_date PASSED [ 68%]
+2026-04-20T09:14:58.6653730Z tests/test_services/test_export_service.py::test_export_missing_date_shows_none_price PASSED [ 70%]
+2026-04-20T09:14:58.6756563Z tests/test_services/test_export_service.py::test_export_special_sheet_4_columns PASSED [ 73%]
+2026-04-20T09:14:58.6872610Z tests/test_services/test_export_service.py::test_export_special_sheet_6_columns PASSED [ 75%]
+2026-04-20T09:14:58.7024541Z tests/test_services/test_price_collector.py::test_collect_single_date_returns_cheapest PASSED [ 78%]
+2026-04-20T09:14:58.7092287Z tests/test_services/test_price_collector.py::test_collect_single_date_picks_cheapest_across_providers PASSED [ 80%]
+2026-04-20T09:14:58.7159900Z tests/test_services/test_price_collector.py::test_collect_single_date_one_provider_fails PASSED [ 82%]
+2026-04-20T09:14:58.7216318Z tests/test_services/test_price_collector.py::test_collect_single_date_no_results PASSED [ 85%]
+2026-04-20T09:14:58.7279884Z tests/test_services/test_price_collector.py::test_collect_route_batch_stats PASSED [ 87%]
+2026-04-20T09:14:58.7312773Z tests/test_services/test_price_collector.py::test_upsert_cheapest_sends_correct_params PASSED [ 90%]
+2026-04-20T09:14:58.7338538Z tests/test_services/test_scheduler_filter.py::test_partial_destination_not_excluded PASSED [ 92%]
+2026-04-20T09:14:58.7364175Z tests/test_services/test_scheduler_filter.py::test_all_destinations_excludes_date PASSED [ 95%]
+2026-04-20T09:14:58.7389262Z tests/test_services/test_scheduler_filter.py::test_all_dates_fully_scraped_returns_empty PASSED [ 97%]
+2026-04-20T09:14:58.8450821Z tests/test_services/test_scheduler_filter.py::test_no_scrapes_returns_all_dates PASSED [100%]
+2026-04-20T09:14:58.8451454Z 
+2026-04-20T09:14:58.8451626Z ============================== 41 passed in 0.84s ==============================

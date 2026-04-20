@@ -1,0 +1,4 @@
+﻿2026-04-20T09:14:37.7746525Z ##[group]Run npx tsc --noEmit
+2026-04-20T09:14:37.7746862Z [36;1mnpx tsc --noEmit[0m
+2026-04-20T09:14:37.7767845Z shell: /usr/bin/bash -e {0}
+2026-04-20T09:14:37.7768107Z ##[endgroup]

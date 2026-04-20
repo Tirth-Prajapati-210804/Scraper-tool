@@ -1,0 +1,21 @@
+﻿2026-04-20T09:14:41.8549965Z ##[group]Run npm run test:run
+2026-04-20T09:14:41.8550292Z [36;1mnpm run test:run[0m
+2026-04-20T09:14:41.8571034Z shell: /usr/bin/bash -e {0}
+2026-04-20T09:14:41.8571297Z ##[endgroup]
+2026-04-20T09:14:41.9666895Z 
+2026-04-20T09:14:41.9667446Z > vite-project@0.0.0 test:run
+2026-04-20T09:14:41.9667867Z > vitest run
+2026-04-20T09:14:41.9668085Z 
+2026-04-20T09:14:42.3656191Z 
+2026-04-20T09:14:42.3660261Z [1m[46m RUN [49m[22m [36mv3.2.4 [39m[90m/home/runner/work/Scraper-tool/Scraper-tool/flight-harvester/frontend[39m
+2026-04-20T09:14:42.3661312Z 
+2026-04-20T09:14:43.5278216Z  [32m✓[39m src/utils/format.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 74[2mms[22m[39m
+2026-04-20T09:14:43.6933717Z  [32m✓[39m src/components/ui/Skeleton.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[32m 41[2mms[22m[39m
+2026-04-20T09:14:43.9441277Z  [32m✓[39m src/components/ui/Button.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[32m 191[2mms[22m[39m
+2026-04-20T09:14:44.6259273Z  [32m✓[39m src/components/StatCard.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[32m 41[2mms[22m[39m
+2026-04-20T09:14:44.6572153Z 
+2026-04-20T09:14:44.6597343Z [2m Test Files [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+2026-04-20T09:14:44.6629376Z [2m      Tests [22m [1m[32m25 passed[39m[22m[90m (25)[39m
+2026-04-20T09:14:44.6651906Z [2m   Start at [22m 09:14:42
+2026-04-20T09:14:44.6653622Z [2m   Duration [22m 2.29s[2m (transform 294ms, setup 0ms, collect 840ms, tests 347ms, environment 2.44s, prepare 785ms)[22m
+2026-04-20T09:14:44.6683828Z 

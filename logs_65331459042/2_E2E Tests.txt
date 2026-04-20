@@ -1,0 +1,587 @@
+﻿2026-04-20T09:14:29.9054631Z Current runner version: '2.333.1'
+2026-04-20T09:14:29.9090516Z ##[group]Runner Image Provisioner
+2026-04-20T09:14:29.9091883Z Hosted Compute Agent
+2026-04-20T09:14:29.9093049Z Version: 20260213.493
+2026-04-20T09:14:29.9094172Z Commit: 5c115507f6dd24b8de37d8bbe0bb4509d0cc0fa3
+2026-04-20T09:14:29.9095349Z Build Date: 2026-02-13T00:28:41Z
+2026-04-20T09:14:29.9096486Z Worker ID: {10bc1b1f-952c-4415-9102-a14982a7a23d}
+2026-04-20T09:14:29.9097738Z Azure Region: centralus
+2026-04-20T09:14:29.9098713Z ##[endgroup]
+2026-04-20T09:14:29.9101130Z ##[group]Operating System
+2026-04-20T09:14:29.9102281Z Ubuntu
+2026-04-20T09:14:29.9103239Z 24.04.4
+2026-04-20T09:14:29.9104009Z LTS
+2026-04-20T09:14:29.9104952Z ##[endgroup]
+2026-04-20T09:14:29.9105801Z ##[group]Runner Image
+2026-04-20T09:14:29.9106791Z Image: ubuntu-24.04
+2026-04-20T09:14:29.9107708Z Version: 20260413.86.1
+2026-04-20T09:14:29.9109785Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260413.86/images/ubuntu/Ubuntu2404-Readme.md
+2026-04-20T09:14:29.9112684Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260413.86
+2026-04-20T09:14:29.9114430Z ##[endgroup]
+2026-04-20T09:14:29.9116182Z ##[group]GITHUB_TOKEN Permissions
+2026-04-20T09:14:29.9119187Z Contents: read
+2026-04-20T09:14:29.9120106Z Metadata: read
+2026-04-20T09:14:29.9120984Z Packages: read
+2026-04-20T09:14:29.9121998Z ##[endgroup]
+2026-04-20T09:14:29.9125457Z Secret source: Actions
+2026-04-20T09:14:29.9127110Z Prepare workflow directory
+2026-04-20T09:14:29.9614746Z Prepare all required actions
+2026-04-20T09:14:29.9672148Z Getting action download info
+2026-04-20T09:14:30.3866586Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+2026-04-20T09:14:30.5368883Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-04-20T09:14:30.6202721Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-04-20T09:14:30.8287592Z Complete job name: E2E Tests
+2026-04-20T09:14:30.9071067Z ##[group]Run actions/checkout@v4
+2026-04-20T09:14:30.9072027Z with:
+2026-04-20T09:14:30.9072831Z   repository: Tirth-Prajapati-210804/Scraper-tool
+2026-04-20T09:14:30.9073735Z   token: ***
+2026-04-20T09:14:30.9074142Z   ssh-strict: true
+2026-04-20T09:14:30.9074563Z   ssh-user: git
+2026-04-20T09:14:30.9074974Z   persist-credentials: true
+2026-04-20T09:14:30.9075452Z   clean: true
+2026-04-20T09:14:30.9075890Z   sparse-checkout-cone-mode: true
+2026-04-20T09:14:30.9076398Z   fetch-depth: 1
+2026-04-20T09:14:30.9076817Z   fetch-tags: false
+2026-04-20T09:14:30.9077248Z   show-progress: true
+2026-04-20T09:14:30.9077682Z   lfs: false
+2026-04-20T09:14:30.9078074Z   submodules: false
+2026-04-20T09:14:30.9078500Z   set-safe-directory: true
+2026-04-20T09:14:30.9079276Z ##[endgroup]
+2026-04-20T09:14:31.0240892Z Syncing repository: Tirth-Prajapati-210804/Scraper-tool
+2026-04-20T09:14:31.0243369Z ##[group]Getting Git version info
+2026-04-20T09:14:31.0244336Z Working directory is '/home/runner/work/Scraper-tool/Scraper-tool'
+2026-04-20T09:14:31.0245502Z [command]/usr/bin/git version
+2026-04-20T09:14:31.0289218Z git version 2.53.0
+2026-04-20T09:14:31.0316961Z ##[endgroup]
+2026-04-20T09:14:31.0340880Z Temporarily overriding HOME='/home/runner/work/_temp/3111154c-3eac-4b9a-8597-de1d7212bff4' before making global git config changes
+2026-04-20T09:14:31.0343932Z Adding repository directory to the temporary git global config as a safe directory
+2026-04-20T09:14:31.0348482Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Scraper-tool/Scraper-tool
+2026-04-20T09:14:31.0386619Z Deleting the contents of '/home/runner/work/Scraper-tool/Scraper-tool'
+2026-04-20T09:14:31.0390823Z ##[group]Initializing the repository
+2026-04-20T09:14:31.0396547Z [command]/usr/bin/git init /home/runner/work/Scraper-tool/Scraper-tool
+2026-04-20T09:14:31.0491661Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-04-20T09:14:31.0494066Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-04-20T09:14:31.0496673Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-04-20T09:14:31.0498215Z hint: call:
+2026-04-20T09:14:31.0498989Z hint:
+2026-04-20T09:14:31.0500054Z hint: 	git config --global init.defaultBranch <name>
+2026-04-20T09:14:31.0501266Z hint:
+2026-04-20T09:14:31.0502310Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-04-20T09:14:31.0504355Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-04-20T09:14:31.0505741Z hint:
+2026-04-20T09:14:31.0506522Z hint: 	git branch -m <name>
+2026-04-20T09:14:31.0507428Z hint:
+2026-04-20T09:14:31.0508618Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-04-20T09:14:31.0510593Z Initialized empty Git repository in /home/runner/work/Scraper-tool/Scraper-tool/.git/
+2026-04-20T09:14:31.0514167Z [command]/usr/bin/git remote add origin https://github.com/Tirth-Prajapati-210804/Scraper-tool
+2026-04-20T09:14:31.0545309Z ##[endgroup]
+2026-04-20T09:14:31.0546658Z ##[group]Disabling automatic garbage collection
+2026-04-20T09:14:31.0550606Z [command]/usr/bin/git config --local gc.auto 0
+2026-04-20T09:14:31.0584548Z ##[endgroup]
+2026-04-20T09:14:31.0585776Z ##[group]Setting up auth
+2026-04-20T09:14:31.0594166Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-04-20T09:14:31.0639081Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-04-20T09:14:31.0944035Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-04-20T09:14:31.0981486Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-04-20T09:14:31.1232714Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-04-20T09:14:31.1266570Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-04-20T09:14:31.1497636Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-04-20T09:14:31.1533943Z ##[endgroup]
+2026-04-20T09:14:31.1535420Z ##[group]Fetching the repository
+2026-04-20T09:14:31.1544533Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +1cfa0f75b26a066c9162e1801611cc6330b44b59:refs/remotes/origin/claude/continue-project-CF0S4
+2026-04-20T09:14:31.6420553Z From https://github.com/Tirth-Prajapati-210804/Scraper-tool
+2026-04-20T09:14:31.6424016Z  * [new ref]         1cfa0f75b26a066c9162e1801611cc6330b44b59 -> origin/claude/continue-project-CF0S4
+2026-04-20T09:14:31.6454086Z ##[endgroup]
+2026-04-20T09:14:31.6456173Z ##[group]Determining the checkout info
+2026-04-20T09:14:31.6458165Z ##[endgroup]
+2026-04-20T09:14:31.6462423Z [command]/usr/bin/git sparse-checkout disable
+2026-04-20T09:14:31.6500858Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-04-20T09:14:31.6529358Z ##[group]Checking out the ref
+2026-04-20T09:14:31.6536089Z [command]/usr/bin/git checkout --progress --force -B claude/continue-project-CF0S4 refs/remotes/origin/claude/continue-project-CF0S4
+2026-04-20T09:14:31.6704312Z Switched to a new branch 'claude/continue-project-CF0S4'
+2026-04-20T09:14:31.6707129Z branch 'claude/continue-project-CF0S4' set up to track 'origin/claude/continue-project-CF0S4'.
+2026-04-20T09:14:31.6715280Z ##[endgroup]
+2026-04-20T09:14:31.6752942Z [command]/usr/bin/git log -1 --format=%H
+2026-04-20T09:14:31.6775746Z 1cfa0f75b26a066c9162e1801611cc6330b44b59
+2026-04-20T09:14:31.7104685Z ##[group]Run actions/setup-node@v4
+2026-04-20T09:14:31.7105910Z with:
+2026-04-20T09:14:31.7106714Z   node-version: 20
+2026-04-20T09:14:31.7107923Z   cache: npm
+2026-04-20T09:14:31.7109249Z   cache-dependency-path: flight-harvester/frontend/package-lock.json
+2026-04-20T09:14:31.7110886Z   always-auth: false
+2026-04-20T09:14:31.7111815Z   check-latest: false
+2026-04-20T09:14:31.7113546Z   token: ***
+2026-04-20T09:14:31.7114396Z ##[endgroup]
+2026-04-20T09:14:31.8997633Z Found in cache @ /opt/hostedtoolcache/node/20.20.2/x64
+2026-04-20T09:14:31.9004257Z ##[group]Environment details
+2026-04-20T09:14:34.7143798Z node: v20.20.2
+2026-04-20T09:14:34.7144438Z npm: 10.8.2
+2026-04-20T09:14:34.7144717Z yarn: 1.22.22
+2026-04-20T09:14:34.7145525Z ##[endgroup]
+2026-04-20T09:14:34.7168405Z [command]/opt/hostedtoolcache/node/20.20.2/x64/bin/npm config get cache
+2026-04-20T09:14:34.9078843Z /home/runner/.npm
+2026-04-20T09:14:35.1039075Z Cache hit for: node-cache-Linux-x64-npm-d0506c7b55a1c8fcbb6f6a116044c95c38b2bf529df45c52f8bc64ed430917fe
+2026-04-20T09:14:36.1492689Z Received 70092178 of 70092178 (100.0%), 74.1 MBs/sec
+2026-04-20T09:14:36.1494551Z Cache Size: ~67 MB (70092178 B)
+2026-04-20T09:14:36.1572725Z [command]/usr/bin/tar -xf /home/runner/work/_temp/07cee15f-f1e7-4dbe-b09a-3ea276975762/cache.tzst -P -C /home/runner/work/Scraper-tool/Scraper-tool --use-compress-program unzstd
+2026-04-20T09:14:36.3406375Z Cache restored successfully
+2026-04-20T09:14:36.3446846Z Cache restored from key: node-cache-Linux-x64-npm-d0506c7b55a1c8fcbb6f6a116044c95c38b2bf529df45c52f8bc64ed430917fe
+2026-04-20T09:14:36.3601164Z ##[group]Run npm ci
+2026-04-20T09:14:36.3601479Z [36;1mnpm ci[0m
+2026-04-20T09:14:36.3636480Z shell: /usr/bin/bash -e {0}
+2026-04-20T09:14:36.3636804Z ##[endgroup]
+2026-04-20T09:14:40.0397415Z npm warn deprecated whatwg-encoding@3.1.1: Use @exodus/bytes instead for a more spec-conformant and faster implementation
+2026-04-20T09:14:40.8291312Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-04-20T09:14:42.8056822Z 
+2026-04-20T09:14:42.8057731Z added 445 packages, and audited 446 packages in 6s
+2026-04-20T09:14:42.8058218Z 
+2026-04-20T09:14:42.8065437Z 109 packages are looking for funding
+2026-04-20T09:14:42.8066366Z   run `npm fund` for details
+2026-04-20T09:14:42.8087422Z 
+2026-04-20T09:14:42.8093402Z 1 moderate severity vulnerability
+2026-04-20T09:14:42.8098306Z 
+2026-04-20T09:14:42.8098671Z To address all issues, run:
+2026-04-20T09:14:42.8099505Z   npm audit fix
+2026-04-20T09:14:42.8099945Z 
+2026-04-20T09:14:42.8100361Z Run `npm audit` for details.
+2026-04-20T09:14:42.8573557Z ##[group]Run npx playwright install chromium --with-deps
+2026-04-20T09:14:42.8574283Z [36;1mnpx playwright install chromium --with-deps[0m
+2026-04-20T09:14:42.8602643Z shell: /usr/bin/bash -e {0}
+2026-04-20T09:14:42.8603050Z ##[endgroup]
+2026-04-20T09:14:43.4715522Z Installing dependencies...
+2026-04-20T09:14:43.4794194Z Switching to root user to install dependencies...
+2026-04-20T09:14:43.5648079Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-04-20T09:14:43.6004494Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+2026-04-20T09:14:43.6015916Z Hit:6 https://packages.microsoft.com/repos/azure-cli noble InRelease
+2026-04-20T09:14:43.6025570Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+2026-04-20T09:14:43.6074361Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+2026-04-20T09:14:43.6137515Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+2026-04-20T09:14:43.6157643Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+2026-04-20T09:14:43.7917905Z Get:8 https://dl.google.com/linux/chrome-stable/deb stable InRelease [1825 B]
+2026-04-20T09:14:43.8356905Z Get:18 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [120 kB]
+2026-04-20T09:14:43.8363469Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1901 kB]
+2026-04-20T09:14:43.8508304Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [345 kB]
+2026-04-20T09:14:43.8543946Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Components [177 kB]
+2026-04-20T09:14:43.8551729Z Get:25 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [96.5 kB]
+2026-04-20T09:14:43.8576159Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 c-n-f Metadata [16.9 kB]
+2026-04-20T09:14:43.8588029Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1666 kB]
+2026-04-20T09:14:43.8599475Z Get:26 https://packages.microsoft.com/ubuntu/24.04/prod noble/main armhf Packages [11.6 kB]
+2026-04-20T09:14:43.8676786Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [323 kB]
+2026-04-20T09:14:43.8704978Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Components [386 kB]
+2026-04-20T09:14:43.8733640Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 c-n-f Metadata [34.3 kB]
+2026-04-20T09:14:43.8747627Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [2957 kB]
+2026-04-20T09:14:43.9009813Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [689 kB]
+2026-04-20T09:14:43.9434834Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Components [212 B]
+2026-04-20T09:14:43.9442957Z Get:21 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [32.5 kB]
+2026-04-20T09:14:43.9456176Z Get:22 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [8208 B]
+2026-04-20T09:14:43.9465828Z Get:23 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Components [940 B]
+2026-04-20T09:14:43.9478657Z Get:24 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 c-n-f Metadata [512 B]
+2026-04-20T09:14:43.9488349Z Get:27 http://azure.archive.ubuntu.com/ubuntu noble-backports/main amd64 Components [7380 B]
+2026-04-20T09:14:43.9538157Z Get:28 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe amd64 Components [10.6 kB]
+2026-04-20T09:14:43.9539944Z Get:29 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe amd64 c-n-f Metadata [1484 B]
+2026-04-20T09:14:43.9542360Z Get:30 http://azure.archive.ubuntu.com/ubuntu noble-backports/restricted amd64 Components [216 B]
+2026-04-20T09:14:43.9544499Z Get:31 http://azure.archive.ubuntu.com/ubuntu noble-backports/multiverse amd64 Components [212 B]
+2026-04-20T09:14:43.9594147Z Get:32 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1608 kB]
+2026-04-20T09:14:43.9664134Z Get:33 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [257 kB]
+2026-04-20T09:14:43.9694096Z Get:34 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Components [21.5 kB]
+2026-04-20T09:14:43.9708894Z Get:35 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 c-n-f Metadata [10.8 kB]
+2026-04-20T09:14:44.0183794Z Get:36 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1169 kB]
+2026-04-20T09:14:44.0234125Z Get:37 http://azure.archive.ubuntu.com/ubuntu noble-security/universe Translation-en [225 kB]
+2026-04-20T09:14:44.0263930Z Get:38 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Components [74.2 kB]
+2026-04-20T09:14:44.0280650Z Get:39 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 c-n-f Metadata [22.9 kB]
+2026-04-20T09:14:44.0313857Z Get:40 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [2822 kB]
+2026-04-20T09:14:44.0546026Z Get:41 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted Translation-en [658 kB]
+2026-04-20T09:14:44.0560208Z Get:45 https://dl.google.com/linux/chrome-stable/deb stable/main amd64 Packages [1220 B]
+2026-04-20T09:14:44.0599336Z Get:42 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Components [212 B]
+2026-04-20T09:14:44.0616311Z Get:43 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse Translation-en [7204 B]
+2026-04-20T09:14:44.0625820Z Get:44 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse amd64 Components [212 B]
+2026-04-20T09:14:52.7602956Z Fetched 16.0 MB in 2s (8591 kB/s)
+2026-04-20T09:14:53.5803485Z Reading package lists...
+2026-04-20T09:14:53.6053501Z Reading package lists...
+2026-04-20T09:14:53.8090833Z Building dependency tree...
+2026-04-20T09:14:53.8097982Z Reading state information...
+2026-04-20T09:14:54.0029642Z libasound2t64 is already the newest version (1.2.11-1ubuntu0.2).
+2026-04-20T09:14:54.0030636Z libasound2t64 set to manually installed.
+2026-04-20T09:14:54.0031656Z libatk-bridge2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-04-20T09:14:54.0033016Z libatk-bridge2.0-0t64 set to manually installed.
+2026-04-20T09:14:54.0034061Z libatk1.0-0t64 is already the newest version (2.52.0-1build1).
+2026-04-20T09:14:54.0035074Z libatk1.0-0t64 set to manually installed.
+2026-04-20T09:14:54.0035907Z libatspi2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-04-20T09:14:54.0036754Z libatspi2.0-0t64 set to manually installed.
+2026-04-20T09:14:54.0037573Z libcairo2 is already the newest version (1.18.0-3build1).
+2026-04-20T09:14:54.0038337Z libcairo2 set to manually installed.
+2026-04-20T09:14:54.0039170Z libcups2t64 is already the newest version (2.4.7-1.2ubuntu7.9).
+2026-04-20T09:14:54.0039986Z libcups2t64 set to manually installed.
+2026-04-20T09:14:54.0040826Z libdbus-1-3 is already the newest version (1.14.10-4ubuntu4.1).
+2026-04-20T09:14:54.0041625Z libdbus-1-3 set to manually installed.
+2026-04-20T09:14:54.0042702Z libdrm2 is already the newest version (2.4.125-1ubuntu0.1~24.04.1).
+2026-04-20T09:14:54.0043532Z libdrm2 set to manually installed.
+2026-04-20T09:14:54.0044339Z libgbm1 is already the newest version (25.2.8-0ubuntu0.24.04.1).
+2026-04-20T09:14:54.0044846Z libgbm1 set to manually installed.
+2026-04-20T09:14:54.0045386Z libglib2.0-0t64 is already the newest version (2.80.0-6ubuntu3.8).
+2026-04-20T09:14:54.0046014Z libglib2.0-0t64 set to manually installed.
+2026-04-20T09:14:54.0046434Z libnspr4 is already the newest version (2:4.35-1.1build1).
+2026-04-20T09:14:54.0046814Z libnspr4 set to manually installed.
+2026-04-20T09:14:54.0047218Z libnss3 is already the newest version (2:3.98-1ubuntu0.1).
+2026-04-20T09:14:54.0047595Z libnss3 set to manually installed.
+2026-04-20T09:14:54.0048008Z libpango-1.0-0 is already the newest version (1.52.1+ds-1build1).
+2026-04-20T09:14:54.0048715Z libpango-1.0-0 set to manually installed.
+2026-04-20T09:14:54.0049123Z libx11-6 is already the newest version (2:1.8.7-1build1).
+2026-04-20T09:14:54.0049487Z libx11-6 set to manually installed.
+2026-04-20T09:14:54.0049843Z libxcb1 is already the newest version (1.15-1ubuntu2).
+2026-04-20T09:14:54.0050203Z libxcb1 set to manually installed.
+2026-04-20T09:14:54.0050621Z libxcomposite1 is already the newest version (1:0.4.5-1build3).
+2026-04-20T09:14:54.0051041Z libxcomposite1 set to manually installed.
+2026-04-20T09:14:54.0051460Z libxdamage1 is already the newest version (1:1.1.6-1build1).
+2026-04-20T09:14:54.0051844Z libxdamage1 set to manually installed.
+2026-04-20T09:14:54.0052225Z libxext6 is already the newest version (2:1.3.4-1build2).
+2026-04-20T09:14:54.0052870Z libxext6 set to manually installed.
+2026-04-20T09:14:54.0053264Z libxfixes3 is already the newest version (1:6.0.0-2build1).
+2026-04-20T09:14:54.0053649Z libxfixes3 set to manually installed.
+2026-04-20T09:14:54.0054041Z libxkbcommon0 is already the newest version (1.6.0-1build1).
+2026-04-20T09:14:54.0054442Z libxkbcommon0 set to manually installed.
+2026-04-20T09:14:54.0054849Z libxrandr2 is already the newest version (2:1.5.2-2build1).
+2026-04-20T09:14:54.0055232Z libxrandr2 set to manually installed.
+2026-04-20T09:14:54.0055614Z xvfb is already the newest version (2:21.1.12-1ubuntu1.5).
+2026-04-20T09:14:54.0056139Z fonts-noto-color-emoji is already the newest version (2.047-0ubuntu0.24.04.1).
+2026-04-20T09:14:54.0056879Z libfontconfig1 is already the newest version (2.15.0-1.1ubuntu2).
+2026-04-20T09:14:54.0057296Z libfontconfig1 set to manually installed.
+2026-04-20T09:14:54.0057738Z libfreetype6 is already the newest version (2.13.2+dfsg-1ubuntu0.1).
+2026-04-20T09:14:54.0058164Z libfreetype6 set to manually installed.
+2026-04-20T09:14:54.0058588Z fonts-liberation is already the newest version (1:2.1.5-3).
+2026-04-20T09:14:54.0058998Z fonts-liberation set to manually installed.
+2026-04-20T09:14:54.0059397Z The following additional packages will be installed:
+2026-04-20T09:14:54.0059760Z   xfonts-encodings xfonts-utils
+2026-04-20T09:14:54.0060046Z Recommended packages:
+2026-04-20T09:14:54.0060320Z   fonts-ipafont-mincho fonts-tlwg-loma
+2026-04-20T09:14:54.0265161Z The following NEW packages will be installed:
+2026-04-20T09:14:54.0265959Z   fonts-freefont-ttf fonts-ipafont-gothic fonts-tlwg-loma-otf fonts-unifont
+2026-04-20T09:14:54.0273924Z   fonts-wqy-zenhei xfonts-cyrillic xfonts-encodings xfonts-scalable
+2026-04-20T09:14:54.0274644Z   xfonts-utils
+2026-04-20T09:14:54.0460628Z 0 upgraded, 9 newly installed, 0 to remove and 19 not upgraded.
+2026-04-20T09:14:54.0461342Z Need to get 21.1 MB of archives.
+2026-04-20T09:14:54.0461797Z After this operation, 79.5 MB of additional disk space will be used.
+2026-04-20T09:14:54.0462285Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-04-20T09:14:54.1056276Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-ipafont-gothic all 00303-21ubuntu1 [3513 kB]
+2026-04-20T09:14:54.1793171Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 fonts-freefont-ttf all 20211204+svn4273-2 [5641 kB]
+2026-04-20T09:14:54.2728468Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-tlwg-loma-otf all 1:0.7.3-1 [107 kB]
+2026-04-20T09:14:54.3057895Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-unifont all 1:15.1.01-1build1 [2993 kB]
+2026-04-20T09:14:54.3860278Z Get:6 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-wqy-zenhei all 0.9.45-8 [7472 kB]
+2026-04-20T09:14:54.5451671Z Get:7 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-encodings all 1:1.0.5-0ubuntu2 [578 kB]
+2026-04-20T09:14:54.5984618Z Get:8 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-utils amd64 1:7.7+6build3 [94.4 kB]
+2026-04-20T09:14:54.6320014Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 xfonts-cyrillic all 1:1.0.5+nmu1 [384 kB]
+2026-04-20T09:14:54.6661191Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-scalable all 1:1.0.3-1.3 [304 kB]
+2026-04-20T09:14:54.9355365Z Fetched 21.1 MB in 1s (33.3 MB/s)
+2026-04-20T09:14:54.9584708Z Selecting previously unselected package fonts-ipafont-gothic.
+2026-04-20T09:14:54.9876819Z (Reading database ... 
+2026-04-20T09:14:54.9877297Z (Reading database ... 5%
+2026-04-20T09:14:54.9877617Z (Reading database ... 10%
+2026-04-20T09:14:54.9877909Z (Reading database ... 15%
+2026-04-20T09:14:54.9878368Z (Reading database ... 20%
+2026-04-20T09:14:54.9878655Z (Reading database ... 25%
+2026-04-20T09:14:54.9878935Z (Reading database ... 30%
+2026-04-20T09:14:54.9879205Z (Reading database ... 35%
+2026-04-20T09:14:54.9879485Z (Reading database ... 40%
+2026-04-20T09:14:54.9879763Z (Reading database ... 45%
+2026-04-20T09:14:54.9880040Z (Reading database ... 50%
+2026-04-20T09:14:54.9954539Z (Reading database ... 55%
+2026-04-20T09:14:55.0973160Z (Reading database ... 60%
+2026-04-20T09:14:55.2942474Z (Reading database ... 65%
+2026-04-20T09:14:55.4827441Z (Reading database ... 70%
+2026-04-20T09:14:55.6508338Z (Reading database ... 75%
+2026-04-20T09:14:55.8371601Z (Reading database ... 80%
+2026-04-20T09:14:56.0865948Z (Reading database ... 85%
+2026-04-20T09:14:56.3002704Z (Reading database ... 90%
+2026-04-20T09:14:56.4462111Z (Reading database ... 95%
+2026-04-20T09:14:56.4462859Z (Reading database ... 100%
+2026-04-20T09:14:56.4463522Z (Reading database ... 220764 files and directories currently installed.)
+2026-04-20T09:14:56.4510665Z Preparing to unpack .../0-fonts-ipafont-gothic_00303-21ubuntu1_all.deb ...
+2026-04-20T09:14:56.4620997Z Unpacking fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-04-20T09:14:56.6984141Z Selecting previously unselected package fonts-freefont-ttf.
+2026-04-20T09:14:56.7127446Z Preparing to unpack .../1-fonts-freefont-ttf_20211204+svn4273-2_all.deb ...
+2026-04-20T09:14:56.7138715Z Unpacking fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-04-20T09:14:56.7987108Z Selecting previously unselected package fonts-tlwg-loma-otf.
+2026-04-20T09:14:56.8128441Z Preparing to unpack .../2-fonts-tlwg-loma-otf_1%3a0.7.3-1_all.deb ...
+2026-04-20T09:14:56.8139561Z Unpacking fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-04-20T09:14:56.8374770Z Selecting previously unselected package fonts-unifont.
+2026-04-20T09:14:56.8513716Z Preparing to unpack .../3-fonts-unifont_1%3a15.1.01-1build1_all.deb ...
+2026-04-20T09:14:56.8524984Z Unpacking fonts-unifont (1:15.1.01-1build1) ...
+2026-04-20T09:14:56.9627283Z Selecting previously unselected package fonts-wqy-zenhei.
+2026-04-20T09:14:56.9768783Z Preparing to unpack .../4-fonts-wqy-zenhei_0.9.45-8_all.deb ...
+2026-04-20T09:14:56.9884070Z Unpacking fonts-wqy-zenhei (0.9.45-8) ...
+2026-04-20T09:14:57.4572231Z Selecting previously unselected package xfonts-encodings.
+2026-04-20T09:14:57.4710750Z Preparing to unpack .../5-xfonts-encodings_1%3a1.0.5-0ubuntu2_all.deb ...
+2026-04-20T09:14:57.4721430Z Unpacking xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-04-20T09:14:57.5036279Z Selecting previously unselected package xfonts-utils.
+2026-04-20T09:14:57.5175746Z Preparing to unpack .../6-xfonts-utils_1%3a7.7+6build3_amd64.deb ...
+2026-04-20T09:14:57.5185676Z Unpacking xfonts-utils (1:7.7+6build3) ...
+2026-04-20T09:14:57.6111776Z Selecting previously unselected package xfonts-cyrillic.
+2026-04-20T09:14:57.6250320Z Preparing to unpack .../7-xfonts-cyrillic_1%3a1.0.5+nmu1_all.deb ...
+2026-04-20T09:14:57.6263038Z Unpacking xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-04-20T09:14:57.6627848Z Selecting previously unselected package xfonts-scalable.
+2026-04-20T09:14:57.6771145Z Preparing to unpack .../8-xfonts-scalable_1%3a1.0.3-1.3_all.deb ...
+2026-04-20T09:14:57.6782682Z Unpacking xfonts-scalable (1:1.0.3-1.3) ...
+2026-04-20T09:14:57.7215835Z Setting up fonts-wqy-zenhei (0.9.45-8) ...
+2026-04-20T09:14:57.7349700Z Setting up fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-04-20T09:14:57.7378424Z Setting up fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-04-20T09:14:57.7403819Z Setting up xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-04-20T09:14:57.7431219Z Setting up fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-04-20T09:14:57.7505160Z update-alternatives: using /usr/share/fonts/opentype/ipafont-gothic/ipag.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+2026-04-20T09:14:57.7524403Z Setting up fonts-unifont (1:15.1.01-1build1) ...
+2026-04-20T09:14:57.7548556Z Setting up xfonts-utils (1:7.7+6build3) ...
+2026-04-20T09:14:57.7597886Z Setting up xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-04-20T09:14:57.7891539Z Setting up xfonts-scalable (1:1.0.3-1.3) ...
+2026-04-20T09:14:57.8171552Z Processing triggers for man-db (2.12.0-4build2) ...
+2026-04-20T09:14:57.8195426Z Not building database; man-db/auto-update is not 'true'.
+2026-04-20T09:14:57.8212032Z Processing triggers for fontconfig (2.15.0-1.1ubuntu2) ...
+2026-04-20T09:14:58.5395210Z 
+2026-04-20T09:14:58.5396875Z Running kernel seems to be up-to-date.
+2026-04-20T09:14:58.5397277Z 
+2026-04-20T09:14:58.5397540Z No services need to be restarted.
+2026-04-20T09:14:58.5397835Z 
+2026-04-20T09:14:58.5398099Z No containers need to be restarted.
+2026-04-20T09:14:58.5398409Z 
+2026-04-20T09:14:58.5398684Z No user sessions are running outdated binaries.
+2026-04-20T09:14:58.5399022Z 
+2026-04-20T09:14:58.5399483Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-04-20T09:14:59.5842271Z Downloading Chrome for Testing 147.0.7727.15 (playwright chromium v1217) from https://cdn.playwright.dev/builds/cft/147.0.7727.15/linux64/chrome-linux64.zip
+2026-04-20T09:15:00.4427436Z |                                                                                |   0% of 170.4 MiB
+2026-04-20T09:15:00.8350682Z |■■■■■■■■                                                                        |  10% of 170.4 MiB
+2026-04-20T09:15:00.9385888Z |■■■■■■■■■■■■■■■■                                                                |  20% of 170.4 MiB
+2026-04-20T09:15:01.0363083Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 170.4 MiB
+2026-04-20T09:15:01.1260770Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 170.4 MiB
+2026-04-20T09:15:01.1994264Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 170.4 MiB
+2026-04-20T09:15:01.3035124Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 170.4 MiB
+2026-04-20T09:15:01.4052850Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 170.4 MiB
+2026-04-20T09:15:01.5063618Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 170.4 MiB
+2026-04-20T09:15:01.5946041Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 170.4 MiB
+2026-04-20T09:15:01.6665460Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 170.4 MiB
+2026-04-20T09:15:04.9474376Z Chrome for Testing 147.0.7727.15 (playwright chromium v1217) downloaded to /home/runner/.cache/ms-playwright/chromium-1217
+2026-04-20T09:15:04.9478824Z Downloading FFmpeg (playwright ffmpeg v1011) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-linux.zip
+2026-04-20T09:15:05.8821407Z |                                                                                |   0% of 2.3 MiB
+2026-04-20T09:15:05.9898290Z |■■■■■■■■                                                                        |  10% of 2.3 MiB
+2026-04-20T09:15:06.0622152Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.3 MiB
+2026-04-20T09:15:06.1056391Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.3 MiB
+2026-04-20T09:15:06.1247982Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.3 MiB
+2026-04-20T09:15:06.1598473Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.3 MiB
+2026-04-20T09:15:06.1722094Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.3 MiB
+2026-04-20T09:15:06.2029556Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.3 MiB
+2026-04-20T09:15:06.2129355Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.3 MiB
+2026-04-20T09:15:06.2214774Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
+2026-04-20T09:15:06.2485295Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
+2026-04-20T09:15:06.3250297Z FFmpeg (playwright ffmpeg v1011) downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1011
+2026-04-20T09:15:06.3254627Z Downloading Chrome Headless Shell 147.0.7727.15 (playwright chromium-headless-shell v1217) from https://cdn.playwright.dev/builds/cft/147.0.7727.15/linux64/chrome-headless-shell-linux64.zip
+2026-04-20T09:15:07.1883657Z |                                                                                |   0% of 112 MiB
+2026-04-20T09:15:07.5313670Z |■■■■■■■■                                                                        |  10% of 112 MiB
+2026-04-20T09:15:07.6000766Z |■■■■■■■■■■■■■■■■                                                                |  20% of 112 MiB
+2026-04-20T09:15:07.6555342Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 112 MiB
+2026-04-20T09:15:07.7105377Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 112 MiB
+2026-04-20T09:15:07.7766241Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 112 MiB
+2026-04-20T09:15:07.8308273Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 112 MiB
+2026-04-20T09:15:07.8791831Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 112 MiB
+2026-04-20T09:15:07.9324260Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 112 MiB
+2026-04-20T09:15:07.9827536Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 112 MiB
+2026-04-20T09:15:08.0315783Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 112 MiB
+2026-04-20T09:15:10.3898255Z Chrome Headless Shell 147.0.7727.15 (playwright chromium-headless-shell v1217) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1217
+2026-04-20T09:15:10.4066955Z ##[group]Run npm run e2e
+2026-04-20T09:15:10.4067241Z [36;1mnpm run e2e[0m
+2026-04-20T09:15:10.4088352Z shell: /usr/bin/bash -e {0}
+2026-04-20T09:15:10.4088624Z ##[endgroup]
+2026-04-20T09:15:10.5535328Z 
+2026-04-20T09:15:10.5536067Z > vite-project@0.0.0 e2e
+2026-04-20T09:15:10.5536472Z > playwright test
+2026-04-20T09:15:10.5536640Z 
+2026-04-20T09:15:13.0993476Z 
+2026-04-20T09:15:13.0994111Z Running 15 tests using 1 worker
+2026-04-20T09:15:36.5690832Z ××F··············
+2026-04-20T09:15:36.5698519Z 
+2026-04-20T09:15:36.5711992Z   1) [chromium] › e2e/dashboard.spec.ts:10:3 › Dashboard › shows stat cards with data ──────────────
+2026-04-20T09:15:36.5713130Z 
+2026-04-20T09:15:36.5713953Z     Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+2026-04-20T09:15:36.5714669Z 
+2026-04-20T09:15:36.5714832Z     Locator: getByText('Origins')
+2026-04-20T09:15:36.5715172Z     Expected: visible
+2026-04-20T09:15:36.5716156Z     Error: strict mode violation: getByText('Origins') resolved to 2 elements:
+2026-04-20T09:15:36.5717210Z         1) <p class="text-xs font-medium uppercase tracking-wide text-slate-400">Origins</p> aka getByText('Origins', { exact: true })
+2026-04-20T09:15:36.5718084Z         2) <span>2 origins</span> aka getByText('2 origins')
+2026-04-20T09:15:36.5718391Z 
+2026-04-20T09:15:36.5718489Z     Call log:
+2026-04-20T09:15:36.5718901Z     [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+2026-04-20T09:15:36.5719380Z     [2m  - waiting for getByText('Origins')[22m
+2026-04-20T09:15:36.5719702Z 
+2026-04-20T09:15:36.5719711Z 
+2026-04-20T09:15:36.5720170Z       11 |     await expect(page.getByText("Route Groups").first()).toBeVisible();
+2026-04-20T09:15:36.5721105Z       12 |     await expect(page.getByText("Prices Collected")).toBeVisible();
+2026-04-20T09:15:36.5721916Z     > 13 |     await expect(page.getByText("Origins")).toBeVisible();
+2026-04-20T09:15:36.5722376Z          |                                             ^
+2026-04-20T09:15:36.5723077Z       14 |   });
+2026-04-20T09:15:36.5723415Z       15 |
+2026-04-20T09:15:36.5723923Z       16 |   test("shows route group card", async ({ page }) => {
+2026-04-20T09:15:36.5725034Z         at /home/runner/work/Scraper-tool/Scraper-tool/flight-harvester/frontend/e2e/dashboard.spec.ts:13:45
+2026-04-20T09:15:36.5725656Z 
+2026-04-20T09:15:36.5726278Z     Error Context: test-results/dashboard-Dashboard-shows-stat-cards-with-data-chromium/error-context.md
+2026-04-20T09:15:36.5726832Z 
+2026-04-20T09:15:36.5727297Z     Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+2026-04-20T09:15:36.5727655Z 
+2026-04-20T09:15:36.5728160Z     Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+2026-04-20T09:15:36.5728709Z 
+2026-04-20T09:15:36.5728859Z     Locator: getByText('Origins')
+2026-04-20T09:15:36.5729140Z     Expected: visible
+2026-04-20T09:15:36.5729537Z     Error: strict mode violation: getByText('Origins') resolved to 2 elements:
+2026-04-20T09:15:36.5730315Z         1) <p class="text-xs font-medium uppercase tracking-wide text-slate-400">Origins</p> aka getByText('Origins', { exact: true })
+2026-04-20T09:15:36.5730960Z         2) <span>2 origins</span> aka getByText('2 origins')
+2026-04-20T09:15:36.5731181Z 
+2026-04-20T09:15:36.5731266Z     Call log:
+2026-04-20T09:15:36.5731801Z     [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+2026-04-20T09:15:36.5732317Z     [2m  - waiting for getByText('Origins')[22m
+2026-04-20T09:15:36.5732886Z 
+2026-04-20T09:15:36.5732892Z 
+2026-04-20T09:15:36.5733201Z       11 |     await expect(page.getByText("Route Groups").first()).toBeVisible();
+2026-04-20T09:15:36.5733747Z       12 |     await expect(page.getByText("Prices Collected")).toBeVisible();
+2026-04-20T09:15:36.5734224Z     > 13 |     await expect(page.getByText("Origins")).toBeVisible();
+2026-04-20T09:15:36.5734609Z          |                                             ^
+2026-04-20T09:15:36.5734882Z       14 |   });
+2026-04-20T09:15:36.5735344Z       15 |
+2026-04-20T09:15:36.5735669Z       16 |   test("shows route group card", async ({ page }) => {
+2026-04-20T09:15:36.5736291Z         at /home/runner/work/Scraper-tool/Scraper-tool/flight-harvester/frontend/e2e/dashboard.spec.ts:13:45
+2026-04-20T09:15:36.5736703Z 
+2026-04-20T09:15:36.5737132Z     Error Context: test-results/dashboard-Dashboard-shows-stat-cards-with-data-chromium-retry1/error-context.md
+2026-04-20T09:15:36.5737599Z 
+2026-04-20T09:15:36.5738027Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-04-20T09:15:36.5738688Z     test-results/dashboard-Dashboard-shows-stat-cards-with-data-chromium-retry1/trace.zip
+2026-04-20T09:15:36.5739142Z     Usage:
+2026-04-20T09:15:36.5739246Z 
+2026-04-20T09:15:36.5739687Z         npx playwright show-trace test-results/dashboard-Dashboard-shows-stat-cards-with-data-chromium-retry1/trace.zip
+2026-04-20T09:15:36.5740169Z 
+2026-04-20T09:15:36.5741131Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-04-20T09:15:36.5741747Z 
+2026-04-20T09:15:36.5742778Z     Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+2026-04-20T09:15:36.5743130Z 
+2026-04-20T09:15:36.5743552Z     Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+2026-04-20T09:15:36.5743925Z 
+2026-04-20T09:15:36.5744076Z     Locator: getByText('Origins')
+2026-04-20T09:15:36.5744354Z     Expected: visible
+2026-04-20T09:15:36.5744773Z     Error: strict mode violation: getByText('Origins') resolved to 2 elements:
+2026-04-20T09:15:36.5745636Z         1) <p class="text-xs font-medium uppercase tracking-wide text-slate-400">Origins</p> aka getByText('Origins', { exact: true })
+2026-04-20T09:15:36.5746360Z         2) <span>2 origins</span> aka getByText('2 origins')
+2026-04-20T09:15:36.5746611Z 
+2026-04-20T09:15:36.5746715Z     Call log:
+2026-04-20T09:15:36.5747113Z     [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+2026-04-20T09:15:36.5747578Z     [2m  - waiting for getByText('Origins')[22m
+2026-04-20T09:15:36.5747812Z 
+2026-04-20T09:15:36.5747818Z 
+2026-04-20T09:15:36.5748086Z       11 |     await expect(page.getByText("Route Groups").first()).toBeVisible();
+2026-04-20T09:15:36.5748660Z       12 |     await expect(page.getByText("Prices Collected")).toBeVisible();
+2026-04-20T09:15:36.5749195Z     > 13 |     await expect(page.getByText("Origins")).toBeVisible();
+2026-04-20T09:15:36.5749597Z          |                                             ^
+2026-04-20T09:15:36.5749894Z       14 |   });
+2026-04-20T09:15:36.5750107Z       15 |
+2026-04-20T09:15:36.5750412Z       16 |   test("shows route group card", async ({ page }) => {
+2026-04-20T09:15:36.5751069Z         at /home/runner/work/Scraper-tool/Scraper-tool/flight-harvester/frontend/e2e/dashboard.spec.ts:13:45
+2026-04-20T09:15:36.5751530Z 
+2026-04-20T09:15:36.5751982Z     Error Context: test-results/dashboard-Dashboard-shows-stat-cards-with-data-chromium-retry2/error-context.md
+2026-04-20T09:15:36.5752719Z 
+2026-04-20T09:15:36.5752842Z   1 failed
+2026-04-20T09:15:36.5753414Z     [chromium] › e2e/dashboard.spec.ts:10:3 › Dashboard › shows stat cards with data ───────────────
+2026-04-20T09:15:36.5754005Z   14 passed (25.1s)
+2026-04-20T09:15:36.5782031Z ##[error]  1) [chromium] › e2e/dashboard.spec.ts:10:3 › Dashboard › shows stat cards with data ──────────────
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Origins')
+    Expected: visible
+    Error: strict mode violation: getByText('Origins') resolved to 2 elements:
+        1) <p class="text-xs font-medium uppercase tracking-wide text-slate-400">Origins</p> aka getByText('Origins', { exact: true })
+        2) <span>2 origins</span> aka getByText('2 origins')
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByText('Origins')
+
+
+      11 |     await expect(page.getByText("Route Groups").first()).toBeVisible();
+      12 |     await expect(page.getByText("Prices Collected")).toBeVisible();
+    > 13 |     await expect(page.getByText("Origins")).toBeVisible();
+         |                                             ^
+      14 |   });
+      15 |
+      16 |   test("shows route group card", async ({ page }) => {
+        at /home/runner/work/Scraper-tool/Scraper-tool/flight-harvester/frontend/e2e/dashboard.spec.ts:13:45
+2026-04-20T09:15:36.5801445Z ##[error]  1) [chromium] › e2e/dashboard.spec.ts:10:3 › Dashboard › shows stat cards with data ──────────────
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Origins')
+    Expected: visible
+    Error: strict mode violation: getByText('Origins') resolved to 2 elements:
+        1) <p class="text-xs font-medium uppercase tracking-wide text-slate-400">Origins</p> aka getByText('Origins', { exact: true })
+        2) <span>2 origins</span> aka getByText('2 origins')
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByText('Origins')
+
+
+      11 |     await expect(page.getByText("Route Groups").first()).toBeVisible();
+      12 |     await expect(page.getByText("Prices Collected")).toBeVisible();
+    > 13 |     await expect(page.getByText("Origins")).toBeVisible();
+         |                                             ^
+      14 |   });
+      15 |
+      16 |   test("shows route group card", async ({ page }) => {
+        at /home/runner/work/Scraper-tool/Scraper-tool/flight-harvester/frontend/e2e/dashboard.spec.ts:13:45
+2026-04-20T09:15:36.5814012Z ##[error]  1) [chromium] › e2e/dashboard.spec.ts:10:3 › Dashboard › shows stat cards with data ──────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Origins')
+    Expected: visible
+    Error: strict mode violation: getByText('Origins') resolved to 2 elements:
+        1) <p class="text-xs font-medium uppercase tracking-wide text-slate-400">Origins</p> aka getByText('Origins', { exact: true })
+        2) <span>2 origins</span> aka getByText('2 origins')
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByText('Origins')
+
+
+      11 |     await expect(page.getByText("Route Groups").first()).toBeVisible();
+      12 |     await expect(page.getByText("Prices Collected")).toBeVisible();
+    > 13 |     await expect(page.getByText("Origins")).toBeVisible();
+         |                                             ^
+      14 |   });
+      15 |
+      16 |   test("shows route group card", async ({ page }) => {
+        at /home/runner/work/Scraper-tool/Scraper-tool/flight-harvester/frontend/e2e/dashboard.spec.ts:13:45
+2026-04-20T09:15:36.5820742Z ##[notice]  1 failed
+    [chromium] › e2e/dashboard.spec.ts:10:3 › Dashboard › shows stat cards with data ───────────────
+  14 passed (25.1s)
+2026-04-20T09:15:36.5906286Z ##[error]Process completed with exit code 1.
+2026-04-20T09:15:36.5981386Z ##[group]Run actions/upload-artifact@v4
+2026-04-20T09:15:36.5981692Z with:
+2026-04-20T09:15:36.5981877Z   name: playwright-report
+2026-04-20T09:15:36.5982173Z   path: flight-harvester/frontend/playwright-report/
+2026-04-20T09:15:36.5982805Z   retention-days: 7
+2026-04-20T09:15:36.5983028Z   if-no-files-found: warn
+2026-04-20T09:15:36.5983255Z   compression-level: 6
+2026-04-20T09:15:36.5983463Z   overwrite: false
+2026-04-20T09:15:36.5983657Z   include-hidden-files: false
+2026-04-20T09:15:36.5983897Z ##[endgroup]
+2026-04-20T09:15:36.8111727Z ##[warning]No files were found with the provided path: flight-harvester/frontend/playwright-report/. No artifacts will be uploaded.
+2026-04-20T09:15:36.8286431Z Post job cleanup.
+2026-04-20T09:15:36.9249875Z [command]/usr/bin/git version
+2026-04-20T09:15:36.9288682Z git version 2.53.0
+2026-04-20T09:15:36.9336177Z Temporarily overriding HOME='/home/runner/work/_temp/55564798-cc8d-4d30-a1c8-2fab17f11570' before making global git config changes
+2026-04-20T09:15:36.9338038Z Adding repository directory to the temporary git global config as a safe directory
+2026-04-20T09:15:36.9351290Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Scraper-tool/Scraper-tool
+2026-04-20T09:15:36.9387473Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-04-20T09:15:36.9420457Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-04-20T09:15:36.9649731Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-04-20T09:15:36.9674488Z http.https://github.com/.extraheader
+2026-04-20T09:15:36.9689102Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-04-20T09:15:36.9720765Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-04-20T09:15:36.9945500Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-04-20T09:15:36.9978149Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-04-20T09:15:37.0313177Z Cleaning up orphan processes
+2026-04-20T09:15:37.0593650Z ##[warning]Node.js 20 actions are deprecated. The following actions are running on Node.js 20 and may not work as expected: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. Actions will be forced to run with Node.js 24 by default starting June 2nd, 2026. Node.js 20 will be removed from the runner on September 16th, 2026. Please check if updated versions of these actions are available that support Node.js 24. To opt into Node.js 24 now, set the FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true environment variable on the runner or in your workflow file. Once Node.js 24 becomes the default, you can temporarily opt out by setting ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
