@@ -33,7 +33,7 @@ _TEST_SETTINGS = Settings(
     database_url=_DB_URL,
     jwt_secret_key="integration-test-secret-that-is-32-chars!",
     admin_email="admin@example.com",
-    admin_password="IntegrationPass1!",
+    admin_password="CIAdminPassword1!",
     scheduler_enabled=False,
     environment="test",
     debug=False,
@@ -89,7 +89,7 @@ async def auth_client(client):
     """Client pre-authenticated as the default admin."""
     res = await client.post(
         "/api/v1/auth/login",
-        json={"email": "admin@example.com", "password": "IntegrationPass1!"},
+        json={"email": "admin@example.com", "password": "CIAdminPassword1!"},
     )
     assert res.status_code == 200, f"Login fixture failed: {res.text}"
     token = res.json()["access_token"]
