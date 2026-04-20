@@ -8,13 +8,13 @@ import pytest
 async def test_login_success(client):
     res = await client.post(
         "/api/v1/auth/login",
-        json={"email": "admin@integration.test", "password": "IntegrationPass1!"},
+        json={"email": "admin@example.com", "password": "IntegrationPass1!"},
     )
     assert res.status_code == 200
     data = res.json()
     assert "access_token" in data
     assert data["token_type"] == "bearer"
-    assert data["user"]["email"] == "admin@integration.test"
+    assert data["user"]["email"] == "admin@example.com"
     assert data["user"]["role"] == "admin"
 
 
@@ -22,7 +22,7 @@ async def test_login_success(client):
 async def test_login_wrong_password(client):
     res = await client.post(
         "/api/v1/auth/login",
-        json={"email": "admin@integration.test", "password": "wrongpassword"},
+        json={"email": "admin@example.com", "password": "wrongpassword"},
     )
     assert res.status_code == 401
 
@@ -40,7 +40,7 @@ async def test_login_unknown_email(client):
 async def test_get_me_returns_current_user(auth_client):
     res = await auth_client.get("/api/v1/auth/me")
     assert res.status_code == 200
-    assert res.json()["email"] == "admin@integration.test"
+    assert res.json()["email"] == "admin@example.com"
 
 
 @pytest.mark.asyncio
