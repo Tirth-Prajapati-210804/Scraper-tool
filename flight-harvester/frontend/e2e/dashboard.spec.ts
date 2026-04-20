@@ -10,7 +10,7 @@ test.describe("Dashboard", () => {
   test("shows stat cards with data", async ({ page }) => {
     await expect(page.getByText("Route Groups").first()).toBeVisible();
     await expect(page.getByText("Prices Collected")).toBeVisible();
-    await expect(page.getByText("Origins")).toBeVisible();
+    await expect(page.getByText("Origins").first()).toBeVisible();
   });
 
   test("shows route group card", async ({ page }) => {
