@@ -8,14 +8,14 @@ test.describe("Dashboard", () => {
   });
 
   test("shows stat cards with data", async ({ page }) => {
-    await expect(page.getByText("Route Groups")).toBeVisible();
+    await expect(page.getByText("Route Groups").first()).toBeVisible();
     await expect(page.getByText("Prices Collected")).toBeVisible();
     await expect(page.getByText("Origins")).toBeVisible();
   });
 
   test("shows route group card", async ({ page }) => {
     await expect(page.getByText(MOCK_GROUP.name)).toBeVisible();
-    await expect(page.getByText(MOCK_GROUP.destination_label)).toBeVisible();
+    await expect(page.getByText(MOCK_GROUP.destination_label, { exact: true })).toBeVisible();
   });
 
   test("trigger collection shows success toast", async ({ page }) => {
