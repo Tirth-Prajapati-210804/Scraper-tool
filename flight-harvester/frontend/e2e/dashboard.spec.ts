@@ -26,7 +26,7 @@ test.describe("Dashboard", () => {
         body: JSON.stringify({ status: "triggered" }),
       }),
     );
-    await page.getByRole("button", { name: "Trigger collection" }).click();
+    await page.getByRole("button", { name: "Trigger collection", exact: true }).click();
     await expect(page.getByText("Collection triggered successfully")).toBeVisible();
   });
 
@@ -38,7 +38,7 @@ test.describe("Dashboard", () => {
         body: JSON.stringify({ status: "already_running" }),
       }),
     );
-    await page.getByRole("button", { name: "Trigger collection" }).click();
+    await page.getByRole("button", { name: "Trigger collection", exact: true }).click();
     await expect(page.getByText("Collection is already running")).toBeVisible();
   });
 

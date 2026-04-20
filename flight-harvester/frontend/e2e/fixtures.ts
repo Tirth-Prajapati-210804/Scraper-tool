@@ -90,4 +90,5 @@ export async function loginViaUI(page: Page) {
   await page.getByLabel("Password").fill("StrongPass123!");
   await page.getByRole("button", { name: "Sign in" }).click();
   await page.waitForURL("/");
+  await page.waitForLoadState("networkidle");
 }
