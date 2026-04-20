@@ -1,0 +1,11 @@
+﻿2026-04-20T07:40:35.3878640Z ##[group]Run actions/upload-artifact@v4
+2026-04-20T07:40:35.3879115Z with:
+2026-04-20T07:40:35.3879305Z   name: playwright-report
+2026-04-20T07:40:35.3879596Z   path: flight-harvester/frontend/playwright-report/
+2026-04-20T07:40:35.3879905Z   retention-days: 7
+2026-04-20T07:40:35.3880105Z   if-no-files-found: warn
+2026-04-20T07:40:35.3880326Z   compression-level: 6
+2026-04-20T07:40:35.3880535Z   overwrite: false
+2026-04-20T07:40:35.3880734Z   include-hidden-files: false
+2026-04-20T07:40:35.3880962Z ##[endgroup]
+2026-04-20T07:40:35.6013486Z ##[warning]No files were found with the provided path: flight-harvester/frontend/playwright-report/. No artifacts will be uploaded.

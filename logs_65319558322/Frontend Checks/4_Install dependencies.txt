@@ -1,0 +1,18 @@
+﻿2026-04-20T07:39:30.5125723Z ##[group]Run npm ci
+2026-04-20T07:39:30.5127370Z [36;1mnpm ci[0m
+2026-04-20T07:39:30.5161640Z shell: /usr/bin/bash -e {0}
+2026-04-20T07:39:30.5161923Z ##[endgroup]
+2026-04-20T07:39:33.3463407Z npm warn deprecated whatwg-encoding@3.1.1: Use @exodus/bytes instead for a more spec-conformant and faster implementation
+2026-04-20T07:39:34.1267094Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-04-20T07:39:36.0789557Z 
+2026-04-20T07:39:36.0791066Z added 445 packages, and audited 446 packages in 5s
+2026-04-20T07:39:36.0792110Z 
+2026-04-20T07:39:36.0801950Z 109 packages are looking for funding
+2026-04-20T07:39:36.0802951Z   run `npm fund` for details
+2026-04-20T07:39:36.0819994Z 
+2026-04-20T07:39:36.0820563Z 1 moderate severity vulnerability
+2026-04-20T07:39:36.0821350Z 
+2026-04-20T07:39:36.0821883Z To address all issues, run:
+2026-04-20T07:39:36.0822771Z   npm audit fix
+2026-04-20T07:39:36.0823175Z 
+2026-04-20T07:39:36.0823692Z Run `npm audit` for details.

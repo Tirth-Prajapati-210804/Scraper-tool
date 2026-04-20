@@ -1,0 +1,72 @@
+﻿2026-04-20T07:39:40.2640711Z ##[group]Run actions/checkout@v4
+2026-04-20T07:39:40.2641324Z with:
+2026-04-20T07:39:40.2641574Z   repository: Tirth-Prajapati-210804/Scraper-tool
+2026-04-20T07:39:40.2642089Z   token: ***
+2026-04-20T07:39:40.2642282Z   ssh-strict: true
+2026-04-20T07:39:40.2642470Z   ssh-user: git
+2026-04-20T07:39:40.2642692Z   persist-credentials: true
+2026-04-20T07:39:40.2642902Z   clean: true
+2026-04-20T07:39:40.2643095Z   sparse-checkout-cone-mode: true
+2026-04-20T07:39:40.2643330Z   fetch-depth: 1
+2026-04-20T07:39:40.2643505Z   fetch-tags: false
+2026-04-20T07:39:40.2643693Z   show-progress: true
+2026-04-20T07:39:40.2643875Z   lfs: false
+2026-04-20T07:39:40.2644039Z   submodules: false
+2026-04-20T07:39:40.2644221Z   set-safe-directory: true
+2026-04-20T07:39:40.2644606Z ##[endgroup]
+2026-04-20T07:39:40.3752184Z Syncing repository: Tirth-Prajapati-210804/Scraper-tool
+2026-04-20T07:39:40.3753413Z ##[group]Getting Git version info
+2026-04-20T07:39:40.3753821Z Working directory is '/home/runner/work/Scraper-tool/Scraper-tool'
+2026-04-20T07:39:40.3754434Z [command]/usr/bin/git version
+2026-04-20T07:39:40.3824335Z git version 2.53.0
+2026-04-20T07:39:40.3849250Z ##[endgroup]
+2026-04-20T07:39:40.3872146Z Temporarily overriding HOME='/home/runner/work/_temp/0721de8b-a684-488d-845c-d9cad7258a4e' before making global git config changes
+2026-04-20T07:39:40.3873425Z Adding repository directory to the temporary git global config as a safe directory
+2026-04-20T07:39:40.3878358Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Scraper-tool/Scraper-tool
+2026-04-20T07:39:40.3911675Z Deleting the contents of '/home/runner/work/Scraper-tool/Scraper-tool'
+2026-04-20T07:39:40.3915418Z ##[group]Initializing the repository
+2026-04-20T07:39:40.3919862Z [command]/usr/bin/git init /home/runner/work/Scraper-tool/Scraper-tool
+2026-04-20T07:39:40.3978287Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-04-20T07:39:40.3979138Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-04-20T07:39:40.3979918Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-04-20T07:39:40.3980465Z hint: call:
+2026-04-20T07:39:40.3980635Z hint:
+2026-04-20T07:39:40.3980913Z hint: 	git config --global init.defaultBranch <name>
+2026-04-20T07:39:40.3981411Z hint:
+2026-04-20T07:39:40.3981687Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-04-20T07:39:40.3982151Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-04-20T07:39:40.3982511Z hint:
+2026-04-20T07:39:40.3982693Z hint: 	git branch -m <name>
+2026-04-20T07:39:40.3982912Z hint:
+2026-04-20T07:39:40.3983220Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-04-20T07:39:40.3983765Z Initialized empty Git repository in /home/runner/work/Scraper-tool/Scraper-tool/.git/
+2026-04-20T07:39:40.3990208Z [command]/usr/bin/git remote add origin https://github.com/Tirth-Prajapati-210804/Scraper-tool
+2026-04-20T07:39:40.4019139Z ##[endgroup]
+2026-04-20T07:39:40.4019523Z ##[group]Disabling automatic garbage collection
+2026-04-20T07:39:40.4023191Z [command]/usr/bin/git config --local gc.auto 0
+2026-04-20T07:39:40.4050429Z ##[endgroup]
+2026-04-20T07:39:40.4050807Z ##[group]Setting up auth
+2026-04-20T07:39:40.4057343Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-04-20T07:39:40.4087421Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-04-20T07:39:40.4424752Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-04-20T07:39:40.4455491Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-04-20T07:39:40.4686618Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-04-20T07:39:40.4719482Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-04-20T07:39:40.4948653Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-04-20T07:39:40.4983016Z ##[endgroup]
+2026-04-20T07:39:40.4983525Z ##[group]Fetching the repository
+2026-04-20T07:39:40.4991550Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +f3c3082d3a44202ff61d91bdcfca6947a270bc1e:refs/remotes/origin/claude/continue-project-CF0S4
+2026-04-20T07:39:40.6926174Z From https://github.com/Tirth-Prajapati-210804/Scraper-tool
+2026-04-20T07:39:40.6927197Z  * [new ref]         f3c3082d3a44202ff61d91bdcfca6947a270bc1e -> origin/claude/continue-project-CF0S4
+2026-04-20T07:39:40.6956001Z ##[endgroup]
+2026-04-20T07:39:40.6956516Z ##[group]Determining the checkout info
+2026-04-20T07:39:40.6958504Z ##[endgroup]
+2026-04-20T07:39:40.6963459Z [command]/usr/bin/git sparse-checkout disable
+2026-04-20T07:39:40.7000718Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-04-20T07:39:40.7026363Z ##[group]Checking out the ref
+2026-04-20T07:39:40.7030894Z [command]/usr/bin/git checkout --progress --force -B claude/continue-project-CF0S4 refs/remotes/origin/claude/continue-project-CF0S4
+2026-04-20T07:39:40.7164073Z Switched to a new branch 'claude/continue-project-CF0S4'
+2026-04-20T07:39:40.7236382Z branch 'claude/continue-project-CF0S4' set up to track 'origin/claude/continue-project-CF0S4'.
+2026-04-20T07:39:40.7237941Z ##[endgroup]
+2026-04-20T07:39:40.7239081Z [command]/usr/bin/git log -1 --format=%H
+2026-04-20T07:39:40.7239422Z f3c3082d3a44202ff61d91bdcfca6947a270bc1e

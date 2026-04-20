@@ -1,0 +1,72 @@
+﻿2026-04-20T07:40:05.7547389Z Print service container logs: b70d6c1764da43feafcf8b6c4727e63d_postgres15_7c7301
+2026-04-20T07:40:05.7552349Z ##[command]/usr/bin/docker logs --details 0c8255feeee8d9d754401ef246f2e479458ce1189397e6d1d326f6c5165e5c6b
+2026-04-20T07:40:05.7682228Z  The files belonging to this database system will be owned by user "postgres".
+2026-04-20T07:40:05.7683178Z  This user must also own the server process.
+2026-04-20T07:40:05.7684642Z  
+2026-04-20T07:40:05.7685308Z  The database cluster will be initialized with locale "en_US.utf8".
+2026-04-20T07:40:05.7685770Z  The default database encoding has accordingly been set to "UTF8".
+2026-04-20T07:40:05.7686353Z  The default text search configuration will be set to "english".
+2026-04-20T07:40:05.7686676Z  
+2026-04-20T07:40:05.7687239Z  Data page checksums are disabled.
+2026-04-20T07:40:05.7687474Z  
+2026-04-20T07:40:05.7687807Z  fixing permissions on existing directory /var/lib/postgresql/data ... ok
+2026-04-20T07:40:05.7688364Z  creating subdirectories ... ok
+2026-04-20T07:40:05.7688863Z  selecting dynamic shared memory implementation ... posix
+2026-04-20T07:40:05.7689187Z  selecting default max_connections ... 100
+2026-04-20T07:40:05.7689502Z  selecting default shared_buffers ... 128MB
+2026-04-20T07:40:05.7689895Z  selecting default time zone ... Etc/UTC
+2026-04-20T07:40:05.7690301Z  creating configuration files ... ok
+2026-04-20T07:40:05.7690649Z  running bootstrap script ... ok
+2026-04-20T07:40:05.7691067Z  performing post-bootstrap initialization ... ok
+2026-04-20T07:40:05.7691500Z  syncing data to disk ... ok
+2026-04-20T07:40:05.7691807Z  
+2026-04-20T07:40:05.7691998Z  
+2026-04-20T07:40:05.7692199Z  Success. You can now start the database server using:
+2026-04-20T07:40:05.7692562Z  
+2026-04-20T07:40:05.7692906Z      pg_ctl -D /var/lib/postgresql/data -l logfile start
+2026-04-20T07:40:05.7693318Z  
+2026-04-20T07:40:05.7694845Z  initdb: warning: enabling "trust" authentication for local connections
+2026-04-20T07:40:05.7696142Z  initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+2026-04-20T07:40:05.7697578Z  2026-04-20 07:39:34.861 UTC [1] LOG:  starting PostgreSQL 15.17 (Debian 15.17-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+2026-04-20T07:40:05.7698457Z  2026-04-20 07:39:34.862 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-04-20T07:40:05.7698886Z  2026-04-20 07:39:34.862 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2026-04-20T07:40:05.7699357Z  2026-04-20 07:39:34.863 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-04-20T07:40:05.7699886Z  2026-04-20 07:39:34.865 UTC [64] LOG:  database system was shut down at 2026-04-20 07:39:34 UTC
+2026-04-20T07:40:05.7700373Z  2026-04-20 07:39:34.869 UTC [1] LOG:  database system is ready to accept connections
+2026-04-20T07:40:05.7700862Z  2026-04-20 07:40:02.425 UTC [112] LOG:  unexpected EOF on client connection with an open transaction
+2026-04-20T07:40:05.7701422Z  2026-04-20 07:40:02.729 UTC [114] LOG:  unexpected EOF on client connection with an open transaction
+2026-04-20T07:40:05.7701938Z  2026-04-20 07:40:04.572 UTC [111] LOG:  unexpected EOF on client connection with an open transaction
+2026-04-20T07:40:05.7702444Z  2026-04-20 07:40:05.436 UTC [127] LOG:  unexpected EOF on client connection with an open transaction
+2026-04-20T07:40:05.7702946Z  2026-04-20 07:40:05.437 UTC [117] LOG:  unexpected EOF on client connection with an open transaction
+2026-04-20T07:40:05.7703449Z  2026-04-20 07:40:05.437 UTC [115] LOG:  unexpected EOF on client connection with an open transaction
+2026-04-20T07:40:05.7703968Z  2026-04-20 07:40:05.437 UTC [116] LOG:  unexpected EOF on client connection with an open transaction
+2026-04-20T07:40:05.7704478Z  2026-04-20 07:40:05.439 UTC [118] LOG:  unexpected EOF on client connection with an open transaction
+2026-04-20T07:40:05.7705629Z  waiting for server to start....2026-04-20 07:39:34.555 UTC [48] LOG:  starting PostgreSQL 15.17 (Debian 15.17-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+2026-04-20T07:40:05.7706880Z  2026-04-20 07:39:34.556 UTC [48] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-04-20T07:40:05.7707395Z  2026-04-20 07:39:34.558 UTC [51] LOG:  database system was shut down at 2026-04-20 07:39:34 UTC
+2026-04-20T07:40:05.7707846Z  2026-04-20 07:39:34.562 UTC [48] LOG:  database system is ready to accept connections
+2026-04-20T07:40:05.7708183Z   done
+2026-04-20T07:40:05.7708349Z  server started
+2026-04-20T07:40:05.7708522Z  CREATE DATABASE
+2026-04-20T07:40:05.7708691Z  
+2026-04-20T07:40:05.7708835Z  
+2026-04-20T07:40:05.7709125Z  /usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+2026-04-20T07:40:05.7709629Z  
+2026-04-20T07:40:05.7709945Z  waiting for server to shut down...2026-04-20 07:39:34.740 UTC [48] LOG:  received fast shutdown request
+2026-04-20T07:40:05.7710429Z  .2026-04-20 07:39:34.741 UTC [48] LOG:  aborting any active transactions
+2026-04-20T07:40:05.7710963Z  2026-04-20 07:39:34.743 UTC [48] LOG:  background worker "logical replication launcher" (PID 54) exited with exit code 1
+2026-04-20T07:40:05.7711446Z  2026-04-20 07:39:34.743 UTC [49] LOG:  shutting down
+2026-04-20T07:40:05.7711796Z  2026-04-20 07:39:34.744 UTC [49] LOG:  checkpoint starting: shutdown immediate
+2026-04-20T07:40:05.7712699Z  2026-04-20 07:39:34.759 UTC [49] LOG:  checkpoint complete: wrote 922 buffers (5.6%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.013 s, sync=0.002 s, total=0.016 s; sync files=301, longest=0.001 s, average=0.001 s; distance=4239 kB, estimate=4239 kB
+2026-04-20T07:40:05.7713587Z  2026-04-20 07:39:34.766 UTC [48] LOG:  database system is shut down
+2026-04-20T07:40:05.7713881Z   done
+2026-04-20T07:40:05.7714039Z  server stopped
+2026-04-20T07:40:05.7714219Z  
+2026-04-20T07:40:05.7714435Z  PostgreSQL init process complete; ready for start up.
+2026-04-20T07:40:05.7714705Z  
+2026-04-20T07:40:05.7731196Z Stop and remove container: b70d6c1764da43feafcf8b6c4727e63d_postgres15_7c7301
+2026-04-20T07:40:05.7736340Z ##[command]/usr/bin/docker rm --force 0c8255feeee8d9d754401ef246f2e479458ce1189397e6d1d326f6c5165e5c6b
+2026-04-20T07:40:06.0107652Z 0c8255feeee8d9d754401ef246f2e479458ce1189397e6d1d326f6c5165e5c6b
+2026-04-20T07:40:06.0135572Z Remove container network: github_network_9eb1e1c5af024bd9a15f7d72150bce31
+2026-04-20T07:40:06.0140149Z ##[command]/usr/bin/docker network rm github_network_9eb1e1c5af024bd9a15f7d72150bce31
+2026-04-20T07:40:06.1243660Z github_network_9eb1e1c5af024bd9a15f7d72150bce31

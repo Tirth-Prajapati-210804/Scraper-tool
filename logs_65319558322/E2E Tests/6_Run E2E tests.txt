@@ -1,0 +1,333 @@
+﻿2026-04-20T07:40:04.8572955Z ##[group]Run npm run e2e
+2026-04-20T07:40:04.8573394Z [36;1mnpm run e2e[0m
+2026-04-20T07:40:04.8601884Z shell: /usr/bin/bash -e {0}
+2026-04-20T07:40:04.8602283Z ##[endgroup]
+2026-04-20T07:40:04.9831006Z 
+2026-04-20T07:40:04.9831565Z > vite-project@0.0.0 e2e
+2026-04-20T07:40:04.9832048Z > playwright test
+2026-04-20T07:40:04.9832259Z 
+2026-04-20T07:40:07.5526323Z 
+2026-04-20T07:40:07.5596663Z Running 15 tests using 1 worker
+2026-04-20T07:40:35.3552466Z ××F××F·············
+2026-04-20T07:40:35.3561841Z 
+2026-04-20T07:40:35.3583490Z   1) [chromium] › e2e/dashboard.spec.ts:10:3 › Dashboard › shows stat cards with data ──────────────
+2026-04-20T07:40:35.3584211Z 
+2026-04-20T07:40:35.3584843Z     Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+2026-04-20T07:40:35.3585496Z 
+2026-04-20T07:40:35.3586128Z     Locator: getByText('Route Groups')
+2026-04-20T07:40:35.3586702Z     Expected: visible
+2026-04-20T07:40:35.3587644Z     Error: strict mode violation: getByText('Route Groups') resolved to 2 elements:
+2026-04-20T07:40:35.3589240Z         1) <p class="text-xs font-medium uppercase tracking-wide text-slate-400">Route Groups</p> aka getByRole('paragraph').filter({ hasText: 'Route Groups' })
+2026-04-20T07:40:35.3591224Z         2) <h2 class="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">Route Groups</h2> aka getByRole('heading', { name: 'Route Groups' })
+2026-04-20T07:40:35.3592067Z 
+2026-04-20T07:40:35.3592171Z     Call log:
+2026-04-20T07:40:35.3592641Z     [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+2026-04-20T07:40:35.3593200Z     [2m  - waiting for getByText('Route Groups')[22m
+2026-04-20T07:40:35.3593485Z 
+2026-04-20T07:40:35.3593493Z 
+2026-04-20T07:40:35.3593593Z        9 |
+2026-04-20T07:40:35.3593974Z       10 |   test("shows stat cards with data", async ({ page }) => {
+2026-04-20T07:40:35.3594586Z     > 11 |     await expect(page.getByText("Route Groups")).toBeVisible();
+2026-04-20T07:40:35.3595129Z          |                                                  ^
+2026-04-20T07:40:35.3596133Z       12 |     await expect(page.getByText("Prices Collected")).toBeVisible();
+2026-04-20T07:40:35.3596904Z       13 |     await expect(page.getByText("Origins")).toBeVisible();
+2026-04-20T07:40:35.3597277Z       14 |   });
+2026-04-20T07:40:35.3597776Z         at /home/runner/work/Scraper-tool/Scraper-tool/flight-harvester/frontend/e2e/dashboard.spec.ts:11:50
+2026-04-20T07:40:35.3598185Z 
+2026-04-20T07:40:35.3598581Z     Error Context: test-results/dashboard-Dashboard-shows-stat-cards-with-data-chromium/error-context.md
+2026-04-20T07:40:35.3599310Z 
+2026-04-20T07:40:35.3600000Z     Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+2026-04-20T07:40:35.3600519Z 
+2026-04-20T07:40:35.3601157Z     Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+2026-04-20T07:40:35.3601628Z 
+2026-04-20T07:40:35.3601788Z     Locator: getByText('Route Groups')
+2026-04-20T07:40:35.3602270Z     Expected: visible
+2026-04-20T07:40:35.3602960Z     Error: strict mode violation: getByText('Route Groups') resolved to 2 elements:
+2026-04-20T07:40:35.3603838Z         1) <p class="text-xs font-medium uppercase tracking-wide text-slate-400">Route Groups</p> aka getByRole('paragraph').filter({ hasText: 'Route Groups' })
+2026-04-20T07:40:35.3605278Z         2) <h2 class="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">Route Groups</h2> aka getByRole('heading', { name: 'Route Groups' })
+2026-04-20T07:40:35.3606486Z 
+2026-04-20T07:40:35.3606625Z     Call log:
+2026-04-20T07:40:35.3607203Z     [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+2026-04-20T07:40:35.3607764Z     [2m  - waiting for getByText('Route Groups')[22m
+2026-04-20T07:40:35.3608145Z 
+2026-04-20T07:40:35.3608155Z 
+2026-04-20T07:40:35.3608289Z        9 |
+2026-04-20T07:40:35.3608768Z       10 |   test("shows stat cards with data", async ({ page }) => {
+2026-04-20T07:40:35.3609511Z     > 11 |     await expect(page.getByText("Route Groups")).toBeVisible();
+2026-04-20T07:40:35.3610450Z          |                                                  ^
+2026-04-20T07:40:35.3610880Z       12 |     await expect(page.getByText("Prices Collected")).toBeVisible();
+2026-04-20T07:40:35.3611522Z       13 |     await expect(page.getByText("Origins")).toBeVisible();
+2026-04-20T07:40:35.3611930Z       14 |   });
+2026-04-20T07:40:35.3612419Z         at /home/runner/work/Scraper-tool/Scraper-tool/flight-harvester/frontend/e2e/dashboard.spec.ts:11:50
+2026-04-20T07:40:35.3612843Z 
+2026-04-20T07:40:35.3613276Z     Error Context: test-results/dashboard-Dashboard-shows-stat-cards-with-data-chromium-retry1/error-context.md
+2026-04-20T07:40:35.3613985Z 
+2026-04-20T07:40:35.3614586Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-04-20T07:40:35.3615282Z     test-results/dashboard-Dashboard-shows-stat-cards-with-data-chromium-retry1/trace.zip
+2026-04-20T07:40:35.3616172Z     Usage:
+2026-04-20T07:40:35.3616290Z 
+2026-04-20T07:40:35.3616752Z         npx playwright show-trace test-results/dashboard-Dashboard-shows-stat-cards-with-data-chromium-retry1/trace.zip
+2026-04-20T07:40:35.3617233Z 
+2026-04-20T07:40:35.3617821Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-04-20T07:40:35.3618192Z 
+2026-04-20T07:40:35.3618555Z     Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+2026-04-20T07:40:35.3618843Z 
+2026-04-20T07:40:35.3619189Z     Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+2026-04-20T07:40:35.3619522Z 
+2026-04-20T07:40:35.3619641Z     Locator: getByText('Route Groups')
+2026-04-20T07:40:35.3619908Z     Expected: visible
+2026-04-20T07:40:35.3620298Z     Error: strict mode violation: getByText('Route Groups') resolved to 2 elements:
+2026-04-20T07:40:35.3621159Z         1) <p class="text-xs font-medium uppercase tracking-wide text-slate-400">Route Groups</p> aka getByRole('paragraph').filter({ hasText: 'Route Groups' })
+2026-04-20T07:40:35.3622262Z         2) <h2 class="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">Route Groups</h2> aka getByRole('heading', { name: 'Route Groups' })
+2026-04-20T07:40:35.3622803Z 
+2026-04-20T07:40:35.3622880Z     Call log:
+2026-04-20T07:40:35.3623201Z     [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+2026-04-20T07:40:35.3623613Z     [2m  - waiting for getByText('Route Groups')[22m
+2026-04-20T07:40:35.3623824Z 
+2026-04-20T07:40:35.3623830Z 
+2026-04-20T07:40:35.3623911Z        9 |
+2026-04-20T07:40:35.3624195Z       10 |   test("shows stat cards with data", async ({ page }) => {
+2026-04-20T07:40:35.3624651Z     > 11 |     await expect(page.getByText("Route Groups")).toBeVisible();
+2026-04-20T07:40:35.3625049Z          |                                                  ^
+2026-04-20T07:40:35.3625460Z       12 |     await expect(page.getByText("Prices Collected")).toBeVisible();
+2026-04-20T07:40:35.3626218Z       13 |     await expect(page.getByText("Origins")).toBeVisible();
+2026-04-20T07:40:35.3626544Z       14 |   });
+2026-04-20T07:40:35.3627033Z         at /home/runner/work/Scraper-tool/Scraper-tool/flight-harvester/frontend/e2e/dashboard.spec.ts:11:50
+2026-04-20T07:40:35.3627510Z 
+2026-04-20T07:40:35.3627961Z     Error Context: test-results/dashboard-Dashboard-shows-stat-cards-with-data-chromium-retry2/error-context.md
+2026-04-20T07:40:35.3628427Z 
+2026-04-20T07:40:35.3628840Z   2) [chromium] › e2e/dashboard.spec.ts:16:3 › Dashboard › shows route group card ──────────────────
+2026-04-20T07:40:35.3629208Z 
+2026-04-20T07:40:35.3629577Z     Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+2026-04-20T07:40:35.3629932Z 
+2026-04-20T07:40:35.3630046Z     Locator: getByText('Vietnam')
+2026-04-20T07:40:35.3630300Z     Expected: visible
+2026-04-20T07:40:35.3630668Z     Error: strict mode violation: getByText('Vietnam') resolved to 2 elements:
+2026-04-20T07:40:35.3632288Z         1) <a data-discover="true" href="/route-groups/00000000-0000-0000-0000-000000000002" class="flex items-center gap-1 font-semibold text-slate-900 hover:text-brand-700">…</a> aka getByRole('link', { name: 'Canada → Vietnam' })
+2026-04-20T07:40:35.3633700Z         2) <p class="mt-0.5 text-sm text-slate-500">Vietnam</p> aka getByText('Vietnam', { exact: true })
+2026-04-20T07:40:35.3634085Z 
+2026-04-20T07:40:35.3634186Z     Call log:
+2026-04-20T07:40:35.3634542Z     [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+2026-04-20T07:40:35.3634997Z     [2m  - waiting for getByText('Vietnam')[22m
+2026-04-20T07:40:35.3635217Z 
+2026-04-20T07:40:35.3635222Z 
+2026-04-20T07:40:35.3635427Z       16 |   test("shows route group card", async ({ page }) => {
+2026-04-20T07:40:35.3636117Z       17 |     await expect(page.getByText(MOCK_GROUP.name)).toBeVisible();
+2026-04-20T07:40:35.3636709Z     > 18 |     await expect(page.getByText(MOCK_GROUP.destination_label)).toBeVisible();
+2026-04-20T07:40:35.3637224Z          |                                                                ^
+2026-04-20T07:40:35.3637544Z       19 |   });
+2026-04-20T07:40:35.3637751Z       20 |
+2026-04-20T07:40:35.3638114Z       21 |   test("trigger collection shows success toast", async ({ page }) => {
+2026-04-20T07:40:35.3638837Z         at /home/runner/work/Scraper-tool/Scraper-tool/flight-harvester/frontend/e2e/dashboard.spec.ts:18:64
+2026-04-20T07:40:35.3639292Z 
+2026-04-20T07:40:35.3639685Z     Error Context: test-results/dashboard-Dashboard-shows-route-group-card-chromium/error-context.md
+2026-04-20T07:40:35.3640148Z 
+2026-04-20T07:40:35.3640521Z     Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+2026-04-20T07:40:35.3640833Z 
+2026-04-20T07:40:35.3641217Z     Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+2026-04-20T07:40:35.3641567Z 
+2026-04-20T07:40:35.3641680Z     Locator: getByText('Vietnam')
+2026-04-20T07:40:35.3641963Z     Expected: visible
+2026-04-20T07:40:35.3642381Z     Error: strict mode violation: getByText('Vietnam') resolved to 2 elements:
+2026-04-20T07:40:35.3643788Z         1) <a data-discover="true" href="/route-groups/00000000-0000-0000-0000-000000000002" class="flex items-center gap-1 font-semibold text-slate-900 hover:text-brand-700">…</a> aka getByRole('link', { name: 'Canada → Vietnam' })
+2026-04-20T07:40:35.3644997Z         2) <p class="mt-0.5 text-sm text-slate-500">Vietnam</p> aka getByText('Vietnam', { exact: true })
+2026-04-20T07:40:35.3645402Z 
+2026-04-20T07:40:35.3645478Z     Call log:
+2026-04-20T07:40:35.3646174Z     [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+2026-04-20T07:40:35.3646700Z     [2m  - waiting for getByText('Vietnam')[22m
+2026-04-20T07:40:35.3646931Z 
+2026-04-20T07:40:35.3646938Z 
+2026-04-20T07:40:35.3647159Z       16 |   test("shows route group card", async ({ page }) => {
+2026-04-20T07:40:35.3647667Z       17 |     await expect(page.getByText(MOCK_GROUP.name)).toBeVisible();
+2026-04-20T07:40:35.3648272Z     > 18 |     await expect(page.getByText(MOCK_GROUP.destination_label)).toBeVisible();
+2026-04-20T07:40:35.3648823Z          |                                                                ^
+2026-04-20T07:40:35.3649127Z       19 |   });
+2026-04-20T07:40:35.3649332Z       20 |
+2026-04-20T07:40:35.3649678Z       21 |   test("trigger collection shows success toast", async ({ page }) => {
+2026-04-20T07:40:35.3650356Z         at /home/runner/work/Scraper-tool/Scraper-tool/flight-harvester/frontend/e2e/dashboard.spec.ts:18:64
+2026-04-20T07:40:35.3650870Z 
+2026-04-20T07:40:35.3651394Z     Error Context: test-results/dashboard-Dashboard-shows-route-group-card-chromium-retry1/error-context.md
+2026-04-20T07:40:35.3651852Z 
+2026-04-20T07:40:35.3652247Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-04-20T07:40:35.3652930Z     test-results/dashboard-Dashboard-shows-route-group-card-chromium-retry1/trace.zip
+2026-04-20T07:40:35.3653570Z     Usage:
+2026-04-20T07:40:35.3653811Z 
+2026-04-20T07:40:35.3654624Z         npx playwright show-trace test-results/dashboard-Dashboard-shows-route-group-card-chromium-retry1/trace.zip
+2026-04-20T07:40:35.3655489Z 
+2026-04-20T07:40:35.3656354Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-04-20T07:40:35.3656841Z 
+2026-04-20T07:40:35.3657297Z     Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+2026-04-20T07:40:35.3657652Z 
+2026-04-20T07:40:35.3658004Z     Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+2026-04-20T07:40:35.3658343Z 
+2026-04-20T07:40:35.3658458Z     Locator: getByText('Vietnam')
+2026-04-20T07:40:35.3658709Z     Expected: visible
+2026-04-20T07:40:35.3659082Z     Error: strict mode violation: getByText('Vietnam') resolved to 2 elements:
+2026-04-20T07:40:35.3660361Z         1) <a data-discover="true" href="/route-groups/00000000-0000-0000-0000-000000000002" class="flex items-center gap-1 font-semibold text-slate-900 hover:text-brand-700">…</a> aka getByRole('link', { name: 'Canada → Vietnam' })
+2026-04-20T07:40:35.3661516Z         2) <p class="mt-0.5 text-sm text-slate-500">Vietnam</p> aka getByText('Vietnam', { exact: true })
+2026-04-20T07:40:35.3661877Z 
+2026-04-20T07:40:35.3661952Z     Call log:
+2026-04-20T07:40:35.3662275Z     [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+2026-04-20T07:40:35.3662678Z     [2m  - waiting for getByText('Vietnam')[22m
+2026-04-20T07:40:35.3662881Z 
+2026-04-20T07:40:35.3662887Z 
+2026-04-20T07:40:35.3663075Z       16 |   test("shows route group card", async ({ page }) => {
+2026-04-20T07:40:35.3663526Z       17 |     await expect(page.getByText(MOCK_GROUP.name)).toBeVisible();
+2026-04-20T07:40:35.3664063Z     > 18 |     await expect(page.getByText(MOCK_GROUP.destination_label)).toBeVisible();
+2026-04-20T07:40:35.3664536Z          |                                                                ^
+2026-04-20T07:40:35.3664831Z       19 |   });
+2026-04-20T07:40:35.3665019Z       20 |
+2026-04-20T07:40:35.3665352Z       21 |   test("trigger collection shows success toast", async ({ page }) => {
+2026-04-20T07:40:35.3666312Z         at /home/runner/work/Scraper-tool/Scraper-tool/flight-harvester/frontend/e2e/dashboard.spec.ts:18:64
+2026-04-20T07:40:35.3666738Z 
+2026-04-20T07:40:35.3667146Z     Error Context: test-results/dashboard-Dashboard-shows-route-group-card-chromium-retry2/error-context.md
+2026-04-20T07:40:35.3667593Z 
+2026-04-20T07:40:35.3667673Z   2 failed
+2026-04-20T07:40:35.3668173Z     [chromium] › e2e/dashboard.spec.ts:10:3 › Dashboard › shows stat cards with data ───────────────
+2026-04-20T07:40:35.3668893Z     [chromium] › e2e/dashboard.spec.ts:16:3 › Dashboard › shows route group card ───────────────────
+2026-04-20T07:40:35.3669334Z   13 passed (29.5s)
+2026-04-20T07:40:35.3698788Z ##[error]  1) [chromium] › e2e/dashboard.spec.ts:10:3 › Dashboard › shows stat cards with data ──────────────
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Route Groups')
+    Expected: visible
+    Error: strict mode violation: getByText('Route Groups') resolved to 2 elements:
+        1) <p class="text-xs font-medium uppercase tracking-wide text-slate-400">Route Groups</p> aka getByRole('paragraph').filter({ hasText: 'Route Groups' })
+        2) <h2 class="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">Route Groups</h2> aka getByRole('heading', { name: 'Route Groups' })
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByText('Route Groups')
+
+
+       9 |
+      10 |   test("shows stat cards with data", async ({ page }) => {
+    > 11 |     await expect(page.getByText("Route Groups")).toBeVisible();
+         |                                                  ^
+      12 |     await expect(page.getByText("Prices Collected")).toBeVisible();
+      13 |     await expect(page.getByText("Origins")).toBeVisible();
+      14 |   });
+        at /home/runner/work/Scraper-tool/Scraper-tool/flight-harvester/frontend/e2e/dashboard.spec.ts:11:50
+2026-04-20T07:40:35.3723379Z ##[error]  1) [chromium] › e2e/dashboard.spec.ts:10:3 › Dashboard › shows stat cards with data ──────────────
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Route Groups')
+    Expected: visible
+    Error: strict mode violation: getByText('Route Groups') resolved to 2 elements:
+        1) <p class="text-xs font-medium uppercase tracking-wide text-slate-400">Route Groups</p> aka getByRole('paragraph').filter({ hasText: 'Route Groups' })
+        2) <h2 class="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">Route Groups</h2> aka getByRole('heading', { name: 'Route Groups' })
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByText('Route Groups')
+
+
+       9 |
+      10 |   test("shows stat cards with data", async ({ page }) => {
+    > 11 |     await expect(page.getByText("Route Groups")).toBeVisible();
+         |                                                  ^
+      12 |     await expect(page.getByText("Prices Collected")).toBeVisible();
+      13 |     await expect(page.getByText("Origins")).toBeVisible();
+      14 |   });
+        at /home/runner/work/Scraper-tool/Scraper-tool/flight-harvester/frontend/e2e/dashboard.spec.ts:11:50
+2026-04-20T07:40:35.3748100Z ##[error]  1) [chromium] › e2e/dashboard.spec.ts:10:3 › Dashboard › shows stat cards with data ──────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Route Groups')
+    Expected: visible
+    Error: strict mode violation: getByText('Route Groups') resolved to 2 elements:
+        1) <p class="text-xs font-medium uppercase tracking-wide text-slate-400">Route Groups</p> aka getByRole('paragraph').filter({ hasText: 'Route Groups' })
+        2) <h2 class="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">Route Groups</h2> aka getByRole('heading', { name: 'Route Groups' })
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByText('Route Groups')
+
+
+       9 |
+      10 |   test("shows stat cards with data", async ({ page }) => {
+    > 11 |     await expect(page.getByText("Route Groups")).toBeVisible();
+         |                                                  ^
+      12 |     await expect(page.getByText("Prices Collected")).toBeVisible();
+      13 |     await expect(page.getByText("Origins")).toBeVisible();
+      14 |   });
+        at /home/runner/work/Scraper-tool/Scraper-tool/flight-harvester/frontend/e2e/dashboard.spec.ts:11:50
+2026-04-20T07:40:35.3767368Z ##[error]  2) [chromium] › e2e/dashboard.spec.ts:16:3 › Dashboard › shows route group card ──────────────────
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Vietnam')
+    Expected: visible
+    Error: strict mode violation: getByText('Vietnam') resolved to 2 elements:
+        1) <a data-discover="true" href="/route-groups/00000000-0000-0000-0000-000000000002" class="flex items-center gap-1 font-semibold text-slate-900 hover:text-brand-700">…</a> aka getByRole('link', { name: 'Canada → Vietnam' })
+        2) <p class="mt-0.5 text-sm text-slate-500">Vietnam</p> aka getByText('Vietnam', { exact: true })
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByText('Vietnam')
+
+
+      16 |   test("shows route group card", async ({ page }) => {
+      17 |     await expect(page.getByText(MOCK_GROUP.name)).toBeVisible();
+    > 18 |     await expect(page.getByText(MOCK_GROUP.destination_label)).toBeVisible();
+         |                                                                ^
+      19 |   });
+      20 |
+      21 |   test("trigger collection shows success toast", async ({ page }) => {
+        at /home/runner/work/Scraper-tool/Scraper-tool/flight-harvester/frontend/e2e/dashboard.spec.ts:18:64
+2026-04-20T07:40:35.3780945Z ##[error]  2) [chromium] › e2e/dashboard.spec.ts:16:3 › Dashboard › shows route group card ──────────────────
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Vietnam')
+    Expected: visible
+    Error: strict mode violation: getByText('Vietnam') resolved to 2 elements:
+        1) <a data-discover="true" href="/route-groups/00000000-0000-0000-0000-000000000002" class="flex items-center gap-1 font-semibold text-slate-900 hover:text-brand-700">…</a> aka getByRole('link', { name: 'Canada → Vietnam' })
+        2) <p class="mt-0.5 text-sm text-slate-500">Vietnam</p> aka getByText('Vietnam', { exact: true })
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByText('Vietnam')
+
+
+      16 |   test("shows route group card", async ({ page }) => {
+      17 |     await expect(page.getByText(MOCK_GROUP.name)).toBeVisible();
+    > 18 |     await expect(page.getByText(MOCK_GROUP.destination_label)).toBeVisible();
+         |                                                                ^
+      19 |   });
+      20 |
+      21 |   test("trigger collection shows success toast", async ({ page }) => {
+        at /home/runner/work/Scraper-tool/Scraper-tool/flight-harvester/frontend/e2e/dashboard.spec.ts:18:64
+2026-04-20T07:40:35.3795375Z ##[error]  2) [chromium] › e2e/dashboard.spec.ts:16:3 › Dashboard › shows route group card ──────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Vietnam')
+    Expected: visible
+    Error: strict mode violation: getByText('Vietnam') resolved to 2 elements:
+        1) <a data-discover="true" href="/route-groups/00000000-0000-0000-0000-000000000002" class="flex items-center gap-1 font-semibold text-slate-900 hover:text-brand-700">…</a> aka getByRole('link', { name: 'Canada → Vietnam' })
+        2) <p class="mt-0.5 text-sm text-slate-500">Vietnam</p> aka getByText('Vietnam', { exact: true })
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByText('Vietnam')
+
+
+      16 |   test("shows route group card", async ({ page }) => {
+      17 |     await expect(page.getByText(MOCK_GROUP.name)).toBeVisible();
+    > 18 |     await expect(page.getByText(MOCK_GROUP.destination_label)).toBeVisible();
+         |                                                                ^
+      19 |   });
+      20 |
+      21 |   test("trigger collection shows success toast", async ({ page }) => {
+        at /home/runner/work/Scraper-tool/Scraper-tool/flight-harvester/frontend/e2e/dashboard.spec.ts:18:64
+2026-04-20T07:40:35.3803522Z ##[notice]  2 failed
+    [chromium] › e2e/dashboard.spec.ts:10:3 › Dashboard › shows stat cards with data ───────────────
+    [chromium] › e2e/dashboard.spec.ts:16:3 › Dashboard › shows route group card ───────────────────
+  13 passed (29.5s)
+2026-04-20T07:40:35.3807118Z ##[error]Process completed with exit code 1.
