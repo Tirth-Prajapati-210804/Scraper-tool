@@ -100,6 +100,7 @@ function ExtraOptionsFields({
             </button>
           ))}
         </div>
+        <p className="mt-1.5 text-xs text-slate-400">Filter results by number of stops. "Any" returns all flights.</p>
       </div>
 
       {/* Date range */}
@@ -253,6 +254,7 @@ function QuickForm({
             onChange={(e) => set("nights", Number(e.target.value))}
             required
           />
+          <p className="mt-1 text-xs text-slate-400">Duration of stay, e.g. 7</p>
         </div>
         <div>
           <label className="field-label">Days ahead to track</label>
@@ -265,6 +267,7 @@ function QuickForm({
             onChange={(e) => set("days_ahead", Number(e.target.value))}
             required
           />
+          <p className="mt-1 text-xs text-slate-400">How far into the future to collect, e.g. 365</p>
         </div>
       </div>
 
@@ -446,6 +449,7 @@ function AdvancedForm({
           required
           placeholder="CAD-Tokyo-Shanghai-CAD"
         />
+        <p className="mt-1 text-xs text-slate-400">A unique identifier for this route group</p>
       </div>
 
       <div>
@@ -457,10 +461,11 @@ function AdvancedForm({
           required
           placeholder="TYO/SHA"
         />
+        <p className="mt-1 text-xs text-slate-400">Short display name shown in the UI, e.g. TYO/SHA</p>
       </div>
 
       <div>
-        <label className="field-label">Origin airports (comma-separated IATA)</label>
+        <label className="field-label">Origin airports</label>
         <input
           className="field-input"
           value={form.origins}
@@ -468,17 +473,19 @@ function AdvancedForm({
           required
           placeholder="YYZ, YVR, YEG"
         />
+        <p className="mt-1 text-xs text-slate-400">Comma-separated IATA codes — e.g. YYZ, YVR, YEG</p>
       </div>
 
       <div>
-        <label className="field-label">Destination airports (comma-separated IATA)</label>
+        <label className="field-label">Destination airports</label>
         <input
           className="field-input"
           value={form.destinations}
           onChange={(e) => set("destinations", e.target.value)}
           required
-          placeholder="TYO, SHA"
+          placeholder="NRT, PVG"
         />
+        <p className="mt-1 text-xs text-slate-400">Comma-separated IATA codes — e.g. NRT, PVG, BKK</p>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -492,6 +499,7 @@ function AdvancedForm({
             onChange={(e) => set("nights", Number(e.target.value))}
             required
           />
+          <p className="mt-1 text-xs text-slate-400">Duration of stay at destination</p>
         </div>
         <div>
           <label className="field-label">Days Ahead</label>
@@ -503,6 +511,7 @@ function AdvancedForm({
             onChange={(e) => set("days_ahead", Number(e.target.value))}
             required
           />
+          <p className="mt-1 text-xs text-slate-400">How many future dates to collect prices for</p>
         </div>
       </div>
 
