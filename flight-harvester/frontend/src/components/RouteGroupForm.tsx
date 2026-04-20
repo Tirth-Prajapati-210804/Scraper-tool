@@ -1,5 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { TagInput } from "./ui/TagInput";
 import { type FormEvent, useEffect, useState } from "react";
 import {
   createRouteGroup,
@@ -333,8 +334,8 @@ function QuickForm({
 interface AdvancedState {
   name: string;
   destination_label: string;
-  destinations: string;
-  origins: string;
+  destinations: string[];
+  origins: string[];
   nights: number;
   days_ahead: number;
   is_active: boolean;
@@ -349,8 +350,8 @@ function toAdvancedState(rg?: RouteGroup | null): AdvancedState {
     return {
       name: "",
       destination_label: "",
-      destinations: "",
-      origins: "",
+      destinations: [],
+      origins: [],
       nights: 12,
       days_ahead: 365,
       is_active: true,
@@ -363,8 +364,8 @@ function toAdvancedState(rg?: RouteGroup | null): AdvancedState {
   return {
     name: rg.name,
     destination_label: rg.destination_label,
-    destinations: rg.destinations.join(", "),
-    origins: rg.origins.join(", "),
+    destinations: rg.destinations,
+    origins: rg.origins,
     nights: rg.nights,
     days_ahead: rg.days_ahead,
     is_active: rg.is_active,
@@ -405,17 +406,16 @@ function AdvancedForm({
     setError(null);
     setSaving(true);
     try {
+      if (form.origins.length === 0 || form.destinations.length === 0) {
+        setError("Add at least one origin and one destination airport.");
+        setSaving(false);
+        return;
+      }
       const payload = {
         name: form.name.trim(),
         destination_label: form.destination_label.trim(),
-        destinations: form.destinations
-          .split(",")
-          .map((s) => s.trim().toUpperCase())
-          .filter(Boolean),
-        origins: form.origins
-          .split(",")
-          .map((s) => s.trim().toUpperCase())
-          .filter(Boolean),
+        destinations: form.destinations,
+        origins: form.origins,
         nights: form.nights,
         days_ahead: form.days_ahead,
         is_active: form.is_active,
@@ -466,26 +466,22 @@ function AdvancedForm({
 
       <div>
         <label className="field-label">Origin airports</label>
-        <input
-          className="field-input"
+        <TagInput
           value={form.origins}
-          onChange={(e) => set("origins", e.target.value)}
-          required
-          placeholder="YYZ, YVR, YEG"
+          onChange={(tags) => set("origins", tags)}
+          placeholder="YYZ, YVR…"
+          hint="Type an IATA code and press Enter or comma to add"
         />
-        <p className="mt-1 text-xs text-slate-400">Comma-separated IATA codes — e.g. YYZ, YVR, YEG</p>
       </div>
 
       <div>
         <label className="field-label">Destination airports</label>
-        <input
-          className="field-input"
+        <TagInput
           value={form.destinations}
-          onChange={(e) => set("destinations", e.target.value)}
-          required
-          placeholder="NRT, PVG"
+          onChange={(tags) => set("destinations", tags)}
+          placeholder="NRT, BKK…"
+          hint="Type an IATA code and press Enter or comma to add"
         />
-        <p className="mt-1 text-xs text-slate-400">Comma-separated IATA codes — e.g. NRT, PVG, BKK</p>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
