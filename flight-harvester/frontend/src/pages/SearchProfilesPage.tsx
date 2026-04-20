@@ -7,7 +7,7 @@ import {
   listSearchProfiles,
   updateSearchProfile,
 } from "../api/search-profiles";
-import { triggerGroupCollection } from "../api/collection";
+import { triggerProfileCollection } from "../api/collection";
 import { SearchProfileForm } from "../components/SearchProfileForm";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
@@ -127,7 +127,7 @@ function ProfileCard({
     setTriggering(true);
     try {
       // Re-use the existing collection trigger endpoint
-      await triggerGroupCollection(profile.id);
+      await triggerProfileCollection(profile.id);
       showToast("Collection started", "success");
     } catch {
       showToast("Failed to trigger collection", "error");
